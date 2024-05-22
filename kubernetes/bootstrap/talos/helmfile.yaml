@@ -4,6 +4,8 @@ repositories:
     url: https://helm.cilium.io
   - name: postfinance
     url: https://postfinance.github.io/kubelet-csr-approver
+  - name: coredns
+    url: https://coredns.github.io/helm
 
 helmDefaults:
   wait: true
