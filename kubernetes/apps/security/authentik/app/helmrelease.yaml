@@ -1,0 +1,78 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: authentik
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: authentik
+      version: 2024.4.2
+      sourceRef:
+        kind: HelmRepository
+        name: authentik
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  uninstall:
+    keepHistory: false
+  values:
+    global:
+      deploymentAnnotations:
+        secret.reloader.stakater.com/reload: &secret authentik-secret
+      deploymentStrategy:
+        type: RollingUpdate
+      envFrom:
+        - secretRef:
+            name: *secret
+    authentik:
+      log_level: info
+      avatars: "gravatar,initials"
+      email:
+        host: 192.168.10.1
+        port: 25
+        from: "Admin <admin@${SECRET_DOMAIN}>"
+      error_reporting:
+        enable: false
+        send_pii: false
+      redis:
+        host: dragonfly.database.svc.cluster.local
+    server:
+      autoscaling:
+        enabled: true
+        minReplicas: 1
+        maxReplicas: 3
+      metrics:
+        prometheus:
+          serviceMonitor:
+            enabled: true
+      ingress:
+        enabled: true
+        ingressClassName: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+          nginx.ingress.kubernetes.io/enable-global-auth: "false"
+        hosts:
+          - &host id.${SECRET_DOMAIN}
+        paths:
+          - /
+        tls: [hosts: [*host]]
+    worker:
+      autoscaling:
+        enabled: true
+        minReplicas: 1
+        maxReplicas: 3
+      metrics:
+        prometheus:
+          serviceMonitor:
+            enabled: true

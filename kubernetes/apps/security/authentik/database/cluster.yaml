@@ -1,0 +1,58 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cnpg-authentik
+spec:
+  description: Postgresql cluster for Authentik
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.3
+  instances: 1
+  storage:
+    size: 4Gi
+    storageClass: openebs-hostpath
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: 256MB
+  nodeMaintenanceWindow:
+    inProgress: false
+    reusePVC: true
+  primaryUpdateStrategy: unsupervised
+  monitoring:
+    enablePodMonitor: true
+  # Initial bootstrap for first install
+  bootstrap:
+    initdb:
+      database: ${AUTHENTIK_DB_NAME}
+      owner: ${AUTHENTIK_DB_USER}
+      secret:
+        name: authentik-db-secret
+  # Bootstrap to recover from an existing backup
+  # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster authentik-postgres16-v1
+  backup:
+    retentionPolicy: 7d
+    barmanObjectStore: &barmanObjectStore
+      data:
+        compression: bzip2
+      wal:
+        compression: bzip2
+        maxParallel: 8
+      destinationPath: s3://k8ss-cluster-postgres/authentik/
+      endpointURL: ${AWS_ENDPOINT_URL}
+      serverName: &currentCluster authentik-postgres16-v1
+      s3Credentials:
+        accessKeyId:
+          name: authentik-db-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: authentik-db-secret
+          key: SECRET_ACCESS_KEY
+ # Note: externalClusters is needed when recovering from an existing cnpg cluster
+ #  externalClusters:
+ #   - name: *previousCluster
+ #     barmanObjectStore:
+ #       <<: *barmanObjectStore
+ #       serverName: *previousCluster
