@@ -33,10 +33,10 @@ spec:
         containers:
           clamav:
             env:
-              CLAMAV_NO_CLAMD=false
-              CLAMAV_NO_FRESHCLAMD=false
-              CLAMAV_NO_MILTERD=false
-              FRESHCLAM_CHECKS=4
+              CLAMAV_NO_CLAMD: false
+              CLAMAV_NO_FRESHCLAMD: false
+              CLAMAV_NO_MILTERD: true
+              FRESHCLAM_CHECKS: 4
             image:
               repository: clamav/clamav
               tag: 1.2.3@sha256:f2b699440dc6a2dfa009542f9e0ebb8687656f8b01bbf26b6809e5676d9685d7
