@@ -66,6 +66,8 @@ spec:
         passwordKey: NEXTCLOUD_ADMIN_PASSWORD
         tokenKey: NEXTCLOUD_TOKEN
         smtpHostKey: NEXTCLOUD_SMTP_HOST
+        smtpUsernameKey: NEXTCLOUD_SMTP_USERNAME
+        smtpPasswordKey: NEXTCLOUD_SMTP_PASSWORD
       mail:
         enabled: true
         fromAddress: admin
