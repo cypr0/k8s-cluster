@@ -1,0 +1,66 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cnpg-nextcloud
+spec:
+  description: Postgresql cluster for Nextcloud
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.3
+  instances: 1
+  storage:
+    size: 50Gi
+    storageClass: openebs-hostpath
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: 4GB
+      effective_cache_size: 12GB
+      maintenance_work_mem: 1GB
+      checkpoint_completion_target: "0.9"
+      wal_buffers: 16MB
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: 10485kB
+      huge_pages: off
+      min_wal_size: 1GB
+      max_wal_size: 4GB
+  bootstrap:
+    initdb:
+      database: ${NEXTCLOUD_DB_NAME}
+      owner: ${NEXTCLOUD_DB_USER}
+      secret:
+        name: nextcloud-db-secret
+      encoding: 'UTF8'
+  primaryUpdateStrategy: unsupervised
+  monitoring:
+    enablePodMonitor: true
+  # Bootstrap to recover from an existing backup
+  # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster nextcloud-postgres16-v1
+  backup:
+    retentionPolicy: 7d
+    barmanObjectStore: &barmanObjectStore
+      data:
+        compression: bzip2
+      wal:
+        compression: bzip2
+        maxParallel: 8
+      destinationPath: s3://k8s-cluster-postgres/nextcloud/
+      endpointURL: ${AWS_ENDPOINT_URL}
+      serverName: &currentCluster nextcloud-postgres16-v1
+      s3Credentials:
+        accessKeyId:
+          name: nextcloud-db-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: nextcloud-db-secret
+          key: SECRET_ACCESS_KEY
+ # Note: externalClusters is needed when recovering from an existing cnpg cluster
+ #  externalClusters:
+ #   - name: *previousCluster
+ #     barmanObjectStore:
+ #       <<: *barmanObjectStore
+ #       serverName: *previousCluster

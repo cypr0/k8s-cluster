@@ -10,6 +10,7 @@ resources:
   - ./jetstack.yaml
   - ./longhorn.yaml
   - ./metrics-server.yaml
+  - ./nextcloud.yaml
   - ./openebs.yaml
   - ./postfinance.yaml
   - ./prometheus-community.yaml
