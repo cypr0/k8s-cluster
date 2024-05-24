@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
   - ./cloudnative-pg/ks.yaml
   - ./dragonfly/ks.yaml
+  - ./eck-operator/ks.yaml
   - ./namespace.yaml
