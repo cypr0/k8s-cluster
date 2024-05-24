@@ -65,12 +65,12 @@ spec:
         usernameKey: NEXTCLOUD_ADMIN_USERNAME
         passwordKey: NEXTCLOUD_ADMIN_PASSWORD
         tokenKey: NEXTCLOUD_TOKEN
+        smtpHostKey: NEXTCLOUD_SMTP_HOST
       mail:
         enabled: true
         fromAddress: admin
         domain: "${SECRET_DOMAIN}"
         smtp:
-          host: ${SMTP_HOST}
           port: 25
           authtype: NONE
       configs:
