@@ -45,7 +45,6 @@ spec:
                 enabled: true
               readiness:
                 enabled: true
-            strategy: RollingUpdate
     service:
       clamav:
         controller: clamav
