@@ -37,7 +37,7 @@ spec:
       log_level: info
       avatars: "gravatar,initials"
       email:
-        host: 192.168.10.1
+        host: ${SMTP_HOST}
         port: 25
         from: "Admin <admin@${SECRET_DOMAIN}>"
       error_reporting:
