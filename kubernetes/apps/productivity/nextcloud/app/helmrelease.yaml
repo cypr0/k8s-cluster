@@ -97,7 +97,6 @@ spec:
             ),
             'allow_local_remote_servers' => true,
             'overwriteprotocol' => 'https',
-            'overwritehost' => 'https://cloud.${SECRET_DOMAIN}',
           );
         user.config.php: |-
           <?php
