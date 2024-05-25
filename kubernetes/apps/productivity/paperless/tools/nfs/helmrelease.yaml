@@ -39,14 +39,14 @@ spec:
             image:
               repository: gists/nfs-server
               tag: 12.6.4@sha256:965b1437bce8b09c508df1006c5b919f7e82486edd68f296edae045302eeab65
+            securityContext:
+              capabilities:
+                add: ["SYS_ADMIN", "SETPCAP"]
             probes:
               liveness:
                 enabled: true
               readiness:
                 enabled: true
-      securityContext:
-        capabilities:
-          add: ["SYS_ADMIN", "SETPCAP"]
     service:
       nfs-server:
         controller: nfs-server
