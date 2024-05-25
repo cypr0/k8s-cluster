@@ -95,7 +95,8 @@ spec:
                0 => 'cloud.${SECRET_DOMAIN}',
                1 => 'id.${SECRET_DOMAIN}',
             ),
-            'allow_local_remote_servers' => true
+            'allow_local_remote_servers' => true,
+            'overwriteprotocol' => 'https',
           );
         user.config.php: |-
           <?php
