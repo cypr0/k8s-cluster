@@ -199,12 +199,6 @@ spec:
       enabled: true
       config:
         default: true
-      resources:
-        requests:
-          cpu: 50m
-          memory: 20Mi
-        limits:
-          memory: 100Mi
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -222,12 +216,6 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
-        resources:
-          requests:
-            cpu: 10m
-            memory: 10Mi
-          limits:
-            memory: 20Mi
     metrics:
       enabled: false
       https: true
