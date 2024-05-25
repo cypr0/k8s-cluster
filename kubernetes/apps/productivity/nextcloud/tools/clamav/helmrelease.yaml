@@ -39,7 +39,7 @@ spec:
               FRESHCLAM_CHECKS: 4
             image:
               repository: clamav/clamav
-              tag: 1.2.3@sha256:f2b699440dc6a2dfa009542f9e0ebb8687656f8b01bbf26b6809e5676d9685d7
+              tag: 1.3.1@sha256:5f36baf4248e5fa498b5a575592d9d864f3f7c579f5254105d51ff4b65affed4
             probes:
               liveness:
                 enabled: true
