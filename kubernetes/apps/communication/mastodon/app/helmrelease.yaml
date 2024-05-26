@@ -108,7 +108,7 @@ spec:
       existingClaim: mastodon-pvc
       mountPath: /opt/bitnami/mastodon/public/system
     volumePermissions:
-      enabled: false
+      enabled: true
     externalDatabase:
       host: "cnpg-mastodon-rw.communication.svc.cluster.local"
       port: 5432
