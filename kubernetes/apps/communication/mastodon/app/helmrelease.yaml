@@ -101,7 +101,7 @@ spec:
       precompileAssets: true
       migrateDB: true
       migrateElasticsearch: true
-      createAdmin: false
+      createAdmin: true
       backoffLimit: 10
     persistence:
       enabled: true
