@@ -110,7 +110,7 @@ spec:
     volumePermissions:
       enabled: false
     externalDatabase:
-      host: "cnpg-mastodon-rw.database.svc.cluster.local"
+      host: "cnpg-mastodon-rw.communication.svc.cluster.local"
       port: 5432
       user: ${MASTODON_DB_USER}
       database: ${MASTODON_DB_NAME}
