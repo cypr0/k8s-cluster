@@ -29,7 +29,7 @@ metadata:
 spec:
   ingressClassName: "external"
   rules:
-    - host: &host "social.${SECRETL_DOMAIN}"
+    - host: &host "social.${SECRET_DOMAIN}"
       http:
         paths:
           - path: /
