@@ -1,0 +1,118 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
+kind: HelmRelease
+metadata:
+  name: &app paperless
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.2.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        replicas: 1
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app:
+            image:
+              repository: ghcr.io/paperless-ngx/paperless-ngx
+              tag: 2.8.6
+            env:
+              PAPERLESS_ALLOWED_HOSTS: paperless.${SECRET_DOMAIN}
+              PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
+              PAPERLESS_CONSUMER_POLLING: 60
+              PAPERLESS_CONSUMER_RECURSIVE: "true"
+              PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
+              PAPERLESS_CONSUMPTION_DIR: /library/consume
+              PAPERLESS_DATA_DIR: /library/data
+              PAPERLESS_EXPORT_DIR: /library/export
+              PAPERLESS_MEDIA_ROOT: /library/media
+              PAPERLESS_OCR_LANGUAGE: deu+eng+spa
+              PAPERLESS_PORT: &port 80
+              PAPERLESS_REDIS: redis://dragonfly.database.svc.cluster.local:6379
+              PAPERLESS_SOCIALACCOUNT_PROVIDERS: >
+                    {
+                      "openid_connect": {
+                        "APPS": [
+                          {
+                            "provider_id": "authentik",
+                            "name": "Authentik",
+                            "client_id": "${PAPERLESS_OPENID_CLIENT_ID}",
+                            "secret": "${PAPERLESS_OPENID_CLIENT_SECRET}",
+                            "settings": {
+                              "server_url": "https://id.${SECRET_DOMAIN}/application/o/paperless/.well-known/openid-configuration"
+                            }
+                          }
+                        ],
+                        "OAUTH_PKCE_ENABLED": "True"
+                      }
+                    }
+              PAPERLESS_TASK_WORKERS: 2
+              PAPERLESS_TIKA_ENABLED: 1
+              PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg.productivity.svc.cluster.local:3000
+              PAPERLESS_TIKA_ENDPOINT: http://paperless-tika.productivity.svc.cluster.local:9998
+              PAPERLESS_TIME_ZONE: ${TIMEZONE}
+              PAPERLESS_TRUSTED_PROXIES: 10.69.0.0/16,192.168.0.0/16
+              PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
+              USERMAP_UID: 568
+              USERMAP_GID: 568
+            envFrom:
+              - secretRef:
+                  name: paperless-secret
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+    service:
+      app:
+        controller: main
+        ports:
+          http:
+            port: *port
+    ingress:
+      app:
+        enabled: true
+        className: internal
+        annotations:
+          nginx.ingress.kubernetes.io/proxy-body-size: 4G
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+        hosts:
+          - host: &host "paperless.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: app
+                  port: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      library:
+        enabled: true
+        existingClaim: paperless-pvc
+        globalMounts:
+          - path: /library

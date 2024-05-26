@@ -1,0 +1,50 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cnpg-paperless
+spec:
+  description: Postgresql cluster for Paperless
+  imageName: ghcr.io/cloudnative-pg/postgresql:16.3
+  instances: 1
+  storage:
+    size: 10Gi
+    storageClass: openebs-hostpath
+  bootstrap:
+    initdb:
+      database: ${PAPERLESS_DB_NAME}
+      owner: ${PAPERLESS_DB_USER}
+      secret:
+        name: paperless-db-secret
+  primaryUpdateStrategy: unsupervised
+  monitoring:
+    enablePodMonitor: true
+  # Bootstrap to recover from an existing backup
+  # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster paperless-postgres16-v1
+  backup:
+    retentionPolicy: 7d
+    barmanObjectStore: &barmanObjectStore
+      data:
+        compression: bzip2
+      wal:
+        compression: bzip2
+        maxParallel: 8
+      destinationPath: s3://k8s-cluster-postgres/paperless/
+      endpointURL: ${AWS_ENDPOINT_URL}
+      serverName: &currentCluster paperless-postgres16-v1
+      s3Credentials:
+        accessKeyId:
+          name: nextcloud-db-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: nextcloud-db-secret
+          key: SECRET_ACCESS_KEY
+ # Note: externalClusters is needed when recovering from an existing cnpg cluster
+ #  externalClusters:
+ #   - name: *previousCluster
+ #     barmanObjectStore:
+ #       <<: *barmanObjectStore
+ #       serverName: *previousCluster
