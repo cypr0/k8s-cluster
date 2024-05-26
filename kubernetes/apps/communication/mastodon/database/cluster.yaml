@@ -25,10 +25,10 @@ spec:
       huge_pages: off
       min_wal_size: 1GB
       max_wal_size: 4GB
-      max_worker_processes: 6
-      max_parallel_workers_per_gather: 3
-      max_parallel_workers: 6
-      max_parallel_maintenance_workers: 3
+      max_worker_processes: "6"
+      max_parallel_workers_per_gather: "3"
+      max_parallel_workers: "6"
+      max_parallel_maintenance_workers: "3"
   bootstrap:
     initdb:
       database: ${MASTODON_DB_NAME}
