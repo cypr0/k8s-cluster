@@ -31,6 +31,7 @@ spec:
       registry: docker.io
       repository: bitnami/mastodon
       tag: 4.2.8
+      pullPolicy: Always
     environment: production
     adminUser: ${MASTODON_ADMIN_USER}
     adminEmail: "admin@${SECRET_DOMAIN}"
