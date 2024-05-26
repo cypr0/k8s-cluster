@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: *app
-      version: 6.0.1
+      version: 6.1.1
       sourceRef:
         kind: HelmRepository
         name: bitnami
@@ -31,7 +31,6 @@ spec:
       registry: docker.io
       repository: bitnami/mastodon
       tag: 4.2.8
-      pullPolicy: Always
     environment: production
     adminUser: ${MASTODON_ADMIN_USER}
     adminEmail: "admin@${SECRET_DOMAIN}"
