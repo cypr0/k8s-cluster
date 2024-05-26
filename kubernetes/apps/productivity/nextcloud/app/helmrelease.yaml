@@ -94,6 +94,7 @@ spec:
             array(
                0 => 'cloud.${SECRET_DOMAIN}',
                1 => 'id.${SECRET_DOMAIN}',
+               2 => 'localhost',
             ),
             'allow_local_remote_servers' => true,
             'overwriteprotocol' => 'https',
@@ -139,6 +140,7 @@ spec:
     persistence:
       enabled: true
       existingClaim: nextcloud-pvc
+      accessMode: ReadWriteMany
     startupProbe:
       enabled: true
       initialDelaySeconds: 5
