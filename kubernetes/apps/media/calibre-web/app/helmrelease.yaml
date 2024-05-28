@@ -30,7 +30,7 @@ spec:
           app:
             image:
               repository: linuxserver/calibre-web
-              tag: 0.6.21-ls26
+              tag: 0.6.21-ls269
             env:
               PUID: 1000
               PGID: 1000
