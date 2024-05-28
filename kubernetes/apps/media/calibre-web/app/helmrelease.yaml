@@ -22,9 +22,9 @@ spec:
           reloader.stakater.com/auto: "true"
         pod:
           securityContext:
-            runAsUser: 1000
-            runAsGroup: 1000
-            fsGroup: 1000
+            runAsUser: 568
+            runAsGroup: 568
+            fsGroup: 568
             fsGroupChangePolicy: "OnRootMismatch"
         containers:
           app:
@@ -32,8 +32,8 @@ spec:
               repository: linuxserver/calibre-web
               tag: 0.6.21-ls269
             env:
-              PUID: 1000
-              PGID: 1000
+              PUID: 568
+              PGID: 568
               TZ: Europe/Berlin
             probes:
               liveness:
