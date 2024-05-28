@@ -79,4 +79,4 @@ spec:
         globalMounts:
           - path: /books/metadata.db
             subPath: metadata.db
-            readOnly: true
+            readOnly: false
