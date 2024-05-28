@@ -39,7 +39,7 @@ spec:
       email:
         host: ${SMTP_HOST}
         port: 25
-        from: "Admin <admin@${SECRET_DOMAIN}>"
+        from: "Authentik <admin@${SECRET_DOMAIN}>"
       error_reporting:
         enable: false
         send_pii: false
