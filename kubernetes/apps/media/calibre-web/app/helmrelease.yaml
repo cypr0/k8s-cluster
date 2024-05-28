@@ -24,7 +24,7 @@ spec:
           app:
             image:
               repository: linuxserver/calibre-web
-              tag: 0.6.21-ls269
+              tag: 0.6.21-ls269@sha256:fab0fda498a1354fad88ece34119f35118faf292678e0b2c18956dfa690cd2ab
             env:
               PUID: "911"
               PGID: "1000"
@@ -73,3 +73,10 @@ spec:
           calibre-web:
             app:
               - path: /books
+      library:
+        type: configMap
+        name: calibre-web-library
+        globalMounts:
+          - path: /books/metadata.db
+            subPath: metadata.db
+            readOnly: true

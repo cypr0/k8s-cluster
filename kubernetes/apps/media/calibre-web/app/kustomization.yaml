@@ -4,3 +4,11 @@ kind: Kustomization
 resources:
   - ./helmrelease.yaml
   - ./pvc.yaml
+configMapGenerator:
+  - name: calibre-web-library
+    files:
+      - metadata.db=./library/metadata.db
+generatorOptions:
+  disableNameSuffixHash: true
+  annotations:
+    kustomize.toolkit.fluxcd.io/substitute: disabled
