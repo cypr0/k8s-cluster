@@ -41,7 +41,7 @@ spec:
                   name: collabora-secret
             image:
               repository: collabora/code
-              tag: 24.04.3.1.1@sha256:5e8efa0b2ef31b9c544ed0d3d2d16a10a3ce6087eeda3771150e44baa2e2b50f
+              tag: 24.04.3.1.1@sha256:6188b030f84e758ad3285c4dcba474692fd702377a049f290e7858f972cf4368
     ingress:
       code:
         enabled: true
