@@ -116,3 +116,8 @@ spec:
         existingClaim: paperless-pvc
         globalMounts:
           - path: /library
+      consume:
+        enabled: true
+        existingClaim: paperless-nfs-pvc
+        globalMounts:
+          - path: /library/consume

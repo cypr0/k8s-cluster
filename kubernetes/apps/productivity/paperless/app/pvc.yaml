@@ -9,3 +9,33 @@ spec:
   resources:
     requests:
       storage: 150Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: paperless-nfs
+spec:
+  capacity:
+    storage: 1Mi
+  accessModes:
+    - ReadWriteMany
+  storageClassName: paperless-nfs
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    server: "192.168.40.250"
+    path: /media/storage
+  mountOptions:
+    - nfsvers=4.2
+    - nconnect=8
+    - hard
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: paperless-nfs-pvc
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: paperless-nfs
+  resources:
+    requests:
+      storage: 1Mi
