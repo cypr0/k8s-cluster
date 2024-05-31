@@ -23,7 +23,7 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   nfs:
     server: "192.168.40.250"
-    path: /media/storage
+    path: /media/share
   mountOptions:
     - nfsvers=4.2
     - nconnect=8
