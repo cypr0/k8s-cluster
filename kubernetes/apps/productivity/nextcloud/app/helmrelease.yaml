@@ -144,9 +144,9 @@ spec:
     startupProbe:
       enabled: true
       initialDelaySeconds: 5
-      periodSeconds: 10
+      periodSeconds: 90
       timeoutSeconds: 5
-      failureThreshold: 3600
+      failureThreshold: 100
       successThreshold: 1
     livenessProbe:
       enabled: true
