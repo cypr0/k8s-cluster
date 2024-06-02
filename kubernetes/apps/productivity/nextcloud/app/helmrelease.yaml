@@ -146,7 +146,7 @@ spec:
       initialDelaySeconds: 5
       periodSeconds: 10
       timeoutSeconds: 5
-      failureThreshold: 360
+      failureThreshold: 3600
       successThreshold: 1
     livenessProbe:
       enabled: true
