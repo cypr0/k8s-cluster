@@ -36,6 +36,7 @@ spec:
               extra_params: --o:ssl.termination=true --o:ssl.enable=false
               lang: de_DE
               dictionaries: de_DE en_GB en_US es_ES fr_FR
+              server_name: collabora.${SECRET_DOMAIN}
             envFrom:
               - secretRef:
                   name: collabora-secret
