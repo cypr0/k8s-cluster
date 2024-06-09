@@ -56,11 +56,6 @@ spec:
             envFrom:
               - secretRef:
                   name: nextcloud-secret
-            securityContext:
-              runAsUser: 33
-              runAsGroup: 33
-              fsGroup: 33
-              fsGroupChangePolicy: OnRootMismatch
     service:
       app:
         controller: *app
@@ -126,3 +121,12 @@ spec:
               - subPath: "custom.config.php"
                 path: "/var/www/html/config/custom.config.php"
                 readOnly: false
+    defaultPodOptions:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsUser: &uid 33
+        runAsGroup: *uid
+        fsGroup: *uid
+        runAsNonRoot: false
+        seccompProfile: {type: "RuntimeDefault"}
+        fsGroupChangePolicy: "Always"
