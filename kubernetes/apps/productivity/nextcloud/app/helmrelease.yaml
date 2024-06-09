@@ -117,4 +117,4 @@ spec:
         globalMounts:
           - path: /var/www/html/config/custom.config.php
             subPath: custom.config.php
-            readOnly: true
+            readOnly: false
