@@ -40,7 +40,7 @@ spec:
             env:
               TZ: "${TIMEZONE}"
               REDIS_HOST: "dragonfly.database.svc.cluster.local"
-              SMTP_HOST: "${SMTP_HOST}"
+              SMTP_HOST: "${GLOBAL_SMTP_HOST}"
               SMTP_PORT: "25"
               SMTP_AUTHTYPE: "PLAIN"
               MAIL_FROM_ADDRESS: "admin@${SECRET_DOMAIN}"
@@ -52,18 +52,10 @@ spec:
               NEXTCLOUD_TRUSTED_DOMAINS: "cloud.${SECRET_DOMAIN} id.${SECRET_DOMAIN} collabora.{SECRET_DOMAIN} localhost"
               NEXTCLOUD_INIT_HTACCESS: "true"
               PHP_UPLOAD_LIMIT: "16G"
-              APACHE_DISABLE_REWRITE_IP: "1"
               TRUSTED_PROXIES: "10.69.0.0/16 10.96.0.0/16 192.168.0.0/16 127.0.0.1"
             envFrom:
               - secretRef:
                   name: nextcloud-secret
-            resources:
-              requests:
-                cpu: 200m
-                memory: 500Mi
-              limits:
-                cpu: 4000m
-                memory: 4000Mi
     service:
       app:
         controller: *app
@@ -119,3 +111,10 @@ spec:
         existingClaim: nextcloud-pvc
         globalMounts:
           - path: /var/www/html
+      settings:
+        type: configMap
+        name: nextcloud-user-config
+        globalMounts:
+          - path: /var/www/html/config/custom.config.php
+            subPath: custom.config.php
+            readOnly: true
