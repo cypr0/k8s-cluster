@@ -116,7 +116,7 @@ spec:
         type: configMap
         name: nextcloud-user-config
         advancedMounts:
-          app:
+          nextcloud:
             - subPath: "custom.config.php"
               path: "/var/www/html/config/custom.config.php"
               readOnly: false
