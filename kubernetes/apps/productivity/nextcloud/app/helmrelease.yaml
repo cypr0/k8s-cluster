@@ -115,6 +115,6 @@ spec:
         type: configMap
         name: nextcloud-user-config
         globalMounts:
-          - path: /var/www/html/config/custom.config.php
+          - mountPath: /var/www/html/config/custom.config.php
             subPath: custom.config.php
             readOnly: false
