@@ -64,7 +64,7 @@ spec:
           - host: &host "collabora.${SECRET_DOMAIN}"
             paths:
               - path: /
-                pathType: Prefix # ImplementationSpecific
+              #  pathType: Prefix # ImplementationSpecific
                 service:
                   identifier: code
                   port: http
