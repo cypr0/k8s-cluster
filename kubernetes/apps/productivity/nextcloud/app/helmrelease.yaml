@@ -7,11 +7,11 @@ spec:
   interval: 30m
   chart:
     spec:
-      chart: app-template
-      version: 3.2.1
+      chart: *app
+      version: 4.6.10
       sourceRef:
         kind: HelmRepository
-        name: bjw-s
+        name: nextcloud
         namespace: flux-system
   maxHistory: 2
   install:
@@ -21,117 +21,190 @@ spec:
     cleanupOnFail: true
     remediation:
       retries: 3
+      strategy: rollback
   uninstall:
     keepHistory: false
   values:
-    fullnameOverride: *app
-    controllers:
-      nextcloud:
-        containers:
-          app:
-            image:
-              repository: nextcloud
-              tag: 29.0.1-apache
-            probes:
-              startup:
-                spec:
-                  initialDelaySeconds: 30
-                  periodSeconds: 30
-            env:
-              TZ: "${TIMEZONE}"
-              REDIS_HOST: "dragonfly.database.svc.cluster.local"
-              SMTP_HOST: "${GLOBAL_SMTP_HOST}"
-              SMTP_PORT: "25"
-              SMTP_AUTHTYPE: "PLAIN"
-              MAIL_FROM_ADDRESS: "admin@${SECRET_DOMAIN}"
-              OVERWRITEPROTOCOL: "https"
-              OVERWRITEHOST: "cloud.${SECRET_DOMAIN}"
-              POSTGRES_HOST: "cnpg-nextcloud-rw.productivity.svc.cluster.local"
-              POSTGRES_DB: "${NEXTCLOUD_DB_NAME}"
-              POSTGRES_USER: "${NEXTCLOUD_DB_USER}"
-              NEXTCLOUD_TRUSTED_DOMAINS: "cloud.${SECRET_DOMAIN} id.${SECRET_DOMAIN} collabora.{SECRET_DOMAIN} localhost"
-              NEXTCLOUD_INIT_HTACCESS: "true"
-              PHP_UPLOAD_LIMIT: "16G"
-              TRUSTED_PROXIES: "10.69.0.0/16 10.96.0.0/16 192.168.0.0/16 127.0.0.1"
-            envFrom:
-              - secretRef:
-                  name: nextcloud-secret
-            securityContext:
-              readOnlyRootFilesystem: true
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop: ["ALL"]
-    service:
-      app:
-        controller: *app
-        ports:
-          http:
-            port: 80
-    ingress:
-      app:
+    image:
+      flavor: fpm-alpine
+    deploymentAnnotations:
+      secret.reloader.stakater.com/reload: &secret nextcloud-secret
+    replicaCount: 1
+    nextcloud:
+      extraEnv:
+        - name: REDIS_HOST
+          value: dragonfly.database.svc.cluster.local
+        - name: REDIS_HOST_PORT
+          value: "6379"
+        - name: S3_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: *secret
+              key: OBJECTSTORE_S3_KEY
+        - name: S3_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: *secret
+              key: OBJECTSTORE_S3_SECRET
+        - name: S3_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: *secret
+              key: OBJECTSTORE_S3_HOST
+        - name: S3_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: *secret
+              key: OBJECTSTORE_S3_BUCKET
+      strategy:
+         type: RollingUpdate
+      host: &host cloud.${SECRET_DOMAIN}
+      existingSecret:
         enabled: true
-        className: external
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
-          nginx.ingress.kubernetes.io/proxy-body-size: "10G"
-          nginx.ingress.kubernetes.io/proxy-buffering: "off"
-          nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-          nginx.ingress.kubernetes.io/server-snippet: |-
-            server_tokens off;
-            proxy_hide_header X-Powered-By;
-            rewrite ^/.well-known/webfinger /index.php/.well-known/webfinger last;
-            rewrite ^/.well-known/nodeinfo /index.php/.well-known/nodeinfo last;
-            rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
-            rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
-            location = /.well-known/carddav {
-              return 301 $scheme://$host/remote.php/dav;
-            }
-            location = /.well-known/caldav {
-              return 301 $scheme://$host/remote.php/dav;
-            }
-            location = /robots.txt {
-              allow all;
-              log_not_found off;
-              access_log off;
-            }
-            location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
-              deny all;
-            }
-            location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
-              deny all;
-            }
-        hosts:
-          - host: &host "cloud.${SECRET_DOMAIN}"
-            paths:
-              - path: /
-                service:
-                  identifier: app
-                  port: http
-        tls:
-          - hosts:
-              - *host
+        secretName: *secret
+        usernameKey: NEXTCLOUD_ADMIN_USER
+        passwordKey: NEXTCLOUD_ADMIN_PASSWORD
+        tokenKey: NEXTCLOUD_TOKEN
+        smtpHostKey: NEXTCLOUD_SMTP_HOST
+        smtpUsernameKey: NEXTCLOUD_SMTP_USERNAME
+        smtpPasswordKey: NEXTCLOUD_SMTP_PASSWORD
+      mail:
+        enabled: true
+        fromAddress: admin
+        domain: "${SECRET_DOMAIN}"
+        smtp:
+          port: 25
+          authtype: PLAIN
+      configs:
+        proxy.config.php: |-
+          <?php
+          $CONFIG = array (
+            'trusted_proxies' =>
+            array(
+               0 => '10.69.0.0/16',
+               1 => '10.96.0.0/16',
+               2 => '127.0.0.1',
+               3 => '192.168.0.0/16',
+            ),
+            'forwarded_for_headers' =>
+            array (
+              0 => 'HTTP_X_FORWARDED_FOR',
+            ),
+            'trusted_domains' =>
+            array(
+               0 => 'cloud.${SECRET_DOMAIN}',
+               1 => 'id.${SECRET_DOMAIN}',
+               2 => 'localhost',
+            ),
+            'allow_local_remote_servers' => true,
+            'overwriteprotocol' => 'https',
+          );
+        user.config.php: |-
+          <?php
+          $CONFIG = array (
+            'default_language' => 'de',
+            'default_locale' => 'de_DE',
+            'default_phone_region' => 'DE',
+            'default_timezone' => 'Europe/Berlin',
+            'maintenance_window_start' => 1,
+          );
+        bulkupload.config.php: |-
+          <?php
+          $CONFIG = array (
+            'bulkupload.enabled' => false,
+          );
+        s3.config.php: |-
+          <?php
+          $CONFIG = array (
+            'objectstore' => array(
+              'class' => '\\OC\\Files\\ObjectStore\\S3',
+              'arguments' => array(
+                'hostname'       => getenv('OBJECTSTORE_S3_HOST'),
+                'port'           => 443,
+                'use_path_style' => false,
+                'bucket'         => getenv('OBJECTSTORE_S3_BUCKET'),
+                'region'         => getenv('OBJECTSTORE_S3_REGION'),
+                'autocreate'     => true,
+                'key'            => getenv('OBJECTSTORE_S3_KEY'),
+                'secret'         => getenv('OBJECTSTORE_S3_SECRET'),
+                'use_ssl'        => true,
+              ),
+            ),
+          );
+      phpConfigs:
+        uploadLimit.ini: |
+          upload_max_filesize = 16G
+          post_max_size = 16G
+          max_input_time = 3600
+          max_execution_time = 3600
     persistence:
+      enabled: true
+      existingClaim: nextcloud-pvc
+      accessMode: ReadWriteMany
+    livenessProbe:
+      enabled: false
+    readinessProbe:
+      enabled: false
+    ingress:
+      enabled: true
+      className: external
+      annotations:
+        external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        nginx.ingress.kubernetes.io/proxy-body-size: "10G"
+        nginx.ingress.kubernetes.io/proxy-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+        nginx.ingress.kubernetes.io/server-snippet: |-
+          server_tokens off;
+          proxy_hide_header X-Powered-By;
+          rewrite ^/.well-known/webfinger /index.php/.well-known/webfinger last;
+          rewrite ^/.well-known/nodeinfo /index.php/.well-known/nodeinfo last;
+          rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+          rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
+          location = /.well-known/carddav {
+            return 301 $scheme://$host/remote.php/dav;
+          }
+          location = /.well-known/caldav {
+            return 301 $scheme://$host/remote.php/dav;
+          }
+          location = /robots.txt {
+            allow all;
+            log_not_found off;
+            access_log off;
+          }
+          location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
+            deny all;
+          }
+          location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
+            deny all;
+          }
+      path: /
+      pathType: Prefix
+      tls: [hosts: [*host]]
+    nginx:
+      enabled: true
       config:
+        default: true
+    internalDatabase:
+      enabled: false
+    externalDatabase:
+      enabled: false
+      type: postgresql
+      database: nextcloud
+      existingSecret:
         enabled: true
-        existingClaim: nextcloud-pvc
-        globalMounts:
-          - path: /var/www/html
-      settings:
+        secretName: *secret
+        hostKey: NEXTCLOUD_POSTGRESQL_HOST
+        databaseKey: NEXTCLOUD_POSTGRESQL_DB_NAME
+        usernameKey: NEXTCLOUD_POSTGRESQL_USERNAME
+        passwordKey: NEXTCLOUD_POSTGRESQL_PASSWORD
+      metrics:
         enabled: true
-        type: configMap
-        name: nextcloud-user-config
-        advancedMounts:
-          nextcloud:
-            app:
-              - subPath: "custom.config.php"
-                path: "/var/www/html/config/custom.config.php"
-                readOnly: false
-    defaultPodOptions:
-      automountServiceAccountToken: false
-      securityContext:
-        runAsUser: &uid 33
-        runAsGroup: *uid
-        fsGroup: *uid
-        runAsNonRoot: false
-        seccompProfile: {type: "RuntimeDefault"}
-        fsGroupChangePolicy: "Always"
+        serviceMonitor:
+          enabled: true
+    metrics:
+      enabled: false
+      https: true
+      serviceMonitor:
+        enabled: false
+    cronjob:
+      enabled: true
