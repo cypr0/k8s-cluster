@@ -65,9 +65,9 @@ spec:
             paths:
               - path: /
                 pathType: Prefix # ImplementationSpecific
-               # service:
-                #  identifier: code
-                #  port: http
+                service:
+                  identifier: code
+                  port: http
         tls:
           - hosts:
               - *host
