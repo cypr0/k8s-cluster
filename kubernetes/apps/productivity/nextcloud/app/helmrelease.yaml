@@ -117,7 +117,6 @@ spec:
         name: nextcloud-user-config
         advancedMounts:
           app:
-            app:
-              - subPath: "custom.config.php"
-                path: "/var/www/html/config/custom.config.php"
-                readOnly: false
+            - subPath: "custom.config.php"
+              path: "/var/www/html/config/custom.config.php"
+              readOnly: false
