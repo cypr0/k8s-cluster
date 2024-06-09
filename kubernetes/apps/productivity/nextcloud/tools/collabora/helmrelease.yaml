@@ -29,15 +29,15 @@ spec:
       enabled: true
       className: internal
       annotations:
-          nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
-          nginx.ingress.kubernetes.io/proxy-body-size: "0"
-          nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-          nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+        nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
+        nginx.ingress.kubernetes.io/proxy-body-size: "0"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
       hosts:
-          - host: &host "collabora.${SECRET_DOMAIN}"
-            paths:
-            - path: /
-            pathType: ImplementationSpecific
+        - host: &host "collabora.${SECRET_DOMAIN}"
+          paths:
+          - path: /
+          pathType: ImplementationSpecific
       tls:
         - hosts:
             - *host
