@@ -27,7 +27,7 @@ spec:
     replicaCount: 1
     ingress:
       enabled: true
-      className: "internal"
+      className: internal
       annotations:
           nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
