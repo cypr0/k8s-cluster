@@ -49,6 +49,7 @@ spec:
         annotations:
           # external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
           nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
+          nginx.ingress.kubernetes.io/enable-global-auth: "false"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
@@ -63,10 +64,10 @@ spec:
           - host: &host "collabora.${SECRET_DOMAIN}"
             paths:
               - path: /
-                pathType: ImplementationSpecific
-                service:
-                  identifier: code
-                  port: http
+                pathType: Prefix # ImplementationSpecific
+               # service:
+                #  identifier: code
+                #  port: http
         tls:
           - hosts:
               - *host
