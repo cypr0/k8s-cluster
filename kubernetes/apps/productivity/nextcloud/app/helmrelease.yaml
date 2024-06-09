@@ -54,7 +54,6 @@ spec:
               PHP_UPLOAD_LIMIT: "16G"
               APACHE_DISABLE_REWRITE_IP: "1"
               TRUSTED_PROXIES: "10.69.0.0/16 10.96.0.0/16 192.168.0.0/16 127.0.0.1"
-              OVERWRITEPROTOCOL: "https"
             envFrom:
               - secretRef:
                   name: nextcloud-secret
