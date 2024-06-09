@@ -7,11 +7,11 @@ spec:
   interval: 30m
   chart:
     spec:
-      chart: app-template
-      version: 3.2.1
+      chart: collabora-online
+      version: 1.1.16
       sourceRef:
         kind: HelmRepository
-        name: bjw-s
+        name: collabora
         namespace: flux-system
   maxHistory: 2
   install:
@@ -24,56 +24,27 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    controllers:
-      code:
-        replicas: 1
-        strategy: RollingUpdate
-        annotations:
-          reloader.stakater.com/auto: "true"
-        containers:
-          code:
-            env:
-              extra_params: --o:ssl.termination=true --o:ssl.enable=false
-              lang: de_DE
-              dictionaries: de_DE en_GB en_US es_ES fr_FR
-              server_name: collabora.${SECRET_DOMAIN}
-            envFrom:
-              - secretRef:
-                  name: collabora-secret
-            image:
-              repository: collabora/code
-              tag: 24.04.4.1.1@sha256:a5644554de4dd27349eebd7959997ce3945a69cca45ad526050a3615a7527e34
+    replicaCount: 1
     ingress:
-      code:
-        enabled: true
-        className: internal
-        annotations:
-          # external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+      enabled: true
+      className: "internal"
+      annotations:
           nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-          # nginx.ingress.kubernetes.io/server-snippet: |
-            # block admin and metrics endpoint from outside by default
-            # location /cool/getMetrics { deny all; return 403; }
-            # location /cool/adminws/ { deny all; return 403; }
-            # location /browser/dist/admin/admin.html { deny all; return 403; }
-          # nginx.ingress.kubernetes.io/whitelist-source-range: |
-            # 10.69.0.0/16,10.96.0.0/16,192.168.0.0/16
-        hosts:
+      hosts:
           - host: &host "collabora.${SECRET_DOMAIN}"
             paths:
-              - path: /
-                pathType: ImplementationSpecific
-                service:
-                  identifier: code
-                  port: http
-        tls:
-          - hosts:
-              - *host
-    service:
-      code:
-        controller: code
-        ports:
-          http:
-            port: 9980
+            - path: /
+            pathType: ImplementationSpecific
+      tls:
+        - hosts:
+            - *host
+    autoscaling:
+      enabled: false
+    collabora:
+      aliasgroups:
+          - host: "https://collabora.${SECRET_DOMAIN}:443"
+            aliases: "https://collabora.productivity.svc.cluster.local:9980"
+      extra_params: --o:ssl.enable=false --o:ssl.termination=true
