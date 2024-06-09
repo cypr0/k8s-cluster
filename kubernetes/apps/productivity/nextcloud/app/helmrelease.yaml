@@ -142,6 +142,14 @@ spec:
           post_max_size = 16G
           max_input_time = 3600
           max_execution_time = 3600
+      extraVolumes:
+        - name: nfs-share
+          nfs:
+            server: "192.168.40.250"
+            path: "/media/share"
+      extraVolumeMounts:
+        - name: nfs-share
+          mountPath: "/nfs-share"
     persistence:
       enabled: true
       existingClaim: nextcloud-pvc
