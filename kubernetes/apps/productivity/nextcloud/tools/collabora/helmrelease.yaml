@@ -45,21 +45,20 @@ spec:
     ingress:
       code:
         enabled: true
-        className: internal
+        className: external
         annotations:
-          # external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
           nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
-          nginx.ingress.kubernetes.io/enable-global-auth: "false"
           nginx.ingress.kubernetes.io/proxy-body-size: "0"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-          # nginx.ingress.kubernetes.io/server-snippet: |
+          nginx.ingress.kubernetes.io/server-snippet: |
             # block admin and metrics endpoint from outside by default
-            # location /cool/getMetrics { deny all; return 403; }
-            # location /cool/adminws/ { deny all; return 403; }
-            # location /browser/dist/admin/admin.html { deny all; return 403; }
-         # nginx.ingress.kubernetes.io/whitelist-source-range: |
-           # 10.0.0.0/8,192.168.0.0/16
+            location /cool/getMetrics { deny all; return 403; }
+            location /cool/adminws/ { deny all; return 403; }
+            location /browser/dist/admin/admin.html { deny all; return 403; }
+          nginx.ingress.kubernetes.io/whitelist-source-range: |
+            10.69.0.0/16,10.96.0.0/16,192.168.0.0/16
         hosts:
           - host: &host "collabora.${SECRET_DOMAIN}"
             paths:
