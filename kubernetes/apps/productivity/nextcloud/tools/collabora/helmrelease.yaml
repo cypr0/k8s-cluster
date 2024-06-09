@@ -44,7 +44,4 @@ spec:
     autoscaling:
       enabled: false
     collabora:
-      aliasgroups:
-          - host: "https://collabora.${SECRET_DOMAIN}:443"
-            aliases: "https://collabora.productivity.svc.cluster.local:9980"
       extra_params: --o:ssl.enable=false --o:ssl.termination=true
