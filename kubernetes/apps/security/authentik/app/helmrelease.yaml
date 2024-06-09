@@ -37,7 +37,7 @@ spec:
       log_level: info
       avatars: "gravatar,initials"
       email:
-        host: ${SMTP_HOST}
+        host: ${GLOBAL_SMTP_HOST}
         port: 25
         from: "Authentik <admin@${SECRET_DOMAIN}>"
       error_reporting:
