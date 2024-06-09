@@ -56,6 +56,11 @@ spec:
             envFrom:
               - secretRef:
                   name: nextcloud-secret
+            securityContext:
+              readOnlyRootFilesystem: true
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop: ["ALL"]
     service:
       app:
         controller: *app
