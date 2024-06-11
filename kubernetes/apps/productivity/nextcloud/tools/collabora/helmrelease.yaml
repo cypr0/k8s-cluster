@@ -27,9 +27,8 @@ spec:
     replicaCount: 1
     ingress:
       enabled: true
-      className: internal
+      className: "internal"
       annotations:
-        external-dns.alpha.kubernetes.io/hostname: collabora.${SECRET_DOMAIN}
         nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
         nginx.ingress.kubernetes.io/proxy-body-size: "0"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
@@ -46,3 +45,6 @@ spec:
       enabled: false
     collabora:
       extra_params: --o:ssl.enable=false --o:ssl.termination=true
+    prometheus:
+      servicemonitor:
+      enabled: true
