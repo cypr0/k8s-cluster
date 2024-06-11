@@ -10,6 +10,7 @@ resources:
   - ./collabora.yaml
   - ./coredns.yaml
   - ./elastic.yaml
+  - ./external-secrets.yaml
   - ./jetstack.yaml
   - ./longhorn.yaml
   - ./metrics-server.yaml
@@ -20,6 +21,5 @@ resources:
   - ./spegel.yaml
   - ./stakater.yaml
   - ./external-dns.yaml
-  - ./external-secrets.yaml
   - ./ingress-nginx.yaml
   - ./k8s-gateway.yaml
