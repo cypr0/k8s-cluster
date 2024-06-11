@@ -29,6 +29,7 @@ spec:
       enabled: true
       className: internal
       annotations:
+        external-dns.alpha.kubernetes.io/hostname: collabora.${SECRET_DOMAIN}
         nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
         nginx.ingress.kubernetes.io/proxy-body-size: "0"
         nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
