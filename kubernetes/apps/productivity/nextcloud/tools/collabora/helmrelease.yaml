@@ -38,6 +38,8 @@ spec:
           paths:
           - path: /
           pathType: ImplementationSpecific
+          service: collabora-collabora-online
+          port: 9980
       tls:
         - hosts:
             - *host
