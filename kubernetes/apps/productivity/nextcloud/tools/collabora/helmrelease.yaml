@@ -1,5 +1,5 @@
 ---
-apiVersion: helm.toolkit.fluxcd.io/v2
+apiVersion: helm.toolkit.fluxcd.io/v2beta2
 kind: HelmRelease
 metadata:
   name: collabora
@@ -7,11 +7,11 @@ spec:
   interval: 30m
   chart:
     spec:
-      chart: collabora-online
-      version: 1.1.16
+      chart: app-template
+      version: 3.2.1
       sourceRef:
         kind: HelmRepository
-        name: collabora
+        name: bjw-s
         namespace: flux-system
   maxHistory: 2
   install:
@@ -24,32 +24,55 @@ spec:
   uninstall:
     keepHistory: false
   values:
-    replicaCount: 1
+    controllers:
+      collabora-online:
+        replicas: 1
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          code:
+            env:
+              extra_params: --o:ssl.termination=true --o:ssl.enable=false
+              lang: de_DE
+              dictionaries: de_DE en_GB en_US es_ES fr_FR
+            envFrom:
+              - secretRef:
+                  name: collabora-secret
+            image:
+              repository: collabora/code
+              tag: 24.04.1.4.1@sha256:84121bf447871dd4aa5d5627808ba76509c8103ba35d67e07cf803a2f730c012
     ingress:
-      enabled: true
-      className: "internal"
-      annotations:
-        nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
-        nginx.ingress.kubernetes.io/proxy-body-size: "0"
-        nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
-        nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
-      hosts:
-        - host: &host "collabora.${SECRET_DOMAIN}"
-          paths:
-          - path: /
-          pathType: ImplementationSpecific
-          service: collabora-collabora-online
-          port: 9980
-      tls:
-        - hosts:
-            - *host
-    autoscaling:
-      enabled: false
-    collabora:
-      extra_params: --o:ssl.enable=false --o:ssl.termination=true
-    prometheus:
-      servicemonitor:
+      code:
         enabled: true
+        className: internal
+        annotations:
+          # external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
+          nginx.ingress.kubernetes.io/proxy-body-size: "0"
+          nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+          nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+          # nginx.ingress.kubernetes.io/server-snippet: |
+            # block admin and metrics endpoint from outside by default
+            # location /cool/getMetrics { deny all; return 403; }
+            # location /cool/adminws/ { deny all; return 403; }
+            # location /browser/dist/admin/admin.html { deny all; return 403; }
+          # nginx.ingress.kubernetes.io/whitelist-source-range: |
+            # 10.0.0.0/8,192.168.0.0/16
+        hosts:
+          - host: &host "collabora.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                pathType: ImplementationSpecific
+                service:
+                  identifier: code
+                  port: http
+        tls:
+          - hosts:
+              - *host
     service:
-      type: ClusterIP
-      port: 9980
+      app:
+        controller: collabora-online
+        ports:
+          http:
+            port: 9980
