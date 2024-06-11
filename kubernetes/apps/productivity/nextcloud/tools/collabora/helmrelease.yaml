@@ -71,7 +71,7 @@ spec:
           - hosts:
               - *host
     service:
-      app:
+      code:
         controller: collabora-online
         ports:
           http:
