@@ -79,7 +79,7 @@ spec:
         domain: "${SECRET_DOMAIN}"
         smtp:
           port: 25
-          authtype: PLAIN
+          authtype: NONE
       configs:
         proxy.config.php: |-
           <?php
