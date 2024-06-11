@@ -37,7 +37,7 @@ spec:
       log_level: info
       avatars: "gravatar,initials"
       email:
-        host: ${GLOBAL_SMTP_HOST}
+        host: mail-relay.${SECRET_DOMAIN}
         port: 25
         from: "Authentik <admin@${SECRET_DOMAIN}>"
       error_reporting:
