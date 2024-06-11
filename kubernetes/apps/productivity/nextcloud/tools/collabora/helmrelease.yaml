@@ -47,4 +47,4 @@ spec:
       extra_params: --o:ssl.enable=false --o:ssl.termination=true
     prometheus:
       servicemonitor:
-      enabled: true
+        enabled: true
