@@ -23,7 +23,7 @@ spec:
       retries: 3
   values:
     controllers:
-      smtp-relay:
+      mail-relay:
         replicas: 3
         strategy: RollingUpdate
         annotations:
