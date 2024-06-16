@@ -33,10 +33,8 @@ spec:
         containers:
           app:
             env:
-              extra_params: --o:ssl.termination=true --o:ssl.enable=false
-              lang: de_DE
+              extra_params: --o:ssl.termination=true --o:ssl.enable=true
               dictionaries: de_DE en_GB en_US es_ES fr_FR
-              aliasgroup1: https://cloud.${SECRET_DOMAIN}:443,https://nextcloud.productivity.svc.cluster.local:443,https://nextcloud:443
             envFrom:
               - secretRef:
                   name: collabora-secret
