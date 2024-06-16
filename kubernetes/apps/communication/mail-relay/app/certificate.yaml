@@ -1,0 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: mail-relay
+spec:
+  secretName: tls-mail-relay
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: mail-relay.${SECRET_DOMAIN}
+  dnsNames:
+    - mail-relay.${SECRET_DOMAIN}
+  privateKey:
+    rotationPolicy: Always
