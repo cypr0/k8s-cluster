@@ -76,10 +76,10 @@ spec:
       mail:
         enabled: true
         fromAddress: admin
-        domain: "${SECRET_DOMAIN}"
+        domain: ${SECRET_DOMAIN}
         smtp:
           port: 25
-          authtype: NONE
+          secure: ''
       configs:
         proxy.config.php: |-
           <?php
