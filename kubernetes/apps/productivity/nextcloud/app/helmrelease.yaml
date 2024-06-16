@@ -79,7 +79,6 @@ spec:
         domain: ${SECRET_DOMAIN}
         smtp:
           port: 25
-          secure: ''
       configs:
         proxy.config.php: |-
           <?php
