@@ -57,7 +57,7 @@ spec:
             location /cool/adminws/ { deny all; return 403; }
             location /browser/dist/admin/admin.html { deny all; return 403; }
           nginx.ingress.kubernetes.io/whitelist-source-range: |
-            ${SECRET_IPV4_GATEWAY}
+            ${SECRET_IPV4_GATEWAY},192.168.0.0/16,10.96.0.0/16,10.69.0.0/10
         hosts:
           - host: &host "collabora.${SECRET_DOMAIN}"
             paths:
