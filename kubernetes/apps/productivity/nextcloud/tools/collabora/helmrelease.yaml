@@ -33,7 +33,7 @@ spec:
         containers:
           app:
             env:
-              extra_params: --o:ssl.termination=true --o:ssl.enable=true
+              extra_params: --o:ssl.termination=true --o:ssl.enable=false
               dictionaries: de_DE en_GB en_US es_ES fr_FR
             envFrom:
               - secretRef:
