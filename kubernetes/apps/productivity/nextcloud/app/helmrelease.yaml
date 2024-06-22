@@ -149,6 +149,7 @@ spec:
           nfs:
             server: "192.168.40.250"
             path: "/media/share"
+            radOnly: false
       extraVolumeMounts:
         - name: nfs-share
           mountPath: "/nfs-share"
