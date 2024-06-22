@@ -138,6 +138,17 @@ spec:
               ),
             ),
           );
+        mail.config.php: |-
+          <?php
+          $CONFIG = array (
+            'mail_smtpstreamoptions' => array(
+              'ssl' => array(
+                'allow_self_signed' => true,
+                'verify_peer' => false,
+                'verify_peer_name' => false
+              ),
+            ),
+          );
       phpConfigs:
         uploadLimit.ini: |
           upload_max_filesize = 16G
