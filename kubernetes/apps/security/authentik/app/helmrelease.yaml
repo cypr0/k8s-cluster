@@ -41,6 +41,8 @@ spec:
         port: 465
         from: "Authentik <admin@${SECRET_DOMAIN}>"
         timeout: 30
+        use_tls: false
+        use_ssl: true
       error_reporting:
         enable: false
         send_pii: false
