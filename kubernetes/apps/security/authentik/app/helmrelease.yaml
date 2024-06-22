@@ -37,9 +37,10 @@ spec:
       log_level: info
       avatars: "gravatar,initials"
       email:
-        host: mail-relay.${SECRET_DOMAIN}
-        port: 25
+        host: mail.${SECRET_DOMAIN}
+        port: 465
         from: "Authentik <admin@${SECRET_DOMAIN}>"
+        timeout: 30
       error_reporting:
         enable: false
         send_pii: false
