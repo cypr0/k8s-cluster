@@ -57,6 +57,15 @@ spec:
         prometheus:
           serviceMonitor:
             enabled: true
+    geoip:
+        enabled: true
+        editionIds: "GeoLite2-City GeoLite2-ASN"
+        image: maxmindinc/geoipupdate:v7.0.1
+        updateInterval: 8
+        existingSecret:
+          secretName: *secret
+          accountId: MAXMIND_ACCOUNT_ID
+          licenseKey: MAXMIND_LICENSE_KEY
       ingress:
         enabled: true
         ingressClassName: external
