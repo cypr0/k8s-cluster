@@ -82,7 +82,7 @@ spec:
     geoip:
       enabled: true
       editionIds: "GeoLite2-City GeoLite2-ASN"
-      image: maxmindinc/geoipupdate
+      image: maxmind/geoipupdate
       tag: v7.0.1
       updateInterval: 8
       existingSecret:
