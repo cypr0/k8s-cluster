@@ -82,9 +82,6 @@ spec:
     geoip:
       enabled: true
       editionIds: "GeoLite2-City GeoLite2-ASN"
-      image:
-        repository: ghcr.io/maxmind/geoipupdate
-        tag: v7.0.1
       updateInterval: 8
       existingSecret:
         secretName: *secret
