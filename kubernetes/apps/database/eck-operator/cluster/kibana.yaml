@@ -48,4 +48,4 @@ spec:
           - name: kubernetes-1
             id: kubernetes-1
             package:
-              name: kubernettes
+              name: kubernetes
