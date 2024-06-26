@@ -9,8 +9,8 @@ spec:
     name: eck-cluster
     namespace: database
   config:
-    xpack.fleet.agents.elasticsearch.hosts: ["https://eck-cluster-es-ingest-nodes.database.svc.cluster.local:9200"]
-    xpack.fleet.agents.fleet_server.hosts: ["https://eck-cluster-fleetserver-agent.database.svc.cluster.local:8220"]
+    xpack.fleet.agents.elasticsearch.hosts: ["https://eck-cluster-es-http.database.svc.cluster.local:9200"]
+    xpack.fleet.agents.fleet_server.hosts: ["https://fleetserver-agent-http.database.svc.cluster.local:8220"]
     xpack.fleet.packages:
       - name: system
         version: latest
