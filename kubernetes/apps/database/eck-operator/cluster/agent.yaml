@@ -19,3 +19,27 @@ spec:
         automountServiceAccountToken: true
         securityContext:
           runAsUser: 0
+---
+apiVersion: agent.k8s.elastic.co/v1alpha1
+kind: Agent
+metadata:
+  name: cluster-agent
+  namespace: database
+spec:
+  version: 8.14.1
+  kibanaRef:
+    name: eck-cluster
+  fleetServerRef:
+    name: eck-cluster
+  mode: fleet
+  policyID: eck-cluster-agent
+  daemonSet:
+    podTemplate:
+      spec:
+        serviceAccountName: elastic-agent
+        automountServiceAccountToken: true
+        securityContext:
+          runAsUser: 0
+        volumes:
+        - name: agent-data
+          emptyDir: {}
