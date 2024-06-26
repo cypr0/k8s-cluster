@@ -3,5 +3,13 @@ kind: Agent
 metadata:
   name: fleetserver
 spec:
+  version: 8.14.1
+  kibanaRef:
+    name: eck-cluster
+  elasticsearchRefs:
+  - name: eck-cluster
   mode: fleet
   fleetServerEnabled: true
+  policyID: fleet-server
+  deployment:
+    replicas: 1
