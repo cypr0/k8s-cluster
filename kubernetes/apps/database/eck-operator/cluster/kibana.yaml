@@ -33,7 +33,7 @@ spec:
             name: fleet_server
       - name: Elastic Agent Cluster Policy
         id: eck-cluster-agent
-        namespace: cluster
+        namespace: default
         monitoring_enabled:
           - logs
           - metrics
