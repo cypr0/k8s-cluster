@@ -1,0 +1,69 @@
+# secure-elasticsearch.yaml
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: eck-cluster
+  namespace: database
+spec:
+  version: 8.14.1
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
+  secureSettings:
+    - secretName: elastic-secret
+  nodeSets:
+    - name: master-nodes
+      count: 1
+      config:
+        node.roles: ["master"]
+        node.store.allow_mmap: false
+        xpack.security.enabled: true
+        xpack.security.transport.ssl.enabled: true
+        xpack.security.http.ssl.enabled: true
+      volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+          storageClassName: longhorn-backup
+    - name: data-nodes
+      count: 1
+      config:
+        node.roles: ["data"]
+        node.store.allow_mmap: false
+        xpack.security.enabled: true
+        xpack.security.transport.ssl.enabled: true
+        xpack.security.http.ssl.enabled: true
+      volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 10Gi
+          storageClassName: longhorn-backup
+    - name: ingest-nodes
+      count: 1
+      config:
+        node.roles: ["ingest"]
+        node.store.allow_mmap: false
+        xpack.security.enabled: true
+        xpack.security.transport.ssl.enabled: true
+        xpack.security.http.ssl.enabled: true
+      volumeClaimTemplates:
+      - metadata:
+          name: elasticsearch-data
+        spec:
+          accessModes:
+            - ReadWriteOnce
+          resources:
+            requests:
+              storage: 1Gi
+          storageClassName: longhorn-backup
