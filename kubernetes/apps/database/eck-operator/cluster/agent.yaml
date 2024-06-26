@@ -13,3 +13,9 @@ spec:
   policyID: fleet-server
   deployment:
     replicas: 1
+    podTemplate:
+      spec:
+        serviceAccountName: elastic-agent
+        automountServiceAccountToken: true
+        securityContext:
+          runAsUser: 0
