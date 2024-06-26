@@ -10,8 +10,6 @@ spec:
     tls:
       selfSignedCertificate:
         disabled: true
-  secureSettings:
-    - secretName: elastic-secret
   nodeSets:
     - name: master-nodes
       count: 1
@@ -21,6 +19,7 @@ spec:
         xpack.security.enabled: true
         xpack.security.transport.ssl.enabled: true
         xpack.security.http.ssl.enabled: true
+        xpack.security.enrollment.enabled: true
       volumeClaimTemplates:
       - metadata:
           name: elasticsearch-data
