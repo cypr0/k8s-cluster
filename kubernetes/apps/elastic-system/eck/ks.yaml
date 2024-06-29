@@ -5,7 +5,7 @@ metadata:
   name: &app eck-operator
   namespace: flux-system
 spec:
-  targetNamespace: elastic
+  targetNamespace: elastic-system
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
@@ -25,7 +25,7 @@ metadata:
   name: &app eck-cluster
   namespace: flux-system
 spec:
-  targetNamespace: elastic
+  targetNamespace: elastic-system
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app

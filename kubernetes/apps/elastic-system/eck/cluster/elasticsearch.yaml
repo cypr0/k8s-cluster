@@ -3,7 +3,7 @@ apiVersion: elasticsearch.k8s.elastic.co/v1
 kind: Elasticsearch
 metadata:
   name: elastic-cluster
-  namespace: elastic
+  namespace: elastic-system
 spec:
   version: 8.14.1
   http:
