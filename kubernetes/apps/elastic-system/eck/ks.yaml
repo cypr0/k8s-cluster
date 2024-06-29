@@ -9,7 +9,7 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  path: ./kubernetes/apps/elastic/eck/app
+  path: ./kubernetes/apps/elastic-system/eck/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -31,7 +31,7 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: eck-operator
-  path: ./kubernetes/apps/elastic/eck/cluster
+  path: ./kubernetes/apps/elastic-system/eck/cluster
   prune: true
   sourceRef:
     kind: GitRepository
