@@ -16,8 +16,6 @@ spec:
       config:
         node.roles: ["master"]
         node.store.allow_mmap: false
-        xpack.security.enabled: true
-        xpack.security.enrollment.enabled: true
       podTemplate:
         spec:
           containers:
@@ -50,7 +48,6 @@ spec:
       config:
         node.roles: ["data", "ingest"]
         node.store.allow_mmap: false
-        xpack.security.enabled: true
       podTemplate:
         spec:
           containers:
