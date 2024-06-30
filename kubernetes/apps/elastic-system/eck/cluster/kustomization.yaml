@@ -6,4 +6,4 @@ resources:
 #  - ./agent.yaml
   - ./elasticsearch.yaml
   - ./kibana.yaml
-#  - ./rbac.yaml
+  - ./rbac.yaml
