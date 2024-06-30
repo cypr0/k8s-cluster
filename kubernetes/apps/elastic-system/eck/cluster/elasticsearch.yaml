@@ -45,7 +45,7 @@ spec:
     - name: data-nodes
       count: 1
       config:
-        node.roles: ["data", "ingest", "remote_cluster_client"]
+        node.roles: ["data", "ingest", "remote_cluster_client", "ml"]
       podTemplate:
         spec:
           containers:
