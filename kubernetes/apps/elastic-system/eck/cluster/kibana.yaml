@@ -4,6 +4,10 @@ metadata:
   name: elastic-cluster
 spec:
   version: 8.14.1
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
   count: 1
   elasticsearchRef:
     name: elastic-cluster
