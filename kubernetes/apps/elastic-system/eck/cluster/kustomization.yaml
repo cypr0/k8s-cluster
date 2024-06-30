@@ -5,5 +5,6 @@ kind: Kustomization
 resources:
   - ./agent.yaml
   - ./elasticsearch.yaml
+  - ./ingress.yaml
   - ./kibana.yaml
   - ./rbac.yaml
