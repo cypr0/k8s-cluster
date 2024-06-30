@@ -29,6 +29,8 @@ spec:
   version: 8.14.1
   kibanaRef:
     name: elastic-cluster
+  elasticsearchRefs:
+  - name: elastic-cluster
   fleetServerRef:
     name: fleet-server
   mode: fleet
