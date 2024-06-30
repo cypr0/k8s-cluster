@@ -14,7 +14,7 @@ spec:
     - name: master-nodes
       count: 1
       config:
-        node.roles: ["master"]
+        node.roles: ["master", "remote_cluster_client"]
       podTemplate:
         spec:
           containers:
