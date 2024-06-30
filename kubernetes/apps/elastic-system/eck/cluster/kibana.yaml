@@ -25,8 +25,8 @@ spec:
             memory: 2.5Gi
             cpu: 2
   config:
-    xpack.fleet.agents.elasticsearch.hosts: ["https://elastic-cluster-es-http.elastic-system.svc:9200"]
-    xpack.fleet.agents.fleet_server.hosts: ["https://fleet-server-agent-http.elastic-system.svc:8220"]
+    xpack.fleet.agents.elasticsearch.hosts: ["http://elastic-cluster-es-http.elastic-system.svc:9200"]
+    xpack.fleet.agents.fleet_server.hosts: ["http://fleet-server-agent-http.elastic-system.svc:8220"]
     xpack.fleet.packages:
     - name: system
       version: latest
