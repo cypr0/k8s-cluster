@@ -11,6 +11,10 @@ spec:
   - name: elastic-cluster
   mode: fleet
   fleetServerEnabled: true
+  http:
+    tls:
+      selfSignedCertificate:
+        disabled: true
   policyID: eck-fleet-server
   deployment:
     replicas: 1
