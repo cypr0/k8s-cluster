@@ -12,6 +12,10 @@ resources:
   - ./prometheus-community.yaml
   - ./spegel.yaml
   - ./stakater.yaml
+  - ./authentik.yaml
+  - ./cloudnative-pg.yaml
   - ./external-dns.yaml
+  - ./external-secrets.yaml
   - ./ingress-nginx.yaml
   - ./k8s-gateway.yaml
+  - ./longhorn.yaml
