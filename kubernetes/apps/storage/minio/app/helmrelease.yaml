@@ -125,7 +125,7 @@ spec:
     persistence:
       config:
         type: nfs
-        server: ${NFS_SERVER}
+        server: ${SECRET_NFS_SERVER}
         path: /mnt/data/minio
         globalMounts:
           - path: /data
