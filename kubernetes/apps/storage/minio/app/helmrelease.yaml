@@ -86,7 +86,7 @@ spec:
       fsGroupChangePolicy: "OnRootMismatch"
     ingress:
       enabled: true
-      ingressClassName: internal
+      ingressClassName: external
       path: /
       hosts:
         - &api s3.${SECRET_DOMAIN}
