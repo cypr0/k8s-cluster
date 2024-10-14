@@ -87,6 +87,8 @@ spec:
     ingress:
       enabled: true
       ingressClassName: external
+      annotations:
+        external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
       path: /
       hosts:
         - &api s3.${SECRET_DOMAIN}
