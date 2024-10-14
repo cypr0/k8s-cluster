@@ -37,6 +37,7 @@ spec:
     persistence:
       enabled: true
       existingClaim: minio-nfs-pvc
+    mountPath: "/data"
     policies:
     - name: readwrite-k8s-longhorn
       statements:
@@ -84,17 +85,6 @@ spec:
       runAsGroup: 220
       fsGroup: 220
       fsGroupChangePolicy: "OnRootMismatch"
-    ingress:
-      enabled: true
-      ingressClassName: external
-      annotations:
-        external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
-      path: /
-      hosts:
-        - &api s3.${SECRET_DOMAIN}
-      tls:
-        - hosts:
-            - *api
     consoleIngress:
       enabled: true
       ingressClassName: internal
