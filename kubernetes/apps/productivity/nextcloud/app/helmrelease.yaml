@@ -1,0 +1,202 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app nextcloud
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: *app
+      version: 6.1.0
+      sourceRef:
+        kind: HelmRepository
+        name: nextcloud
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  uninstall:
+    keepHistory: false
+  values:
+    image:
+      flavor: fpm-alpine
+    deploymentAnnotations:
+      secret.reloader.stakater.com/reload: &secret nextcloud-secret
+    replicaCount: 3
+    nextcloud:
+      podSecurityContext:
+        fsGroupChangePolicy: OnRootMismatch
+      securityContext:
+        runAsUser: 221
+        runAsGroup: 220
+        runAsNonRoot: true
+        readOnlyRootFilesystem: false
+      extraEnv:
+        - name: REDIS_HOST
+          value: dragonfly.database.svc.cluster.local
+        - name: REDIS_HOST_PORT
+          value: "6379"
+      strategy:
+         type: RollingUpdate
+      host: &host cloud.${SECRET_DOMAIN}
+      existingSecret:
+        enabled: true
+        secretName: *secret
+        usernameKey: NEXTCLOUD_ADMIN_USER
+        passwordKey: NEXTCLOUD_ADMIN_PASSWORD
+        tokenKey: NEXTCLOUD_TOKEN
+        smtpHostKey: NEXTCLOUD_SMTP_HOST
+        smtpUsernameKey: NEXTCLOUD_SMTP_USERNAME
+        smtpPasswordKey: NEXTCLOUD_SMTP_PASSWORD
+      mail:
+        enabled: true
+        fromAddress: admin
+        domain: ${SECRET_DOMAIN}
+        smtp:
+          port: 465
+          timeout: 30
+      configs:
+        proxy.config.php: |-
+          <?php
+          $CONFIG = array (
+            'trusted_proxies' =>
+            array(
+               0 => '10.69.0.0/16',
+               1 => '10.96.0.0/16',
+               2 => '127.0.0.1',
+               3 => '192.168.0.0/16',
+            ),
+            'forwarded_for_headers' =>
+            array (
+              0 => 'HTTP_X_FORWARDED_FOR',
+            ),
+            'trusted_domains' =>
+            array(
+               0 => 'cloud.${SECRET_DOMAIN}',
+               1 => 'id.${SECRET_DOMAIN}',
+               2 => 'collabora.${SECRET_DOMAIN}',
+               3 => 'localhost',
+            ),
+            'allow_local_remote_servers' => true,
+            'overwriteprotocol' => 'https',
+          );
+        user.config.php: |-
+          <?php
+          $CONFIG = array (
+            'default_language' => 'de',
+            'default_locale' => 'de_DE',
+            'default_phone_region' => 'DE',
+            'default_timezone' => 'Europe/Berlin',
+            'maintenance_window_start' => 1,
+          );
+        bulkupload.config.php: |-
+          <?php
+          $CONFIG = array (
+            'bulkupload.enabled' => false,
+          );
+      phpConfigs:
+        uploadLimit.ini: |
+          upload_max_filesize = 16G
+          post_max_size = 16G
+          max_input_time = 3600
+          max_execution_time = 3600
+        www.conf: |
+          [www]
+          user = www-data
+          group = www-data
+          listen = 127.0.0.1:9000
+          pm = dynamic
+          pm.max_children = 57
+          pm.start_servers = 14
+          pm.min_spare_servers = 14
+          pm.max_spare_servers = 42
+          pm.max_requests = 500
+          pm.process_idle_timeout = 10s
+    persistence:
+      enabled: true
+      existingClaim: nextcloud-nfs-pvc
+    livenessProbe:
+      enabled: false
+    readinessProbe:
+      enabled: false
+    ingress:
+      enabled: true
+      className: external
+      annotations:
+        external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        nginx.ingress.kubernetes.io/proxy-body-size: "10G"
+        nginx.ingress.kubernetes.io/proxy-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+        nginx.ingress.kubernetes.io/server-snippet: |-
+          server_tokens off;
+          proxy_hide_header X-Powered-By;
+          add_header X-Robots-Tag "noindex, nofollow";
+          more_set_headers "X-Frame-Options: SAMEORIGIN";
+          more_set_headers "X-Xss-Protection: 1; mode=block";
+          more_set_headers "X-Permitted-Cross-Domain-Policies: none";
+          more_set_headers "Content-Security-Policy "default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self';";
+          rewrite ^/.well-known/webfinger /index.php/.well-known/webfinger last;
+          rewrite ^/.well-known/nodeinfo /index.php/.well-known/nodeinfo last;
+          rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
+          rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
+          location = /.well-known/carddav {
+            return 301 $scheme://$host/remote.php/dav;
+          }
+          location = /.well-known/caldav {
+            return 301 $scheme://$host/remote.php/dav;
+          }
+          location = /robots.txt {
+            allow all;
+            log_not_found off;
+            access_log off;
+          }
+          location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
+            deny all;
+          }
+          location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
+            deny all;
+          }
+      path: /
+      pathType: Prefix
+      tls: [hosts: [*host]]
+    nginx:
+      enabled: true
+      config:
+        default: true
+      securityContext:
+        runAsGroup: 220
+        readOnlyRootFilesystem: false
+    internalDatabase:
+      enabled: false
+    externalDatabase:
+      enabled: false
+      type: postgresql
+      database: nextcloud
+      existingSecret:
+        enabled: true
+        secretName: *secret
+        hostKey: NEXTCLOUD_POSTGRESQL_HOST
+        databaseKey: NEXTCLOUD_POSTGRESQL_DB_NAME
+        usernameKey: NEXTCLOUD_POSTGRESQL_USERNAME
+        passwordKey: NEXTCLOUD_POSTGRESQL_PASSWORD
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
+    metrics:
+      enabled: false
+      https: true
+      serviceMonitor:
+        enabled: false
+    cronjob:
+      enabled: true
+      securityContext:
+        runAsGroup: 220
+        readOnlyRootFilesystem: false

@@ -1,0 +1,53 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: clamav
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.0
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      clamav:
+        replicas: 1
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          clamav:
+            env:
+              CLAMAV_NO_CLAMD: false
+              CLAMAV_NO_FRESHCLAMD: false
+              CLAMAV_NO_MILTERD: true
+              FRESHCLAM_CHECKS: 4
+            image:
+              repository: clamav/clamav
+              tag: 1.4.1@sha256:09ed837cb10f1f3e3175ccd6c749861c76fbf5ca3de45ec91711c8e75fe80bea
+            probes:
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+    service:
+      clamav:
+        controller: clamav
+        ports:
+          clamd:
+            port: 3310
