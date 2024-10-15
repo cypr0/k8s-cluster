@@ -85,6 +85,23 @@ spec:
       runAsGroup: 220
       fsGroup: 220
       fsGroupChangePolicy: "OnRootMismatch"
+    ingress:
+      enabled: true
+      ingressClassName: external
+      annotations:
+        nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+        nginx.ingress.kubernetes.io/rewrite-target: /
+        nginx.ingress.kubernetes.io/proxy-body-size: "0"
+        nginx.ingress.kubernetes.io/server-snippet: |
+          client_max_body_size 0;
+        nginx.ingress.kubernetes.io/configuration-snippet: |
+          chunked_transfer_encoding off;
+      path: /
+      hosts:
+        - &api s3.${SECRET_DOMAIN}
+      tls:
+        - hosts:
+            - *api
     consoleIngress:
       enabled: true
       ingressClassName: internal
