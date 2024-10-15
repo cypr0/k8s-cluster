@@ -113,3 +113,4 @@ spec:
       tls:
         - hosts:
             - *host
+          secretName: "minio-${SECRET_DOMAIN/./-}-tls"
