@@ -34,7 +34,7 @@ spec:
       podSecurityContext:
         fsGroupChangePolicy: OnRootMismatch
       securityContext:
-        runAsUser: 221
+        runAsUser: 222
         runAsGroup: 220
         runAsNonRoot: true
         readOnlyRootFilesystem: false
@@ -119,9 +119,14 @@ spec:
           pm.max_spare_servers = 42
           pm.max_requests = 500
           pm.process_idle_timeout = 10s
+    datadir: /nc_data
     persistence:
       enabled: true
-      existingClaim: nextcloud-nfs-pvc
+      existingClaim: nextcloud-app-pvc
+      nextcloudData:
+        enabled: true
+        existingClaim: nextcloud-data-pvc
+        accessMode: ReadWriteMany
     livenessProbe:
       enabled: false
     readinessProbe:
