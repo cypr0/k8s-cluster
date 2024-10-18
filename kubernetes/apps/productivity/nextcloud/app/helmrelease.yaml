@@ -95,6 +95,10 @@ spec:
             'default_phone_region' => 'DE',
             'default_timezone' => 'Europe/Berlin',
             'maintenance_window_start' => 1,
+            'trashbin_retention_obligation' => 'auto, 30',
+            'auth.bruteforce.protection.enabled' => true,
+            'skeletondirectory' => '',
+            'allow_user_to_change_display_name' => false,
           );
         bulkupload.config.php: |-
           <?php
@@ -120,6 +124,15 @@ spec:
           pm.max_requests = 500
           pm.process_idle_timeout = 10s
     datadir: /nc_data
+    extraVolumes:
+      - name: paperless-nfs
+        nfs:
+          server: "${SECRET_NFS_SERVER}"
+          path: "/mnt/data/paperless"
+          readOnly: false
+    extraVolumeMounts:
+      - name: paperless-nfs
+        mountPath: "/mnt/data/paperless"
     persistence:
       enabled: true
       existingClaim: nextcloud-app-pvc
