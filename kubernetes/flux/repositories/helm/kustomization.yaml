@@ -20,3 +20,4 @@ resources:
   - ./k8s-gateway.yaml
   - ./longhorn.yaml
   - ./minio.yaml
+  - ./nextcloud.yaml
