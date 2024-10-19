@@ -209,7 +209,7 @@ spec:
       securityContext:
         runAsUser: 0
         runAsGroup: 0
-        fsGroup: 00
+        fsGroup: 0
         readOnlyRootFilesystem: false
     internalDatabase:
       enabled: false
