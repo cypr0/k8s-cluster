@@ -126,7 +126,6 @@ spec:
           pm.max_spare_servers = 42
           pm.max_requests = 500
           pm.process_idle_timeout = 10s
-    datadir: /nc_data
     extraVolumes:
       - name: paperless-nfs
         nfs:
@@ -138,11 +137,7 @@ spec:
         mountPath: "/mnt/data/paperless"
     persistence:
       enabled: true
-      existingClaim: nextcloud-app-pvc
-      nextcloudData:
-        enabled: true
-        existingClaim: nextcloud-data-pvc
-        accessMode: ReadWriteMany
+      existingClaim: nextcloud-pvc
     livenessProbe:
       enabled: false
     readinessProbe:
