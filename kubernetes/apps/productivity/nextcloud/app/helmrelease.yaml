@@ -35,6 +35,7 @@ spec:
         runAsGroup: 220
         fsGroup: 220
         fsGroupChangePolicy: OnRootMismatch
+        readOnlyRootFilesystem: false
       securityContext:
         runAsUser: 222
         runAsGroup: 220
@@ -156,16 +157,6 @@ spec:
           pm.max_spare_servers = 42
           pm.max_requests = 500
           pm.process_idle_timeout = 10s
-
-    # Init Container to fix permissions
-    initContainers:
-      - name: fix-permissions
-        image: busybox
-        command: ['sh', '-c', 'chown -R 222:220 /var/www/html && chmod -R 770 /var/www/html']
-        volumeMounts:
-          - name: nextcloud-main
-            mountPath: /var/www/html
-
     extraVolumes:
       - name: paperless-nfs
         nfs:
@@ -249,3 +240,10 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
+    cronjob:
+      enabled: true
+      securityContext:
+        runAsUser: 222
+        runAsGroup: 220
+        fsGroup: 220
+        readOnlyRootFilesystem: false
