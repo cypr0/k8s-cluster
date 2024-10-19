@@ -97,11 +97,39 @@ spec:
             'maintenance_window_start' => 1,
             'trashbin_retention_obligation' => 'auto, 30',
             'auth.bruteforce.protection.enabled' => true,
-            'skeletondirectory' => '',
             'allow_user_to_change_display_name' => false,
-            'integrity.check.disabled' => [
-              'nextcloud-init-sync.lock',
-            ],
+            'forbidden_filenames' => array (
+               0 => '.htaccess',
+               1 => 'Thums.db',
+               2 => 'thumbs.db',
+               ),
+            'enable_previews' => true,
+            'enabledPreviewProviders' => array (
+                0 => 'OC\\Preview\\PNG',
+                1 => 'OC\\Preview\\JPEG',
+                2 => 'OC\\Preview\\GIF',
+                3 => 'OC\\Preview\\BMP',
+                4 => 'OC\\Preview\\XBitmap',
+                5 => 'OC\\Preview\\Movie',
+                6 => 'OC\\Preview\\PDF',
+                7 => 'OC\\Preview\\MP3',
+                8 => 'OC\\Preview\\TXT',
+                9 => 'OC\\Preview\\MarkDown',
+                10 => 'OC\\Preview\\HEIC',
+                11 => 'OC\\Preview\\Movie',
+                12 => 'OC\\Preview\\MKV',
+                13 => 'OC\\Preview\\MP4',
+                14 => 'OC\\Preview\\AVI',
+                ),
+            'filesystem_check_changes' => 0,
+            'filelocking.enabled' => true,
+            'integrity.check.disabled' => false,
+            'preview_max_x' => 1024,
+            'preview_max_y' => 768,
+            'preview_max_scale_factor' => 1,
+            'quota_include_external_storage' => false,
+            'share_folder' => '/Freigaben',
+            'skeletondirectory' => '',
           );
         bulkupload.config.php: |-
           <?php
@@ -135,6 +163,7 @@ spec:
     extraVolumeMounts:
       - name: paperless-nfs
         mountPath: "/mnt/data/paperless"
+    datadir: /nc_data
     persistence:
       enabled: true
       existingClaim: nextcloud-pvc
