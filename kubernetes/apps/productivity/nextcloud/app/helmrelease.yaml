@@ -190,6 +190,7 @@ spec:
         default: true
       securityContext:
         runAsGroup: 220
+        runAsNonRoot: false
         readOnlyRootFilesystem: false
     internalDatabase:
       enabled: false
@@ -217,4 +218,5 @@ spec:
       enabled: true
       securityContext:
         runAsGroup: 220
+        runAsNonRoot: false
         readOnlyRootFilesystem: false
