@@ -31,6 +31,13 @@ spec:
       secret.reloader.stakater.com/reload: &secret nextcloud-secret
     replicaCount: 3
     nextcloud:
+      podSecurityContext:
+        fsGroupChangePolicy: OnRootMismatch
+      securityContext:
+        runAsUser: 222
+        runAsGroup: 220
+        runAsNonRoot: true
+        readOnlyRootFilesystem: false
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
@@ -208,6 +215,9 @@ spec:
       enabled: true
       config:
         default: true
+      securityContext:
+        runAsGroup: 220
+        readOnlyRootFilesystem: false
     internalDatabase:
       enabled: false
     externalDatabase:
