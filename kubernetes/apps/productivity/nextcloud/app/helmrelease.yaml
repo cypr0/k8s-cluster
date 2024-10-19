@@ -246,7 +246,7 @@ spec:
     cronjob:
       enabled: true
       securityContext:
-        runAsuser: 222
+        runAsUser: 222
         runAsGroup: 220
         fsGroup: 220
         readOnlyRootFilesystem: false
