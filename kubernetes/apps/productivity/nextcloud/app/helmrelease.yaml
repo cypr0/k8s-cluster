@@ -31,15 +31,11 @@ spec:
     replicaCount: 3
     nextcloud:
       podSecurityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        fsGroup: 220
         fsGroupChangePolicy: OnRootMismatch
         readOnlyRootFilesystem: false
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        runAsNonRoot: false
+        fsGroup: 220
         readOnlyRootFilesystem: false
       extraEnv:
         - name: REDIS_HOST
@@ -207,9 +203,7 @@ spec:
       config:
         default: true
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        fsGroup: 220
         readOnlyRootFilesystem: false
     internalDatabase:
       enabled: false
@@ -232,7 +226,5 @@ spec:
     cronjob:
       enabled: true
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        fsGroup: 220
         readOnlyRootFilesystem: false
