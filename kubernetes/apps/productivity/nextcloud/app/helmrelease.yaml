@@ -31,7 +31,11 @@ spec:
     replicaCount: 3
     nextcloud:
       securityContext:
+        runAsUser: 82
+        runAsGroup: 220
+        runAsNonRoot: true
         fsGroup: 220
+        readOnlyRootFilesystem: false
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
@@ -197,6 +201,12 @@ spec:
       enabled: true
       config:
         default: true
+      securityContext:
+        runAsUser: 82
+        runAsGroup: 220
+        runAsNonRoot: true
+        fsGroup: 220
+        readOnlyRootFilesystem: false
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -216,3 +226,9 @@ spec:
           enabled: true
     cronjob:
       enabled: true
+      securityContext:
+        runAsUser: 82
+        runAsGroup: 220
+        fsGroup: 220
+        runAsNonRoot: true
+        readOnlyRootFilesystem: false
