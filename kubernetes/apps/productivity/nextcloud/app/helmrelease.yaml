@@ -30,13 +30,6 @@ spec:
       secret.reloader.stakater.com/reload: &secret nextcloud-secret
     replicaCount: 3
     nextcloud:
-      podSecurityContext:
-        fsGroup: 220
-        fsGroupChangePolicy: OnRootMismatch
-        readOnlyRootFilesystem: false
-      securityContext:
-        fsGroup: 220
-        readOnlyRootFilesystem: false
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
@@ -202,9 +195,6 @@ spec:
       enabled: true
       config:
         default: true
-      securityContext:
-        fsGroup: 220
-        readOnlyRootFilesystem: false
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -222,9 +212,5 @@ spec:
         enabled: true
         serviceMonitor:
           enabled: true
-
     cronjob:
       enabled: true
-      securityContext:
-        fsGroup: 220
-        readOnlyRootFilesystem: false
