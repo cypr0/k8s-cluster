@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: *app
-      version: 6.1.0
+      version: 6.1.1
       sourceRef:
         kind: HelmRepository
         name: nextcloud
@@ -33,18 +33,11 @@ spec:
       secret.reloader.stakater.com/reload: &secret nextcloud-secret
     replicaCount: 3
     nextcloud:
-      podSecurityContext:
-        runAsUser: 82
-        runAsGroup: 220
-        fsGroup: 220
-        fsGroupChangePolicy: Always
       securityContext:
         runAsUser: 82
-        runAsGroup: 220
+        runAsGroup: 82
         runAsNonRoot: true
-        fsGroup: 220
         readOnlyRootFilesystem: false
-        fsGroupChangePolicy: Always
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
@@ -214,12 +207,7 @@ spec:
       config:
         default: true
       securityContext:
-        runAsUser: 82
-        runAsGroup: 220
-        runAsNonRoot: true
-        fsGroup: 220
-        readOnlyRootFilesystem: false
-        fsGroupChangePolicy: Always
+        runAsGroup: 82
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -240,9 +228,6 @@ spec:
     cronjob:
       enabled: true
       securityContext:
-        runAsUser: 82
-        runAsGroup: 220
-        fsGroup: 220
-        runAsNonRoot: true
-        readOnlyRootFilesystem: false
-        fsGroupChangePolicy: Always
+        runAsGroup: 82
+    securityContext:
+      fsGroupChangePolicy: OnRootMismatch
