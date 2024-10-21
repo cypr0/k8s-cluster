@@ -34,9 +34,8 @@ spec:
     replicaCount: 3
     nextcloud:
       podSecurityContext:
-        fsGroupChangePolicy: Always
+        fsGroupChangePolicy: OnRootMismatch
       securityContext:
-        runAsUser: 82
         runAsGroup: 220
         runAsNonRoot: true
         readOnlyRootFilesystem: false
