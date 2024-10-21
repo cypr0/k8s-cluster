@@ -36,7 +36,7 @@ spec:
       securityContext:
         runAsUser: 82
         runAsGroup: 82
-        runAsNonRoot: true
+        runAsNonRoot: false
         fsGroup: 82
         readOnlyRootFilesystem: false
       extraEnv:
