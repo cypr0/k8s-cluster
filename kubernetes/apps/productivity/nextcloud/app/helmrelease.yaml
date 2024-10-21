@@ -224,3 +224,7 @@ spec:
           enabled: true
     cronjob:
       enabled: true
+      SecurityContext:
+        supplementalGroups:
+          - 82
+          - 0
