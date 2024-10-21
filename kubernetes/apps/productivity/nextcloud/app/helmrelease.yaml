@@ -37,6 +37,7 @@ spec:
         runAsUser: 82
         runAsGroup: 82
         runAsNonRoot: true
+        fsGroup: 82
         readOnlyRootFilesystem: false
       extraEnv:
         - name: REDIS_HOST
@@ -208,6 +209,7 @@ spec:
         default: true
       securityContext:
         runAsGroup: 82
+        fsGroup: 82
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -229,5 +231,6 @@ spec:
       enabled: true
       securityContext:
         runAsGroup: 82
+        fsGroup: 82
     securityContext:
       fsGroupChangePolicy: OnRootMismatch
