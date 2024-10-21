@@ -33,11 +33,12 @@ spec:
       secret.reloader.stakater.com/reload: &secret nextcloud-secret
     replicaCount: 3
     nextcloud:
+      podSecurityContext:
+        fsGroupChangePolicy: Always
       securityContext:
         runAsUser: 82
-        runAsGroup: 82
-        runAsNonRoot: false
-        fsGroup: 82
+        runAsGroup: 220
+        runAsNonRoot: true
         readOnlyRootFilesystem: false
       extraEnv:
         - name: REDIS_HOST
@@ -208,8 +209,8 @@ spec:
       config:
         default: true
       securityContext:
-        runAsGroup: 82
-        fsGroup: 82
+        runAsGroup: 220
+        readOnlyRootFilesystem: false
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -230,7 +231,5 @@ spec:
     cronjob:
       enabled: true
       securityContext:
-        runAsGroup: 82
-        fsGroup: 82
-    securityContext:
-      fsGroupChangePolicy: OnRootMismatch
+        runAsGroup: 220
+        readOnlyRootFilesystem: false
