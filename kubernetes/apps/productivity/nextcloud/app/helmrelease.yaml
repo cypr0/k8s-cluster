@@ -39,9 +39,9 @@ spec:
           - 220
         fsGroupChangePolicy: OnRootMismatch
       SecurityContext:
-        runAsUser: 222
-        runAsGroup: 220
-        fsGroup: 220
+        runAsUser: 82
+        runAsGroup: 82
+        fsGroup: 82
         readOnlyRootFilesystem: false
         supplementalGroups:
           - 82
@@ -215,9 +215,9 @@ spec:
       config:
         default: true
       SecurityContext:
-        runAsUser: 222
-        runAsGroup: 220
-        fsGroup: 220
+        runAsUser: 82
+        runAsGroup: 82
+        fsGroup: 82
         readOnlyRootFilesystem: false
         supplementalGroups:
           - 82
@@ -242,9 +242,9 @@ spec:
     cronjob:
       enabled: true
       SecurityContext:
-        runAsUser: 222
-        runAsGroup: 220
-        fsGroup: 220
+        runAsUser: 82
+        runAsGroup: 82
+        fsGroup: 82
         readOnlyRootFilesystem: false
         supplementalGroups:
           - 82
