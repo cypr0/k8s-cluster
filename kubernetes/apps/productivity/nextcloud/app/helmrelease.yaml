@@ -36,7 +36,9 @@ spec:
       podSecurityContext:
         supplementalGroups:
           - 82
-          - 0
+          - 220
+      SecurityContext:
+        runAsUser:
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
