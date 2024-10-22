@@ -37,8 +37,15 @@ spec:
         supplementalGroups:
           - 82
           - 220
+        fsGroupChangePolicy: OnRootMismatch
       SecurityContext:
-        runAsUser:
+        runAsUser: 222
+        runAsGroup: 220
+        fsGroup: 220
+        readOnlyRootFilesystem: false
+        supplementalGroups:
+          - 82
+          - 220
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
@@ -207,6 +214,12 @@ spec:
         tag: 1.27-alpine
       config:
         default: true
+      SecurityContext:
+        fsGroup: 220
+        readOnlyRootFilesystem: false
+        supplementalGroups:
+          - 82
+          - 220
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -227,6 +240,8 @@ spec:
     cronjob:
       enabled: true
       SecurityContext:
+        fsGroup: 220
+        readOnlyRootFilesystem: false
         supplementalGroups:
           - 82
-          - 0
+          - 220
