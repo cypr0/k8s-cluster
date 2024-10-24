@@ -21,10 +21,21 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: nextcloud-pvc
+  name: nextcloud-data-pvc
 spec:
   accessModes: ["ReadWriteMany"]
   storageClassName: nextcloud-nfs
   resources:
     requests:
       storage: 1Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nextcloud-app-pvc
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: longorn-backup
+  resources:
+    requests:
+      storage: 50Gi

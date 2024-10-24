@@ -7,7 +7,7 @@ spec:
   chart:
     spec:
       chart: *app
-      version: 6.1.1
+      version: 6.2.1
       sourceRef:
         kind: HelmRepository
         name: nextcloud
@@ -27,18 +27,17 @@ spec:
     fullnameOverride: *app
     image:
       repository: nextcloud
-      tag: 30.0.1-apache
-      flavor: apache
+      tag: 30.0.1-fpm-alpine
+      flavor: fpm-alpine
     deploymentAnnotations:
       secret.reloader.stakater.com/reload: &secret nextcloud-secret
     replicaCount: 3
     nextcloud:
-      podSecurityContext:
-        fsGroupChangePolicy: OnRootMismatch
       securityContext:
-        runAsUser: 33
-        runAsGroup: 33
-        readOnlyRootFilesystem: false
+        runAsUser: 222
+        runAsGroup: 220
+        runAsNonRoot: true
+      datadir: /var/www/data
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
@@ -69,10 +68,8 @@ spec:
           $CONFIG = array (
             'trusted_proxies' =>
             array(
-               0 => '10.69.0.0/16',
-               1 => '10.96.0.0/16',
-               2 => '127.0.0.1',
-               3 => '192.168.0.0/16',
+               0 => '10.96.0.0/16',
+               1 => '127.0.0.1',
             ),
             'forwarded_for_headers' =>
             array (
@@ -154,7 +151,11 @@ spec:
         mountPath: "/mnt/data/paperless"
     persistence:
       enabled: true
-      existingClaim: nextcloud-pvc
+      existingClaim: nextcloud-app-pvc
+      nextcloudData:
+        enabled: true
+        existingClaim: nextcloud-data-pvc
+        accessMode: ReadWriteMany
     livenessProbe:
       enabled: false
     readinessProbe:
@@ -200,7 +201,7 @@ spec:
       pathType: Prefix
       tls: [hosts: [*host]]
     nginx:
-      enabled: false
+      enabled: true
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -221,5 +222,5 @@ spec:
     cronjob:
       enabled: true
       securityContext:
-        runAsGroup: 33
+        runAsGroup: 220
         readOnlyRootFilesystem: false
