@@ -146,7 +146,6 @@ spec:
     extraVolumeMounts:
       - name: paperless-nfs
         mountPath: "/mnt/data/paperless"
-    datadir: /nc_data
     persistence:
       enabled: true
       existingClaim: nextcloud-pvc
