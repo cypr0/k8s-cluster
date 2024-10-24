@@ -221,6 +221,3 @@ spec:
           enabled: true
     cronjob:
       enabled: true
-      securityContext:
-        runAsGroup: 220
-        readOnlyRootFilesystem: false
