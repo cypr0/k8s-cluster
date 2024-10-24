@@ -27,8 +27,8 @@ spec:
     fullnameOverride: *app
     image:
       repository: nextcloud
-      tag: 30.0.1-fpm-alpine
-      flavor: fpm-alpine
+      tag: 30.0.1-apache
+      flavor: apache
     deploymentAnnotations:
       secret.reloader.stakater.com/reload: &secret nextcloud-secret
     replicaCount: 3
@@ -148,6 +148,7 @@ spec:
     extraVolumeMounts:
       - name: paperless-nfs
         mountPath: "/mnt/data/paperless"
+    datadir: /nc_data
     persistence:
       enabled: true
       existingClaim: nextcloud-pvc
@@ -196,12 +197,7 @@ spec:
       pathType: Prefix
       tls: [hosts: [*host]]
     nginx:
-      enabled: true
-      image:
-        repository: nginx
-        tag: 1.27-alpine
-      config:
-        default: true
+      enabled: false
     internalDatabase:
       enabled: false
     externalDatabase:
