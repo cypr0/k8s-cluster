@@ -38,7 +38,6 @@ spec:
       securityContext:
         runAsUser: 33
         runAsGroup: 33
-        runAsNonRoot: true
         readOnlyRootFilesystem: false
       extraEnv:
         - name: REDIS_HOST
@@ -222,7 +221,5 @@ spec:
     cronjob:
       enabled: true
       securityContext:
-        runAsUser: 33
         runAsGroup: 33
-        runAsNonRoot: true
         readOnlyRootFilesystem: false
