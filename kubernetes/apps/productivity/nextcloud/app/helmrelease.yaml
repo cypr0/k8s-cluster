@@ -33,19 +33,6 @@ spec:
       secret.reloader.stakater.com/reload: &secret nextcloud-secret
     replicaCount: 3
     nextcloud:
-      podSecurityContext:
-        supplementalGroups:
-          - 82
-          - 220
-        fsGroupChangePolicy: OnRootMismatch
-      SecurityContext:
-        runAsUser: 82
-        runAsGroup: 82
-        fsGroup: 82
-        readOnlyRootFilesystem: false
-        supplementalGroups:
-          - 82
-          - 220
       extraEnv:
         - name: REDIS_HOST
           value: dragonfly.database.svc.cluster.local
@@ -159,7 +146,7 @@ spec:
     extraVolumeMounts:
       - name: paperless-nfs
         mountPath: "/mnt/data/paperless"
-    datadir: /nc_data
+    datadir: /var/www/data
     persistence:
       enabled: true
       existingClaim: nextcloud-pvc
@@ -214,14 +201,6 @@ spec:
         tag: 1.27-alpine
       config:
         default: true
-      SecurityContext:
-        runAsUser: 82
-        runAsGroup: 82
-        fsGroup: 82
-        readOnlyRootFilesystem: false
-        supplementalGroups:
-          - 82
-          - 220
     internalDatabase:
       enabled: false
     externalDatabase:
@@ -241,11 +220,3 @@ spec:
           enabled: true
     cronjob:
       enabled: true
-      SecurityContext:
-        runAsUser: 82
-        runAsGroup: 82
-        fsGroup: 82
-        readOnlyRootFilesystem: false
-        supplementalGroups:
-          - 82
-          - 220
