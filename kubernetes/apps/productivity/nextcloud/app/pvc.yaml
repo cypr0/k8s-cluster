@@ -35,7 +35,7 @@ metadata:
   name: nextcloud-app-pvc
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: longorn-backup
+  storageClassName: longhorn-backup
   resources:
     requests:
       storage: 50Gi
