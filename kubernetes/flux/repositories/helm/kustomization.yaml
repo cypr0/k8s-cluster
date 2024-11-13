@@ -15,3 +15,5 @@ resources:
   - ./external-dns.yaml
   - ./ingress-nginx.yaml
   - ./k8s-gateway.yaml
+  - ./longhorn.yaml
+  - ./minio.yaml
