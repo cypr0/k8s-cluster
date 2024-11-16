@@ -24,6 +24,9 @@ spec:
       strategy: rollback
   uninstall:
     keepHistory: false
+  dependsOn:
+    - name: external-secrets
+      namespace: security
   values:
     image:
       repository: quay.io/minio/minio
