@@ -6,7 +6,7 @@ metadata:
 spec:
   description: Postgresql cluster for Authentik
   # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql registryUrl=ghcr.io
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.0
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.1
   instances: 3
   storage:
     size: 4Gi
