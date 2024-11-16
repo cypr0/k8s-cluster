@@ -1,4 +1,3 @@
----
 receivers:
   - name: "null"
   - name: "pushover"
