@@ -15,6 +15,7 @@ resources:
   - ./external-dns.yaml
   - ./ingress-nginx.yaml
   - ./k8s-gateway.yaml
+  - ./cloudnative-pg.yaml
   - ./external-secrets.yaml
   - ./longhorn.yaml
   - ./minio.yaml
