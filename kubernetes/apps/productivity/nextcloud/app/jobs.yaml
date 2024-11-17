@@ -12,9 +12,9 @@ spec:
         fsGroup: 220
       containers:
       - name: nextcloud-post-install-job
-        image: docker.io/library/nextcloud:30.0.1-fpm-alpine
+        image: docker.io/library/nextcloud:30.0.2-fpm-alpine
         command: ["/bin/sh", "-c"]
-        args: ["until php /var/www/html/occ status --output json | grep -q '\"installed\":true'; do sleep 10; done && php /var/www/html/occ upgrade && php /var/www/html/occ db:add-missing-indices && php /var/www/html/occ db:add-missing-columns && php /var/www/html/occ db:add-missing-primary-keys && php /var/www/html/occ db:convert-filecache-bigint && php /var/www/html/occ maintenance:repair --include-expensive"]
+        args: ["until php /var/www/html/occ status --output json | grep -q '\"installed\":true'; do sleep 10; done && php /var/www/html/occ maintenance:mode --on && php /var/www/html/occ upgrade && php /var/www/html/occ db:add-missing-indices && php /var/www/html/occ db:add-missing-columns && php /var/www/html/occ db:add-missing-primary-keys && php /var/www/html/occ db:convert-filecache-bigint && php /var/www/html/occ maintenance:repair --include-expensive && php /var/www/html/occ maintenance:mode --off"]
         volumeMounts:
         - name: app-config
           mountPath: /var/www/html
@@ -45,9 +45,9 @@ spec:
         fsGroup: 220
       containers:
       - name: nextcloud-add-apps-job
-        image: docker.io/library/nextcloud:30.0.1-fpm-alpine
+        image: docker.io/library/nextcloud:30.0.2-fpm-alpine
         command: ["/bin/sh", "-c"]
-        args: ["until php /var/www/html/occ status --output json | grep -q '\"installed\":true'; do sleep 10; done && php /var/www/html/occ app:disable firstrunwizard && php /var/www/html/occ app:disable support && php /var/www/html/occ app:enable admin_audit && php /var/www/html/occ app:enable files_pdfviewer && php /var/www/html/occ app:enable groupfolders && php /var/www/html/occ app:install richdocuments && php /var/www/html/occ app:install files_antivirus && php /var/www/html/occ app:install whiteboard && php /var/www/html/occ app:install deck && php /var/www/html/occ app:install tables && php /var/www/html/occ app:install forms && php /var/www/html/occ app:install quota_warning"]
+        args: ["until php /var/www/html/occ status --output json | grep -q '\"installed\":true'; do sleep 10; done && php /var/www/html/occ maintenance:mode --on && php /var/www/html/occ app:disable firstrunwizard && php /var/www/html/occ app:disable support && php /var/www/html/occ app:enable admin_audit && php /var/www/html/occ app:enable files_pdfviewer && php /var/www/html/occ app:enable groupfolders && php /var/www/html/occ app:install richdocuments && php /var/www/html/occ app:install files_antivirus && php /var/www/html/occ app:install whiteboard && php /var/www/html/occ app:install deck && php /var/www/html/occ app:install tables && php /var/www/html/occ app:install forms && php /var/www/html/occ app:install quota_warning && php /var/www/html/occ maintenance:mode --off"]
         volumeMounts:
         - name: app-config
           mountPath: /var/www/html
@@ -83,7 +83,7 @@ spec:
             fsGroup: 220
           containers:
             - name: nextcloud-cron
-              image: docker.io/library/nextcloud:30.0.1-fpm-alpine
+              image: docker.io/library/nextcloud:30.0.2-fpm-alpine
               command: ["php", "-f", "/var/www/html/cron.php"]
               volumeMounts:
                 - name: app-config
@@ -119,9 +119,9 @@ spec:
             fsGroup: 220
           containers:
           - name: add-missing-indices
-            image: docker.io/library/nextcloud:30.0.1-fpm-alpine
+            image: docker.io/library/nextcloud:30.0.2-fpm-alpine
             command: ["/bin/sh", "-c"]
-            args: ["php /var/www/html/occ db:add-missing-indices"]
+            args: ["php /var/www/html/occ maintenance:mode --on && php /var/www/html/occ db:add-missing-indices && php /var/www/html/occ maintenance:mode --off"]
             volumeMounts:
             - name: app-config
               mountPath: /var/www/html
