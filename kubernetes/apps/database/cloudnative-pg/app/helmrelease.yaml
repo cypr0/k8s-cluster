@@ -33,6 +33,6 @@ spec:
     rbac:
       create: true
     monitoring:
-      podMonitorEnabled: false
+      podMonitorEnabled: true
       grafanaDashboard:
-        create: false
+        create: true
