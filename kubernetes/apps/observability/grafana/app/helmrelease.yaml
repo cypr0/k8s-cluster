@@ -182,6 +182,7 @@ spec:
     env:
       GF_ANALYTICS_CHECK_FOR_UPDATES: false
       GF_DATE_FORMATS_USE_BROWSER_LOCALE: true
+      GF_USERS_DEFAULT_LANGUAGE: detect
       GF_EXPLORE_ENABLED: true
       GF_GRAFANA_NET_URL: https://grafana.net
       GF_LOG_FILTERS: rendering:debug
