@@ -110,3 +110,7 @@ spec:
         - hosts:
             - *host
           secretName: "minio-${SECRET_DOMAIN/./-}-tls"
+    metrics:
+      serviceMonitor:
+        enabled: true
+        includeNode: true
