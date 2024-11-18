@@ -1,0 +1,79 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: postiz
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      interval: 15m
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    defaultPodOptions:
+      annotations:
+        reloader.stakater.com/auto: "true"
+        secret.reloader.stakater.com/reload: "postiz-secret"
+    controllers:
+      main:
+        containers:
+          postiz:
+            image:
+              repository: ghcr.io/gitroomhq/postiz-app
+              tag: amd64-1731494298
+            env:
+              MAIN_URL: "https://postiz.${SECRET_DOMAIN}"
+              FRONTEND_URL: "https://postiz.${SECRET_DOMAIN}"
+              NEXT_PUBLIC_BACKEND_URL: "https://postiz.${SECRET_DOMAIN}/api"
+              REDIS_URL: "redis://dragonfly.database.svc.cluster.local:6379"
+              BACKEND_INTERNAL_URL: "http://localhost:3000"
+              IS_GENERAL: "true" # Required for self-hosting.
+              STORAGE_PROVIDER: "local"
+              UPLOAD_DIRECTORY: "/uploads"
+              NEXT_PUBLIC_UPLOAD_DIRECTORY: "/uploads"
+            envFrom:
+              - secretRef:
+                  name: postiz-secret
+    service:
+      postiz:
+        controller: main
+        ports:
+          http:
+            port: 5000
+    ingress:
+      main:
+        enabled: true
+        className: external
+        hosts:
+          - host: &host "postiz.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: postiz
+                  port: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      data:
+        existingClaim: postiz-pvc
+        globalMounts:
+          - subPath: config
+            path: /config
+          - subPath: uploads
+            path: /uploads
