@@ -40,4 +40,4 @@ spec:
   storageClassName: longhorn-backup
   resources:
     requests:
-      storage: 50Gi
+      storage: 20Gi
