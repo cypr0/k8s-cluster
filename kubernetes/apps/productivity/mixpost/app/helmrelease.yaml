@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: postiz
+  name: mixpost
 spec:
   interval: 1m
   chart:
@@ -28,33 +28,32 @@ spec:
     defaultPodOptions:
       annotations:
         reloader.stakater.com/auto: "true"
-        secret.reloader.stakater.com/reload: "postiz-secret"
+        secret.reloader.stakater.com/reload: "mixpost-secret"
     controllers:
       main:
         containers:
-          postiz:
+          mixpost:
             image:
-              repository: ghcr.io/gitroomhq/postiz-app
-              tag: amd64-1731494298
+              repository: inovector/mixpost
+              tag: v1.7.2
             env:
-              MAIN_URL: "https://postiz.${SECRET_DOMAIN}"
-              FRONTEND_URL: "https://postiz.${SECRET_DOMAIN}"
-              NEXT_PUBLIC_BACKEND_URL: "https://postiz.${SECRET_DOMAIN}/api"
-              REDIS_URL: "redis://dragonfly.database.svc.cluster.local:6379"
-              BACKEND_INTERNAL_URL: "http://postiz:3000"
-              IS_GENERAL: "true" # Required for self-hosting.
-              STORAGE_PROVIDER: "local"
-              UPLOAD_DIRECTORY: "/uploads"
-              NEXT_PUBLIC_UPLOAD_DIRECTORY: "/uploads"
+              APP_NAME: Mixpost
+              APP_DEBUG: false
+              APP_DOMAIN: ${SECRET_DOMAIN}
+              APP_URL: https://${SECRET_DOMAIN}
+              DB_HOST: cnpg-mixpost-rw.productivity.svc.cluster.local
+              DB_PORT: 5432
+              REDIS_HOST: dragonfly.database.svc.cluster.local
+              REDIS_PORT: 6379
             envFrom:
               - secretRef:
-                  name: postiz-secret
+                  name: mixpost-secret
     service:
-      postiz:
+      mixpost:
         controller: main
         ports:
           http:
-            port: 5000
+            port: 80
     ingress:
       main:
         enabled: true
@@ -62,21 +61,19 @@ spec:
         annotations:
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
-          - host: &host "postiz.${SECRET_DOMAIN}"
+          - host: &host "mixpost.${SECRET_DOMAIN}"
             paths:
               - path: /
                 pathType: Prefix
                 service:
-                  identifier: postiz
+                  identifier: mixpost
                   port: http
         tls:
           - hosts:
               - *host
     persistence:
       data:
-        existingClaim: postiz-pvc
+        existingClaim: mixpost-pvc
         globalMounts:
-          - subPath: config
-            path: /config
-          - subPath: uploads
-            path: /uploads
+          - subPath: storage
+            path: /var/www/html/storage

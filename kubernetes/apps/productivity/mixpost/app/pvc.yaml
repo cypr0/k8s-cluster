@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postiz-pvc
+  name: mixpost-pvc
 spec:
   accessModes: ["ReadWriteMany"]
   storageClassName: longhorn-backup

@@ -2,9 +2,9 @@
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: cnpg-postiz
+  name: cnpg-mixpost
 spec:
-  description: Postgresql cluster for Postiz
+  description: Postgresql cluster for Mixpost
   # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql registryUrl=ghcr.io
   imageName: ghcr.io/cloudnative-pg/postgresql:17.1
   instances: 1
@@ -17,10 +17,10 @@ spec:
       shared_buffers: 256MB
   bootstrap:
     initdb:
-      database: postizdb
-      owner: postizusr
+      database: mixpostdb
+      owner: mixpostusr
       secret:
-        name: postiz-db-secret
+        name: mixpost-db-secret
   primaryUpdateStrategy: unsupervised
   monitoring:
     enablePodMonitor: true
@@ -37,15 +37,15 @@ spec:
       wal:
         compression: bzip2
         maxParallel: 8
-      destinationPath: s3://k8s-postgres/postiz/
+      destinationPath: s3://k8s-postgres/mixpost/
       endpointURL: https://s3.${SECRET_DOMAIN}
-      serverName: &currentCluster postiz-postgres17-v1
+      serverName: &currentCluster mixpost-postgres17-v1
       s3Credentials:
         accessKeyId:
-          name: postiz-db-secret
+          name: mixpost-db-secret
           key: ACCESS_KEY_ID
         secretAccessKey:
-          name: postiz-db-secret
+          name: mixpost-db-secret
           key: SECRET_ACCESS_KEY
  # Note: externalClusters is needed when recovering from an existing cnpg cluster
  #  externalClusters:
