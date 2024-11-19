@@ -2,7 +2,7 @@
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app postiz
+  name: &app mixpost
   namespace: flux-system
 spec:
   targetNamespace: productivity
@@ -11,7 +11,7 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: mastodon-db
-  path: ./kubernetes/apps/productivity/postiz/app
+  path: ./kubernetes/apps/productivity/mixpost/app
   prune: true
   sourceRef:
     kind: GitRepository
@@ -24,7 +24,7 @@ spec:
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
-  name: &app postiz-db
+  name: &app mixpost-db
   namespace: flux-system
 spec:
   targetNamespace: productivity
@@ -34,7 +34,7 @@ spec:
   dependsOn:
     - name: external-secrets-stores
     - name: cloudnative-pg
-  path: /kubernetes/apps/productivity/postiz/database
+  path: /kubernetes/apps/productivity/mixpost/database
   prune: true
   sourceRef:
     kind: GitRepository
