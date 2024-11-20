@@ -41,7 +41,7 @@ spec:
               APP_DEBUG: false
               APP_DOMAIN: ${SECRET_DOMAIN}
               APP_URL: https://${SECRET_DOMAIN}
-              DB_HOST: mysql.productivity.svc.cluster.local
+              DB_HOST: mixpost-mysql.productivity.svc.cluster.local
               DB_PORT: 3306
               REDIS_HOST: dragonfly.database.svc.cluster.local
               REDIS_PORT: 6379
