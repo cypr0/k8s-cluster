@@ -55,7 +55,6 @@ spec:
             envFrom:
               - secretRef:
                   name: mixpost-secret
-
     service:
       mixpost:
         controller: main
@@ -85,7 +84,7 @@ spec:
           - hosts:
               - *host
     persistence:
-      app-data:
+      data:
         type: persistentVolumeClaim
         existingClaim: mixpost-pvc
         advancedMounts:
@@ -93,11 +92,6 @@ spec:
             mixpost:
               - path: /var/www/html/storage
                 subPath: app
-      db-data:
-        type: persistentVolumeClaim
-        existingClaim: mixpost-pvc
-        advancedMounts:
-          main:
             mysql:
               - path: /var/lib/mysql
                 subPath: database
