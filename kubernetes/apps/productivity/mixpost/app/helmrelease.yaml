@@ -98,6 +98,6 @@ spec:
         existingClaim: mixpost-pvc
         advancedMounts:
           main:
-            mixpost:
+            mysql:
               - path: /var/lib/mysql
                 subPath: database
