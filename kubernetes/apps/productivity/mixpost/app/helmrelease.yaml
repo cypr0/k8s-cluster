@@ -31,6 +31,8 @@ spec:
         secret.reloader.stakater.com/reload: "mixpost-secret"
     controllers:
       main:
+        replicas: 1
+        strategy: RollingUpdate
         containers:
           mixpost:
             image:
@@ -45,6 +47,7 @@ spec:
               DB_PORT: 3306
               REDIS_HOST: dragonfly.database.svc.cluster.local
               REDIS_PORT: 6379
+              REDIS_PASSWORD: ""
             envFrom:
               - secretRef:
                   name: mixpost-secret
