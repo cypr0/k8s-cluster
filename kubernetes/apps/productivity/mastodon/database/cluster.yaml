@@ -9,23 +9,27 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17.1
   instances: 1
   storage:
-    size: 10Gi
+    size: 50Gi
     storageClass: longhorn-basic
   postgresql:
     parameters:
       max_connections: "200"
-      shared_buffers: 3GB
-      effective_cache_size: 9GB
-      maintenance_work_mem: 768MB
+      shared_buffers: 2GB
+      effective_cache_size: 6GB
+      maintenance_work_mem: 512MB
       checkpoint_completion_target: "0.9"
       wal_buffers: 16MB
       default_statistics_target: "100"
       random_page_cost: "1.1"
       effective_io_concurrency: "200"
-      work_mem: 78643kB
+      work_mem: 2621kB
       huge_pages: off
       min_wal_size: 1GB
       max_wal_size: 4GB
+      max_worker_processes: "4"
+      max_parallel_workers_per_gather: "2"
+      max_parallel_workers: "4"
+      max_parallel_maintenance_workers: "2"
   bootstrap:
     initdb:
       database: mastodondb
