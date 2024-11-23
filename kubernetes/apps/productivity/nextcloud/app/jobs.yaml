@@ -84,7 +84,15 @@ spec:
           containers:
             - name: nextcloud-cron
               image: docker.io/library/nextcloud:30.0.2-fpm-alpine
-              command: ["php", "-f", "/var/www/html/cron.php"]
+              command:
+                - sh
+                - -c
+                - |
+                  if [ -f /var/www/html/cron.php ]; then
+                    php -f /var/www/html/cron.php;
+                  else
+                    echo "cron.php not found, skipping execution";
+                  fi
               volumeMounts:
                 - name: app-config
                   mountPath: /var/www/html
