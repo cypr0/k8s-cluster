@@ -36,11 +36,6 @@ spec:
           value: dragonfly.database.svc.cluster.local
         - name: REDIS_PORT
           value: "6379"
-        - name: SECRET_DOMAIN
-          valueFrom:
-            secretKeyRef:
-              name: mastodon-secret
-              key: SECRET_DOMAIN
         - name: MASTODON_ADMIN_USER
           valueFrom:
             secretKeyRef:
