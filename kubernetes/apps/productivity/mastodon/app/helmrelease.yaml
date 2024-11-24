@@ -8,13 +8,6 @@ spec:
   dependsOn:
     - name: cnpg-mastodon
       namespace: productivity
-      condition:
-        kind: Cluster
-        namespace: productivity
-        name: cnpg-mastodon
-        matchConditions:
-          - type: Ready
-            status: "True"
   chart:
     spec:
       chart: app-template
