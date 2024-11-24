@@ -12,44 +12,46 @@ spec:
           - sh
           - -c
           - |
-            echo "Waiting for Mastodon to be fully installed..."
-
-            echo "Checking if the database is ready..."
-            until nc -z ${DB_HOST} ${DB_PORT}; do
-              echo "Database is not ready yet. Waiting for 5 seconds..."
+            echo "Waiting for Mastodon to be ready..."
+            while ! curl -sf https://mastodon.${SECRET_DOMAIN}/api/v2/instance > /dev/null; do
+              echo "Mastodon is not ready yet. Waiting for 5 seconds..."
               sleep 5
             done
-            echo "Database is ready."
-
-            echo "Checking if Redis is ready..."
-            until nc -z ${REDIS_HOST} ${REDIS_PORT}; do
-              echo "Redis is not ready yet. Waiting for 5 seconds..."
-              sleep 5
-            done
-            echo "Redis is ready."
-
-            echo "Checking if Mastodon API is ready..."
-            until curl -sf https://social.${SECRET_DOMAIN}/api/v2/instance > /dev/null; do
-              echo "Mastodon API is not ready yet. Waiting for 5 seconds..."
-              sleep 5
-            done
-            echo "Mastodon API is ready."
-
-            echo "Creating admin user account..."
+            echo "Mastodon is ready. Creating admin user account..."
             tootctl accounts create ${MASTODON_ADMIN_USER} --email admin@${SECRET_DOMAIN} --password ${MASTODON_ADMIN_PASSWORD} --confirmed --role Owner
         env:
-          PGID: 1000
-          PUID: 1000
-          RAILS_ENV: production
-          DB_HOST: cnpg-mastodon-rw.productivity.svc.cluster.local
-          DB_NAME: mastodondb
-          DB_PORT: 5432
-          REDIS_HOST: dragonfly.database.svc.cluster.local
-          REDIS_PORT: 6379
-        envFrom:
-          - secretRef:
+        - name: DB_HOST
+          value: cnpg-mastodon-rw.productivity.svc.cluster.local
+        - name: DB_NAME
+          value: mastodondb
+        - name: DB_PORT
+          value: "5432"
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        - name: RAILS_ENV
+          value: production
+        - name: REDIS_HOST
+          value: dragonfly.database.svc.cluster.local
+        - name: REDIS_PORT
+          value: "6379"
+        - name: SECRET_DOMAIN
+          valueFrom:
+            secretKeyRef:
               name: mastodon-secret
-      volumeMounts:
+              key: SECRET_DOMAIN
+        - name: MASTODON_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: MASTODON_ADMIN_USER
+        - name: MASTODON_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: MASTODON_ADMIN_PASSWORD
+        volumeMounts:
         - name: config
           mountPath: /config
       restartPolicy: OnFailure
