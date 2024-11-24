@@ -6,7 +6,7 @@ spec:
   template:
     spec:
       containers:
-      - name: nextcloud-post-install-job
+      - name: mastodon-create-admin-account
         image: lscr.io/linuxserver/mastodon:4.3.1
         command:
           - sh
