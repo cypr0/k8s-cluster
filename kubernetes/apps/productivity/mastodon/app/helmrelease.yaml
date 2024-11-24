@@ -14,6 +14,16 @@ spec:
         name: bjw-s
         namespace: flux-system
       interval: 15m
+      dependsOn:
+        - name: cnpg-mastodon
+          namespace: productivity
+          condition:
+            kind: Cluster
+            namespace: productivity
+            name: cnpg-mastodon
+            matchConditions:
+              - type: Ready
+                status: "True"
   maxHistory: 2
   install:
     remediation:
