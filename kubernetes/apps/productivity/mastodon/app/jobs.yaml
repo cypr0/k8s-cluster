@@ -17,8 +17,14 @@ spec:
               echo "Mastodon is not ready yet. Waiting for 5 seconds..."
               sleep 5
             done
-            echo "Mastodon is ready. Creating admin user account..."
-            tootctl accounts create ${MASTODON_ADMIN_USER} --email admin@${SECRET_DOMAIN} --password ${MASTODON_ADMIN_PASSWORD} --confirmed --role Owner
+            echo "Mastodon is ready. Checking if admin user exists..."
+
+            if tootctl accounts search ${MASTODON_ADMIN_USER} | grep -q ${MASTODON_ADMIN_USER}; then
+              echo "Admin user ${MASTODON_ADMIN_USER} already exists. Skipping creation."
+            else
+              echo "Admin user does not exist. Creating admin user account..."
+              tootctl accounts create ${MASTODON_ADMIN_USER} --email admin@${SECRET_DOMAIN} --password ${MASTODON_ADMIN_PASSWORD} --confirmed --role Owner
+            fi
         env:
         - name: DB_HOST
           value: cnpg-mastodon-rw.productivity.svc.cluster.local
