@@ -5,9 +5,6 @@ metadata:
   name: mastodon
 spec:
   interval: 1m
-  dependsOn:
-    - name: cnpg-mastodon
-      namespace: productivity
   chart:
     spec:
       chart: app-template
