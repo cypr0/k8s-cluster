@@ -38,6 +38,11 @@ spec:
           value: dragonfly.database.svc.cluster.local
         - name: REDIS_PORT
           value: "6379"
+        - name: MASTODON_APP_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: app_token
         - name: MASTODON_ADMIN_USER
           valueFrom:
             secretKeyRef:
@@ -48,6 +53,56 @@ spec:
             secretKeyRef:
               name: mastodon-secret
               key: MASTODON_ADMIN_PASSWORD
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: MASTODON_DB_PASSWORD
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: SECRET_KEY_BASE
+        - name: OTP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: OTP_SECRET
+        - name: VAPID_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: VAPID_PRIVATE_KEY
+        - name: VAPID_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: VAPID_PUBLIC_KEY
+        - name: ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+        - name: ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+        - name: ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: MASTODON_S3_ACCESS_KEY
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: MASTODON_S3_SECRET_KEY
         volumeMounts:
         - name: config
           mountPath: /config
