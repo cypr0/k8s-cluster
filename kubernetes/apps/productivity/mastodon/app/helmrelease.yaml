@@ -32,6 +32,20 @@ spec:
       main:
         replicas: 1
         strategy: RollingUpdate
+        initContainers:
+          - name: wait-for-db
+            image: bitnami/kubectl
+            tag: 1.31.3
+            command:
+              - sh
+              - -c
+              - |
+                echo "Checking database connectivity..."
+                until nc -zv cnpg-mastodon-rw.productivity.svc.cluster.local 5432; do
+                  echo "Database is not ready yet. Retrying in 5 seconds..."
+                  sleep 5
+                done
+                echo "Database is ready. Proceeding with startup."
         containers:
           mastodon:
             image:
