@@ -35,8 +35,8 @@ spec:
         initContainers:
           wait-for-db:
             image:
-              repository: bitnami/kubectl
-              tag: 1.31.3
+              repository: lscr.io/linuxserver/mastodon
+              tag: 4.3.1
             command:
               - sh
               - -c
