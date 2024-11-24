@@ -34,8 +34,9 @@ spec:
         strategy: RollingUpdate
         initContainers:
           wait-for-db:
-            image: bitnami/kubectl
-            tag: 1.31.3
+            image:
+              repository: bitnami/kubectl
+              tag: 1.31.3
             command:
               - sh
               - -c
