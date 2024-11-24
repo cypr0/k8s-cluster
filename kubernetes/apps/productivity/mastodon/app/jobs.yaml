@@ -36,6 +36,8 @@ spec:
           value: cnpg-mastodon-rw.productivity.svc.cluster.local
         - name: DB_NAME
           value: mastodondb
+        - name: DB_USER
+          value: mastodonusr
         - name: DB_PORT
           value: "5432"
         - name: PGID
