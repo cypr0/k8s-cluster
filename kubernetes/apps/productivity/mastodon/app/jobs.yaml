@@ -52,7 +52,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: mastodon-secret
-              key: MASTODON_DB_PASSWORD
+              key: DB_PASS
         - name: SECRET_KEY_BASE
           valueFrom:
             secretKeyRef:
