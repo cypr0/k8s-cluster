@@ -105,7 +105,7 @@ spec:
           clamav:
             image:
               repository: clamav/clamav
-              tag: 1.4.1@sha256:902eaa978b654af34651768b77b44a51e7c0e93f71e1bd78f6228979df8c641f
+              tag: 1.4.1@sha256:053e55f5bf0121d6cba9c90794860bb08058a3f448b4165d96d3936c6f1e7095
             env:
               CLAMAV_NO_CLAMD: false
               CLAMAV_NO_FRESHCLAMD: false
@@ -121,7 +121,7 @@ spec:
           collabora:
             image:
               repository: collabora/code
-              tag: 24.04.9.2.1@sha256:56fe61f51d7c3031f9727c06484d9e9242241704bf4b9cece89c7281a0e1e048
+              tag: 24.04.10.1.1@sha256:98bfe4bbd18d5faa77f7e3dc0b87309a8d0252c1f4fc81a7f1d9f7a58d4b6ce8
             env:
               - name: username
                 valueFrom:
