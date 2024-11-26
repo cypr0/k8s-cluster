@@ -80,6 +80,7 @@ spec:
             image:
               repository: mysql/mysql-server
               tag: 8.0.32
+            fullnameOverride: mysql
             probes:
               startup:
                 enabled: true
@@ -113,7 +114,6 @@ spec:
         ports:
           mysql:
             port: 3306
-        name: mysql
     ingress:
       main:
         enabled: true
