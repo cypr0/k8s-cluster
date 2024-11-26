@@ -57,18 +57,27 @@ spec:
                 enabled: true
               readiness:
                 enabled: true
-
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - |
+                        curl -s mixpost-mysql:3306 >/dev/null
+                  initialDelaySeconds: 10
+                  periodSeconds: 5
+                  failureThreshold: 3
             env:
               WAIT_TIMEOUT: 360
               APP_NAME: Mixpost
               APP_DEBUG: false
               APP_DOMAIN: mixpost.${SECRET_DOMAIN}
               APP_URL: https://mixpost.${SECRET_DOMAIN}
-              DB_HOST: mixpost-mysql.productivity.svc.cluster.local
+              DB_HOST: mixpost-mysql
               DB_PORT: 3306
               DB_DATABASE: &dbname mixpostdb
               DB_USERNAME: &dbuser mixpostusr
-              REDIS_HOST: dragonfly.database.svc.cluster.local
+              REDIS_HOST: dragonfly.database
               REDIS_PORT: 6379
               REDIS_PASSWORD: ""
             envFrom:
