@@ -33,7 +33,7 @@ spec:
         replicas: 1
         strategy: RollingUpdate
         initContainers:
-          - name: fix-permissions
+          fix-permissions:
             image: busybox
             command: ["sh", "-c", "chmod -R 777 /var/www/html/storage"]
             volumeMounts:
