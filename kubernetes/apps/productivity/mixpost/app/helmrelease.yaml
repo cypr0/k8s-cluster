@@ -30,7 +30,6 @@ spec:
         reloader.stakater.com/auto: "true"
       securityContext:
           runAsNonRoot: false
-          readOnlyRootFilesystem: false
           runAsUser: 0
           runAsGroup: 0
     controllers:
@@ -59,7 +58,7 @@ spec:
               readiness:
                 enabled: true
             dependsOn:
-              - name: mixpost-mysql
+              - mixpost-mysql
             env:
               WAIT_TIMEOUT: 360
               APP_NAME: Mixpost
