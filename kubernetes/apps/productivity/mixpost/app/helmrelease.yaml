@@ -1,0 +1,137 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mixpost
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      interval: 15m
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    defaultPodOptions:
+      annotations:
+        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        replicas: 1
+        strategy: RollingUpdate
+        containers:
+          mixpost:
+            image:
+              repository: inovector/mixpost
+              tag: v1.7.2
+            resources:
+              requests:
+                cpu: 100m
+                memory: 250Mi
+              limits:
+                memory: 4096Mi
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            env:
+              APP_NAME: Mixpost
+              APP_DEBUG: false
+              APP_DOMAIN: mixpost.${SECRET_DOMAIN}
+              APP_URL: https://mixpost.${SECRET_DOMAIN}
+              DB_HOST: mixpost-mysql.productivity.svc.cluster.local
+              DB_PORT: 3306
+              DB_DATABASE: &dbname mixpostdb
+              DB_USERNAME: &dbuser mixpostusr
+              REDIS_HOST: dragonfly.database.svc.cluster.local
+              REDIS_PORT: 6379
+              REDIS_PASSWORD: ""
+            envFrom:
+              - secretRef:
+                  name: mixpost-secret
+          mysql:
+            image:
+              repository: mysql/mysql-server
+              tag: 8.0
+              requests:
+                cpu: 100m
+                memory: 250Mi
+              limits:
+                memory: 4096Mi
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            env:
+              MYSQL_DATABASE: *dbname
+              MYSQL_USER: *dbuser
+            envFrom:
+              - secretRef:
+                  name: mixpost-secret
+    service:
+      mixpost:
+        controller: main
+        ports:
+          http:
+            port: 80
+      mysql:
+        controller: main
+        ports:
+          mysql:
+            port: 3306
+    ingress:
+      main:
+        enabled: true
+        className: internal
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "internal.${SECRET_DOMAIN}"
+        hosts:
+          - host: &host mixpost.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: mixpost
+                  port: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      storage:
+        type: persistentVolumeClaim
+        existingClaim: mixpost-data-pvc
+        advancedMounts:
+          main:
+            mixpost:
+              - path: /var/www/html/storage
+                subPath: storage
+                readOnly: false
+            mysql:
+              - path: /var/lib/mysql
+                subPath: mysql
+                readOnly: false
