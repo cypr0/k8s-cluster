@@ -41,12 +41,6 @@ spec:
             image:
               repository: inovector/mixpost
               tag: v1.7.2
-            resources:
-              requests:
-                cpu: 100m
-                memory: 128Mi
-              limits:
-                memory: 512Mi
             probes:
               startup:
                 enabled: true
@@ -63,7 +57,7 @@ spec:
                       - sh
                       - -c
                       - |
-                        curl -s mixpost-mysql:3306 >/dev/null
+                        curl -s mysql:3306 >/dev/null
                   initialDelaySeconds: 10
                   periodSeconds: 5
                   failureThreshold: 3
@@ -73,13 +67,12 @@ spec:
               APP_DEBUG: false
               APP_DOMAIN: mixpost.${SECRET_DOMAIN}
               APP_URL: https://mixpost.${SECRET_DOMAIN}
-              DB_HOST: mixpost-mysql
+              DB_HOST: "mysql.productivity.svc.cluster.local"
               DB_PORT: 3306
               DB_DATABASE: &dbname mixpostdb
               DB_USERNAME: &dbuser mixpostusr
-              REDIS_HOST: dragonfly.database
+              REDIS_HOST: "dragonfly.database.svc.cluster.local"
               REDIS_PORT: 6379
-              REDIS_PASSWORD: ""
             envFrom:
               - secretRef:
                   name: mixpost-secret
@@ -87,12 +80,6 @@ spec:
             image:
               repository: mysql/mysql-server
               tag: 8.0.32
-            resources:
-              requests:
-                cpu: 100m
-                memory: 128Mi
-              limits:
-                memory: 512Mi
             probes:
               startup:
                 enabled: true
@@ -126,6 +113,7 @@ spec:
         ports:
           mysql:
             port: 3306
+        name: mysql
     ingress:
       main:
         enabled: true
