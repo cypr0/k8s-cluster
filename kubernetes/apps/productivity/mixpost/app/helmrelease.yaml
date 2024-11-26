@@ -71,7 +71,7 @@ spec:
           mysql:
             image:
               repository: mysql/mysql-server
-              tag: 8.0
+              tag: 8.0.32
             resources:
               requests:
                 cpu: 100m
