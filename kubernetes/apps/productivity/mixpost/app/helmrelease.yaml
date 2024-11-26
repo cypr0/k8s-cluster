@@ -72,11 +72,12 @@ spec:
             image:
               repository: mysql/mysql-server
               tag: 8.0
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              memory: 512Mi
+            resources:
+              requests:
+                cpu: 100m
+                memory: 128Mi
+              limits:
+                memory: 512Mi
             probes:
               startup:
                 enabled: true
