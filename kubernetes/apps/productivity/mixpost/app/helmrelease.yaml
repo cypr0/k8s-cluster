@@ -59,6 +59,8 @@ spec:
                 enabled: true
               readiness:
                 enabled: true
+            dependsOn:
+              - name: mixpost-mysql
             env:
               WAIT_TIMEOUT: 360
               APP_NAME: Mixpost
