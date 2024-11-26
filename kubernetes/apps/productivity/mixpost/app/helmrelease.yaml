@@ -32,6 +32,13 @@ spec:
       main:
         replicas: 1
         strategy: RollingUpdate
+        initContainers:
+          - name: fix-permissions
+            image: busybox
+            command: ["sh", "-c", "chmod -R 777 /var/www/html/storage"]
+            volumeMounts:
+              - name: storage
+                mountPath: /var/www/html/storage
         containers:
           mixpost:
             image:
