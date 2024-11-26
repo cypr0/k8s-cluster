@@ -5,6 +5,5 @@ resources:
   - ./namespace.yaml
   - ./immich/ks.yaml
   - ./mastodon/ks.yaml
- # - ./mixpost/ks.yaml
   - ./nextcloud/ks.yaml
   - ./paperless/ks.yaml
