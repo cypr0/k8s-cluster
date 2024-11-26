@@ -57,8 +57,7 @@ spec:
                 enabled: true
               readiness:
                 enabled: true
-            dependsOn:
-              - mixpost-mysql
+
             env:
               WAIT_TIMEOUT: 360
               APP_NAME: Mixpost
@@ -95,6 +94,12 @@ spec:
                 enabled: true
               readiness:
                 enabled: true
+                spec:
+                  tcpSocket:
+                    port: 3306
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                  failureThreshold: 3
             env:
               MYSQL_DATABASE: *dbname
               MYSQL_USER: *dbuser
