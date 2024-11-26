@@ -29,7 +29,6 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
       securityContext:
-        container:
           runAsNonRoot: false
           readOnlyRootFilesystem: false
           runAsUser: 0
