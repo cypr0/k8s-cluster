@@ -79,6 +79,15 @@ spec:
               ES_HOST: mastodon-elasticsearch.productivity.svc.cluster.local
               ES_PORT: 9200
               LOCAL_DOMAIN: ${SECRET_DOMAIN}
+              OIDC_ENABLED: true
+              OIDC_DISPLAY_NAME: Authentik
+              OIDC_DISCOVERY: true
+              OIDC_ISSUER: https://id.${SECRET_DOMAIN}/application/o/mastodon/
+              OIDC_AUTH_ENDPOINT: https://id.${SECRET_DOMAIN}/application/o/authorize/
+              OIDC_SCOPE: openid,profile,email
+              OIDC_UID_FIELD: sub
+              OIDC_REDIRECT_URI: https://social.${SECRET_DOMAIN}/auth/auth/openid_connect/callback
+              OIDC_SECURITY_ASSUME_EMAIL_IS_VERIFIED: true
               PGID: 1000
               PUID: 1000
               RAILS_ENV: production
