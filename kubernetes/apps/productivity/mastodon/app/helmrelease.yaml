@@ -85,7 +85,7 @@ spec:
               OIDC_ISSUER: https://id.${SECRET_DOMAIN}/application/o/mastodon/
               OIDC_AUTH_ENDPOINT: https://id.${SECRET_DOMAIN}/application/o/authorize/
               OIDC_SCOPE: openid,profile,email
-              OIDC_UID_FIELD: preferred_username
+              OIDC_UID_FIELD: sub
               OIDC_REDIRECT_URI: https://social.${SECRET_DOMAIN}/auth/auth/openid_connect/callback
               OIDC_SECURITY_ASSUME_EMAIL_IS_VERIFIED: true
               PGID: 1000
