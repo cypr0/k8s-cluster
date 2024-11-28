@@ -91,6 +91,7 @@ spec:
               PGID: 1000
               PUID: 1000
               RAILS_ENV: production
+              RAILS_LOG_LEVEL: debug
               REDIS_HOST: dragonfly.database.svc.cluster.local
               REDIS_PORT: 6379
               S3_BUCKET: k8s-mastodon
