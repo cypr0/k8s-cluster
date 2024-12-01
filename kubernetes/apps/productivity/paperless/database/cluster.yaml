@@ -10,7 +10,7 @@ spec:
   instances: 1
   storage:
     size: 100Gi
-    storageClass: cnpg-paperless-nfs
+    storageClass: cexternal-nfs
   postgresql:
     parameters:
       max_connections: "200"
