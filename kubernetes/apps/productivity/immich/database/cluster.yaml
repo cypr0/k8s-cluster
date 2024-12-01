@@ -10,7 +10,7 @@ spec:
   instances: 1
   storage:
     size: 10Gi
-    storageClass: postgres-nfs
+    storageClass: external-nfs
   enableSuperuserAccess: true
   postgresql:
     shared_preload_libraries:
