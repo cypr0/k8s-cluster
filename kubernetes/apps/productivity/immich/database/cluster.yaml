@@ -10,7 +10,7 @@ spec:
   instances: 1
   storage:
     persistentVolumeClaim:
-      claimName: pcnpg-immich-nfs-pvc
+      claimName: cnpg-immich-nfs-pvc
   enableSuperuserAccess: true
   postgresql:
     shared_preload_libraries:
