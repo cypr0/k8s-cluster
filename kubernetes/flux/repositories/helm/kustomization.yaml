@@ -21,3 +21,4 @@ resources:
   - ./grafana.yaml
   - ./longhorn.yaml
   - ./minio.yaml
+  - ./nfs-provisioner.yaml
