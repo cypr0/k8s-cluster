@@ -4,6 +4,8 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: cnpg-immich-nfs
+  labels:
+    app: cnpg-immich-nfs
 spec:
   capacity:
     storage: 1Mi # Size does not matter
@@ -18,14 +20,3 @@ spec:
     - vers=4.2
     - nconnect=8
     - hard
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: cnpg-immich-nfs-pvc
-spec:
-  accessModes: ["ReadWriteMany"]
-  storageClassName: cnpg-immich-nfs
-  resources:
-    requests:
-      storage: 100Gi

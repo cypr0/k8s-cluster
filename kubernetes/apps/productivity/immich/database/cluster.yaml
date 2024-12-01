@@ -9,8 +9,17 @@ spec:
   imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16.4
   instances: 1
   storage:
-    persistentVolumeClaim:
-      claimName: cnpg-immich-nfs-pvc
+    size: 100Gi
+    pvcTemplate:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Gi
+      selector:
+        matchLabels:
+          app: cnpg-immich-nfs
+      volumeMode: Filesystem
   enableSuperuserAccess: true
   postgresql:
     shared_preload_libraries:
