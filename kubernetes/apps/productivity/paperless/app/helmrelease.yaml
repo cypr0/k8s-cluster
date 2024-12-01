@@ -44,6 +44,7 @@ spec:
               PAPERLESS_CONSUMPTION_DIR: /library/consume
               PAPERLESS_DATA_DIR: /library/data
               PAPERLESS_EXPORT_DIR: /library/export
+              PAPERLESS_LOGOUT_REDIRECT_URL: https://id.${SECRET_DOMAIN}/application/o/paperless-ngx/end-session/
               PAPERLESS_MEDIA_ROOT: /library/media
               PAPERLESS_OCR_LANGUAGE: deu+eng+spa
               PAPERLESS_PORT: &port 80
