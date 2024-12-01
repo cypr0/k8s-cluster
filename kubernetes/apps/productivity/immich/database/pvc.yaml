@@ -28,4 +28,4 @@ spec:
   storageClassName: cnpg-immich-nfs
   resources:
     requests:
-      storage: 1Mi
+      storage: 100Gi
