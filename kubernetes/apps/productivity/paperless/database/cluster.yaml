@@ -9,8 +9,8 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17.1
   instances: 1
   storage:
-    size: 50Gi
-    storageClass: longhorn-basic
+    size: 100Gi
+    storageClass: cnpg-paperless-nfs
   postgresql:
     parameters:
       max_connections: "200"

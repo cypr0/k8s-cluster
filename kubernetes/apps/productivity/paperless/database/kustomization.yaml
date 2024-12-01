@@ -5,4 +5,5 @@ namespace: productivity
 resources:
   - ./cluster.yaml
   - ./externalsecret.yaml
+  - ./pvc.yaml
   - ./scheduledbackup.yaml

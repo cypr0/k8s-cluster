@@ -9,8 +9,8 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16.4
   instances: 1
   storage:
-    size: 50Gi
-    storageClass: longhorn-basic
+    size: 100Gi
+    storageClass: cnpg-nextcloud-nfs
   postgresql:
     parameters:
       max_connections: "200"
