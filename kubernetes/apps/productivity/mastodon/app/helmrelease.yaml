@@ -96,7 +96,7 @@ spec:
               REDIS_PORT: 6379
               S3_BUCKET: k8s-mastodon
               S3_ENABLED: true
-              S3_ENDPOINT: s3.${SECRET_DOMAIN}
+              S3_ENDPOINT: https://s3.${SECRET_DOMAIN}
               S3_HOSTNAME: s3.${SECRET_DOMAIN}
               S3_PROTOCOL: https
               S3_REGION: eu-central-1
