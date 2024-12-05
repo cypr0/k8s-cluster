@@ -1,0 +1,36 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: coturn
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: coturn
+      version: 1.0.0
+      sourceRef:
+        kind: HelmRepository
+        name: jaconi
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  uninstall:
+    keepHistory: false
+  dependsOn:
+    - name: external-secrets
+      namespace: security
+  values:
+    realm: §{SECRET_DOMAIN}
+    replicaCount: 1
+    image:
+      repository: coturn/coturn
+      pullPolicy: IfNotPresent
+      tag: 4.6.2
