@@ -2,7 +2,7 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: coturn
+  name: nextcloud-coturn
 spec:
   interval: 30m
   chart:
@@ -34,3 +34,7 @@ spec:
       repository: coturn/coturn
       pullPolicy: IfNotPresent
       tag: 4.6.2
+    certificate:
+      enabled: true
+      dnsName: coturn.${SECRET_DOMAIN}
+      issuerName: letsencrypt-production
