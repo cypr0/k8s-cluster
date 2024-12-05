@@ -159,15 +159,6 @@ spec:
                 value: "redis"
               - name: REDIS_URL
                 value: "redis://dragonfly.database.svc.cluster.local:6379"
-          coturn:
-            image:
-              repository: coturn/coturn
-              tag: 4.6.2
-            env:
-              - name: DETECT_EXTERNAL_IP
-                value: "yes"
-              - name: DETECT_RELAY_IP
-                value: "yes"
         initContainers:
           init-chmod-pvc:
             image:
@@ -199,13 +190,6 @@ spec:
         ports:
           http:
             port: 3002
-      coturn:
-        controller: main
-        ports:
-          stun-listening:
-            port: 3478
-          stun-tls-listening:
-            port: 5349
     ingress:
       nextcloud:
         enabled: true
@@ -641,21 +625,6 @@ spec:
                     }
                 }
             }
-      coturn-config:
-        enabled: true
-        data:
-          turnserver.conf: |
-            verbose
-            fingerprint
-            lt-cred-mech
-            use-auth-secret
-            static-auth-secret=${COTURN_SECRET}
-            realm=coturn.${SECRET_DOMAIN}
-            keep-address-family
-            no-cli
-            no-tlsv1
-            no-tlsv1_1
-            no-multicast-peers
     persistence:
       data:
         type: persistentVolumeClaim
@@ -736,13 +705,4 @@ spec:
             nextcloud:
               - path: /usr/local/etc/php/conf.d/redis-session.ini
                 subPath: redis-session.ini
-                readOnly: true
-      coturn-config:
-        type: "configMap"
-        name: nextcloud-coturn-config
-        advancedMounts:
-          main:
-            nextcloud:
-              - path: /etc/coturn/turnserver.conf
-                subPath: turnserver.conf
                 readOnly: true
