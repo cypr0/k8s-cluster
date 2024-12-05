@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: coturn-tls
+  namespace: productivity
+spec:
+  secretName: coturn-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: ClusterIssuer
+  commonName: coturn.${SECRET_DOMAIN}
+  dnsNames:
+    - coturn.${SECRET_DOMAIN}
+  privateKey:
+    algorithm: ECDSA
+    size: 384

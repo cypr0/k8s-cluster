@@ -8,10 +8,10 @@ spec:
   chart:
     spec:
       chart: coturn
-      version: 1.0.0
+      version: 1.1.3
       sourceRef:
         kind: HelmRepository
-        name: jaconi
+        name: schichtel
         namespace: flux-system
   maxHistory: 2
   install:
@@ -28,13 +28,23 @@ spec:
     - name: external-secrets
       namespace: security
   values:
-    realm: §{SECRET_DOMAIN}
-    replicaCount: 1
-    image:
-      repository: coturn/coturn
-      pullPolicy: IfNotPresent
-      tag: 4.6.2
-    certificate:
+    coturn:
+      realm: coturn.${SECRET_DOMAIN}
+      tls:
+        secretName: coturn-tls
+      ports:
+        relay:
+          min: 49152
+          max: 65535
+      staticSecret:
+        secretName: coturn-secret
+        secretKey: COTURN_SECRET
+      logging:
+        verbose: true
+        logBinding: true
+      mobility: true
+    metrics:
       enabled: true
-      dnsName: coturn.${SECRET_DOMAIN}
-      issuerName: letsencrypt-production
+    service:
+      type: LoadBalancer
+      externalTrafficPolicy: Local
