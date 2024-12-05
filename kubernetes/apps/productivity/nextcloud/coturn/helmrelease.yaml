@@ -47,6 +47,6 @@ spec:
       enabled: true
     service:
       type: LoadBalancer
-      externalTrafficPolicy: Local
+      externalTrafficPolicy: Cluster
       annotations:
         external-dns.alpha.kubernetes.io/hostname: coturn.${SECRET_DOMAIN}
