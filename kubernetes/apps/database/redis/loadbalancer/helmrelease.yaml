@@ -70,7 +70,7 @@ spec:
             paths:
               - path: /
                 service:
-                  name: main
+                  name: haproxy
                   port: http
     configMaps:
       haproxy-config:
