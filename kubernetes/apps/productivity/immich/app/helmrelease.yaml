@@ -105,6 +105,9 @@ spec:
             envFrom:
               - configMapRef:
                   name: immich-immich-config
+          redis:
+            image:
+              repository:
     service:
       immich-server:
         controller: main
