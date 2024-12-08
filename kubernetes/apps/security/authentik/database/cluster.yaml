@@ -5,7 +5,7 @@ metadata:
   name: cnpg-authentik
 spec:
   description: Postgresql cluster for Authentik
-  # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql registryUrl=ghcr.io
+  # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql repository=ghcr.io
   imageName: ghcr.io/cloudnative-pg/postgresql:17.1
   instances: 3
   storage:
