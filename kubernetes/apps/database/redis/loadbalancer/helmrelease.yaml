@@ -46,7 +46,6 @@ spec:
       haproxy:
         controller: main
         type: LoadBalancer
-        externalIPs: ["192.168.10.6"]
         ipFamilyPolicy: SingleStack
         ports:
           http:
