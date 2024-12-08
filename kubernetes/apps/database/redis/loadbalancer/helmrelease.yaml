@@ -132,7 +132,7 @@ spec:
                 bind :6379
                 default_backend redis-primary
 
-            frontend redis-sentinel
+            frontend redis-sentinel-front
                 bind :26379
                 default_backend redis-sentinel
 
@@ -158,7 +158,7 @@ spec:
                 server redis-1 redis-node-1.redis-headless.database.svc.cluster.local check inter 5s resolvers cluster_ns
                 server redis-2 redis-node-2.redis-headless.database.svc.cluster.local check inter 5s resolvers cluster_ns
 
-            backend redis-sentinel
+            backend redis-sentinel-back
                 mode tcp
                 balance roundrobin
                 option tcp-check
