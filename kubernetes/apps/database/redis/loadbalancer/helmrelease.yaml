@@ -134,7 +134,7 @@ spec:
 
             frontend redis-sentinel-front
                 bind :26379
-                default_backend redis-sentinel
+                default_backend redis-sentinel-back
 
             backend redis-primary
                 mode tcp
