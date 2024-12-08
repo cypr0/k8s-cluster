@@ -163,7 +163,7 @@ spec:
           init-chmod-pvc:
             image:
               repository: docker.io/library/alpine
-              tag: 3.20.3
+              tag: 3.21.0
             command: ["/bin/sh"]
             args: ["-c", "mkdir -p /var/www/html/config && chmod 0770 /var/www/html/config && chown 222:220 /var/www/html/config"]
             securityContext:
