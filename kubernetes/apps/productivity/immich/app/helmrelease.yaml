@@ -143,10 +143,9 @@ spec:
           TZ: ${TIMEZONE}
           IMMICH_MEDIA_LOCATION: &mediaLocation /usr/src/app/upload
           IMMICH_ENV: production
-          REDIS_HOSTNAME: "dragonfly.database.svc.cluster.local"
+          REDIS_HOSTNAME: "redis.database.svc.cluster.local"
           REDIS_PORT: "6379"
-          REDIS_PASSWORD: ""
-          REDIS_DBINDEX: "10"
+          REDIS_DBINDEX: "4"
           DB_HOSTNAME: "cnpg-immich-rw.productivity.svc.cluster.local"
           DB_PORT: "5432"
           DB_DATABASE_NAME: "immichdb"
