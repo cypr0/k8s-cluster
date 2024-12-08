@@ -92,7 +92,7 @@ spec:
               PUID: 1000
               RAILS_ENV: production
               RAILS_LOG_LEVEL: info
-              REDIS_HOST: dragonfly.database.svc.cluster.local
+              REDIS_HOST: redis-lb.database.svc.cluster.local
               REDIS_PORT: 6379
               S3_BUCKET: k8s-mastodon
               S3_ENABLED: true
