@@ -22,4 +22,3 @@ resources:
   - ./longhorn.yaml
   - ./minio.yaml
   - ./nfs-provisioner.yaml
-  - ./schichtel.yaml
