@@ -179,7 +179,7 @@ spec:
             subPath: haproxy.cfg
             readOnly: true
     serviceMonitor:
-      main:
+      haproxy:
         enabled: true
         endpoints:
           - port: http
