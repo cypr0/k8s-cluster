@@ -71,7 +71,7 @@ spec:
               - path: /
                 service:
                   name: haproxy
-                  port: http
+                  port: 8080
     configMaps:
       haproxy-config:
         enabled: true
@@ -181,6 +181,7 @@ spec:
     serviceMonitor:
       haproxy:
         enabled: true
+        serviceName: redis-lb
         endpoints:
           - port: http
             scheme: http
