@@ -55,11 +55,6 @@ spec:
             secretKeyRef:
               name: mastodon-secret
               key: MASTODON_ADMIN_USER
-        - name: MASTODON_ADMIN_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: mastodon-secret
-              key: MASTODON_ADMIN_PASSWORD
         - name: DB_PASS
           valueFrom:
             secretKeyRef:
@@ -161,11 +156,6 @@ spec:
                 secretKeyRef:
                   name: mastodon-secret
                   key: MASTODON_ADMIN_USER
-            - name: MASTODON_ADMIN_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mastodon-secret
-                  key: MASTODON_ADMIN_PASSWORD
             - name: DB_PASS
               valueFrom:
                 secretKeyRef:
