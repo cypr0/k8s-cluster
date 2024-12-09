@@ -93,12 +93,12 @@ Additionally, the cluster heavily relies on the excellent [Helm Charts](https://
 Special thanks to **onedr0p** and **bjw-s** for sharing these fantastic resources, which significantly enhanced the quality and efficiency of this cluster's setup!
 
 
-📄 License
+## 📄 License
 
 This repository is licensed under the MIT License.
 
 
-🤝 Contributions
+## 🤝 Contributions
 
 Contributions are welcome! Feel free to fork the repository and submit a pull request with your improvements or ideas.
 
