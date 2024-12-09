@@ -71,7 +71,7 @@ The cluster is built on high-performance virtual root servers provided by [Netcu
     - **Storage**: 512 GB SSD
   - All servers run **Talos OS**, optimized for containerized workloads.
 - **Firewall**:
-  - A dedicated OPNsense firewall deployed on a separate virtual server, also hosted at Netcup.
+  - A dedicated **OPNsense** firewall deployed on a separate virtual server, also hosted at Netcup.
   - The firewall handles connections to local home networks and provides secure ingress/egress traffic control.
 - **NFS Server**:
   - A separate virtual server at Netcup is used to provide NFS storage, enabling robust persistence for cluster applications.
