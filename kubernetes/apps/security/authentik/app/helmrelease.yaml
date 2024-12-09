@@ -50,7 +50,7 @@ spec:
         enable: false
         send_pii: false
       redis:
-        host: dragonfly.database.svc.cluster.local
+        host: redis-lb.database.svc.cluster.local
     server:
       autoscaling:
         enabled: true
