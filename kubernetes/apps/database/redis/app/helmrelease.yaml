@@ -47,7 +47,7 @@ spec:
           cpu: 30m
           memory: 200Mi
         limits:
-          cpu: 100m
+          cpu: 500m
           memory: 512Mi
     metrics:
       enabled: true
