@@ -6,6 +6,7 @@ This repository contains the full Infrastructure-as-Code (IaC) setup for my pers
 
 The repository is organized as follows:
 
+```
 .
 ├── .devcontainer/         # Development container configuration
 ├── .github/               # GitHub workflows for CI/CD
@@ -17,6 +18,7 @@ The repository is organized as follows:
 │   ├── bootstrap/         # Initial Flux and Talos deployment
 │   └── flux/              # GitOps Flux configuration and repositories
 └── scripts/               # Utility scripts
+```
 
 ## ✨ Features
 
