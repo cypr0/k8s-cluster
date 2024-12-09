@@ -20,6 +20,7 @@ The repository is organized as follows:
 └── scripts/               # Utility scripts
 ```
 
+
 ## ✨ Features
 
 - **GitOps with Flux**: Automated deployment and management of cluster resources via Flux.
@@ -35,6 +36,7 @@ The repository is organized as follows:
   - [NFS Subdir External Provisioner](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner): Lightweight NFS-based storage provisioner.
   - [OpenEBS](https://openebs.io): Cloud-native storage for containers.
 
+
 ## 📦 Applications
 
 The cluster hosts the following applications:
@@ -46,6 +48,7 @@ The cluster hosts the following applications:
 
 All these applications are deployed using the **[bjw-s AppTemplate](https://bjw-s.github.io/helm-charts)**, which provides a flexible and modular approach to application management. This ensures that each application is tailored to meet my personal requirements.
 
+
 ## 🔒 Security
 
 - **Namespace `Security`**: A dedicated namespace for managing security-related services.
@@ -56,22 +59,25 @@ All these applications are deployed using the **[bjw-s AppTemplate](https://bjw-
 - **ECDSA Certificates**: Preferred for stronger cryptography and improved performance.
 - **Secrets Encryption**: Managed using `sops` to ensure secure storage and transmission of sensitive information.
 
-## 🖧 Cluster Infrastructure
 
-The Kubernetes cluster is hosted on a robust infrastructure provided by Netcup:
+## 🏗️ Cluster Infrastructure
 
-- **Nodes**: Three virtual root servers (RS 2000 G11) from Netcup, each equipped with:
-  - **CPU**: 8 cores
-  - **RAM**: 16 GB
-  - **Storage**: 512 GB SSD
-- **Firewall**: An OPNsense firewall is deployed on an additional virtual server at Netcup to:
-  - Protect the cluster.
-  - Facilitate connections to local home networks.
-- **NFS Storage**: Another dedicated virtual server at Netcup provides NFS storage for the cluster.
+The cluster is built on high-performance virtual root servers provided by [Netcup](https://www.netcup.com/de/?ref=97728). Below are the details of the infrastructure:
 
-For more details about Netcup, check their [website](https://www.netcup.com/de/?ref=97728).
+- **Cluster Nodes**:
+  - Three virtual root servers (RS 2000 G11) with the following specifications:
+    - **CPU**: 8 cores
+    - **Memory**: 16 GB RAM
+    - **Storage**: 512 GB SSD
+  - All servers run **Tacos OS**, optimized for containerized workloads.
+- **Firewall**:
+  - A dedicated OPNsense firewall deployed on a separate virtual server, also hosted at Netcup.
+  - The firewall handles connections to local home networks and provides secure ingress/egress traffic control.
+- **NFS Server**:
+  - A separate virtual server at Netcup is used to provide NFS storage, enabling robust persistence for cluster applications.
 
 [![Netcup](https://www.netcup.com/uploads/netcup_hlogo_2019_b110h50_32d03f6da4.png)](https://www.netcup.com/de/?ref=97728)
+
 
 ## 🌟 Acknowledgments
 
@@ -86,9 +92,11 @@ Additionally, the cluster heavily relies on the excellent [Helm Charts](https://
 
 Special thanks to **onedr0p** and **bjw-s** for sharing these fantastic resources, which significantly enhanced the quality and efficiency of this cluster's setup!
 
+
 📄 License
 
 This repository is licensed under the MIT License.
+
 
 🤝 Contributions
 
