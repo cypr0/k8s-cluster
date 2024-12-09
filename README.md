@@ -69,7 +69,7 @@ The cluster is built on high-performance virtual root servers provided by [Netcu
     - **CPU**: 8 cores
     - **Memory**: 16 GB RAM
     - **Storage**: 512 GB SSD
-  - All servers run **Tacos OS**, optimized for containerized workloads.
+  - All servers run **Talos OS**, optimized for containerized workloads.
 - **Firewall**:
   - A dedicated OPNsense firewall deployed on a separate virtual server, also hosted at Netcup.
   - The firewall handles connections to local home networks and provides secure ingress/egress traffic control.
