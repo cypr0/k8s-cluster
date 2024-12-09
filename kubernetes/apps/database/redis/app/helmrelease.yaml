@@ -44,11 +44,11 @@ spec:
         enabled: false
       resources:
         requests:
-          cpu: 15m
-          memory: 100Mi
-        limits:
-          cpu: 50m
+          cpu: 30m
           memory: 200Mi
+        limits:
+          cpu: 100m
+          memory: 512Mi
     metrics:
       enabled: true
       serviceMonitor:
