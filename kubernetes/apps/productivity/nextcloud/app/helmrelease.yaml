@@ -461,6 +461,12 @@ spec:
                     # Remove X-Powered-By, which is an information leak
                     fastcgi_hide_header X-Powered-By;
 
+                    # OIDC-related headers
+                    proxy_set_header X-Forwarded-Host $host;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header Host $host;
+
                     # Add .mjs as a file extension for javascript
                     # Either include it in the default mime.types list
                     # or include you can include that list explicitly and add the file extension
@@ -468,6 +474,11 @@ spec:
                     include mime.types;
                     types {
                         text/javascript  js mjs;
+                    }
+
+                    # Make /.well-known/openid-configuration redirect to Authentik
+                    location = /.well-known/openid-configuration {
+                        proxy_pass https://id.${SECRET_DOMAIN};
                     }
 
                     # Specify how to handle directories -- specifying `/index.php$request_uri`
