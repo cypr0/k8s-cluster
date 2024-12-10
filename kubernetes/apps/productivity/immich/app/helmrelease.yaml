@@ -224,7 +224,7 @@ spec:
               },
               "machineLearning": {
                 "enabled": true,
-                "url": ["http://immich-immich-machine-learning.productivity.svc.cluster.local:3003"],
+                "urls": ["http://immich-immich-machine-learning.productivity.svc.cluster.local:3003"],
                 "clip": {
                   "enabled": true,
                   "modelName": "ViT-B-32__openai"
