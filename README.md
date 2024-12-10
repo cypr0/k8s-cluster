@@ -23,13 +23,13 @@ The repository is organized as follows:
 
 ## ✨ Features
 
-- **GitOps with Flux**: Automated deployment and management of cluster resources via Flux.
+- **GitOps with Flux**: Automated deployment and management of cluster resources via [Flux](https://fluxcd.io/).
 - **Scalability**: Designed for both small home-lab clusters and large-scale production setups.
-- **Customizable App Deployments**: Applications are primarily managed using the [bjw-s AppTemplate](https://bjw-s.github.io/helm-charts), allowing tailored configurations for specific needs.
-- **Secrets Management**: Integration with `sops` for secure secret management.
+- **Customizable App Deployments**: Applications are primarily managed using the [bjw-s App Template](https://bjw-s.github.io/helm-charts/docs/app-template/), allowing tailored configurations for specific needs.
+- **Secrets Management**: Integration with `sops` and `age` for secure secret management.
 - **CNI and Networking**: Uses [Cilium](https://cilium.io/) for advanced networking and security.
-- **Ingress Management**: Includes ingress-nginx for internal and external access to applications.
-- **Monitoring and Observability**: Pre-configured monitoring stack (Prometheus, Grafana).
+- **Ingress Management**: Includes [ingress-nginx](https://www.f5.com/products/nginx/nginx-ingress-controller) for internal and external access to applications.
+- **Monitoring and Observability**: Pre-configured monitoring stack ([Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/)).
 - **Storage**:
   - [Longhorn](https://longhorn.io): Distributed block storage for Kubernetes.
   - [MinIO](https://min.io): S3-compatible object storage.
@@ -41,23 +41,23 @@ The repository is organized as follows:
 
 The cluster hosts the following applications:
 
-- **Immich**: Photo and video backup service with AI-based search capabilities.
-- **Mastodon**: A decentralized social network instance.
-- **Nextcloud**: A self-hosted productivity platform.
-- **Paperless-ngx**: Document management system for organizing and digitizing your paperwork.
+- **[Immich](https://immich.app/)**: Photo and video backup service with AI-based search capabilities.
+- **[Mastodon](https://joinmastodon.org/)**: A decentralized social network instance.
+- **[Nextcloud](https://nextcloud.com/)**: A self-hosted productivity platform.
+- **[Paperless-ngx](https://docs.paperless-ngx.com/)**: Document management system for organizing and digitizing your paperwork.
 
-All these applications are deployed using the **[bjw-s AppTemplate](https://bjw-s.github.io/helm-charts)**, which provides a flexible and modular approach to application management. This ensures that each application is tailored to meet my personal requirements.
+All these applications are deployed using the **[bjw-s App Template](https://bjw-s.github.io/helm-charts/docs/app-template/)**, which provides a flexible and modular approach to application management. This ensures that each application is tailored to meet my personal requirements.
 
 
 ## 🔒 Security
 
 - **Namespace `Security`**: A dedicated namespace for managing security-related services.
-  - **Identity Provider**: Authentik is deployed to provide centralized authentication and SSO capabilities.
-  - **Secrets Management**: external-secrets integrates with 1Password for secure, automated secrets management.
+  - **Identity Provider**: [Authentik](https://goauthentik.io/) is deployed to provide centralized authentication and SSO capabilities.
+  - **Secrets Management**: [external-secrets](https://external-secrets.io/latest/) integrates with [1Password](https://1password.com/) for secure, automated secrets management.
 - **TLS Everywhere**: All applications are configured to use TLS, managed by `cert-manager` with Let's Encrypt, ensuring end-to-end encryption.
-- **BSI Compliance**: TLS certificates are configured to meet the BSI's Technical Guideline TR-02102-2 standards.
+- **BSI Compliance**: TLS certificates are configured to meet the BSI's Technical Guideline [TR-02102-2](https://www.bsi.bund.de/DE/Themen/Unternehmen-und-Organisationen/Standards-und-Zertifizierung/Technische-Richtlinien/TR-nach-Thema-sortiert/tr02102/tr-02102.html) standards.
 - **ECDSA Certificates**: Preferred for stronger cryptography and improved performance.
-- **Secrets Encryption**: Managed using `sops` to ensure secure storage and transmission of sensitive information.
+- **Secrets Encryption**: Managed using `sops` and `age` to ensure secure storage and transmission of sensitive information.
 
 
 ## 🏗️ Cluster Infrastructure
@@ -69,9 +69,9 @@ The cluster is built on high-performance virtual root servers provided by [Netcu
     - **CPU**: 8 cores
     - **Memory**: 16 GB RAM
     - **Storage**: 512 GB SSD
-  - All servers run **Talos OS**, optimized for containerized workloads.
+  - All servers run **[Talos OS](https://www.talos.dev/)**, optimized for containerized workloads.
 - **Firewall**:
-  - A dedicated **OPNsense** firewall deployed on a separate virtual server, also hosted at Netcup.
+  - A dedicated **[OPNsense](https://opnsense.org/)** firewall deployed on a separate virtual server, also hosted at Netcup.
   - The firewall handles connections to local home networks and provides secure ingress/egress traffic control.
 - **NFS Server**:
   - A separate virtual server at Netcup is used to provide NFS storage, enabling robust persistence for cluster applications.
