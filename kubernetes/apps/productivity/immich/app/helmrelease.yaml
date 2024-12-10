@@ -347,7 +347,7 @@ spec:
         name: immich-immich-json
         advancedMounts:
           main:
-            nginx:
+            immich-server:
               - path: *configLocation
                 subPath: immich.json
                 readOnly: true
