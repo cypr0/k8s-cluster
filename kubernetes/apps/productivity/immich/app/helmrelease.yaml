@@ -108,6 +108,7 @@ spec:
               - configMapRef:
                   name: immich-immich-config
           redis:
+            # Doesn't work with dragonfly: https://github.com/immich-app/immich/issues/2542
             image:
               repository: public.ecr.aws/docker/library/redis
               tag: 7.4.1
