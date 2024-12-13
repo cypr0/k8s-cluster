@@ -384,4 +384,4 @@ spec:
         advancedMounts:
           main:
             redis:
-              - path: /opt/bitnami
+              - path: /opt/bitnami/redis
