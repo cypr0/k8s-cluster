@@ -104,6 +104,10 @@ spec:
             --mapping-quota="quota" \
             --group-provisioning="1" \
             --mapping-groups="groups";
+          echo "Successfully configured user_oidc provider.";
+          echo "Making the OIDC provider the default login method...";
+          php /var/www/html/occ config:app:set --value=0 user_oidc allow_multiple_user_backends;
+          echo "Completely finished user_oidc configuration.";
         volumeMounts:
         - name: app-config
           mountPath: /var/www/html
