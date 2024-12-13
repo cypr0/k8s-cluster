@@ -36,6 +36,8 @@ spec:
       main:
         replicas: 1
         strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
         containers:
           immich-server:
             image:
@@ -107,14 +109,14 @@ spec:
                   name: immich-immich-config
           redis:
             image:
-              repository: bitnami/redis
+              repository: public.ecr.aws/docker/library/redis
               tag: 7.4.1
             resources:
               requests:
                 cpu: 15m
-                memory: 250Mi
+                memory: 10Mi
               limits:
-                memory: 1024Mi
+                memory: 512Mi
             probes:
               startup:
                 enabled: true
@@ -126,7 +128,7 @@ spec:
               readiness:
                 enabled: true
             env:
-              ALLOW_EMPTY_PASSWORD: yes
+              REDIS_REPLICATION_MODE: master
     service:
       immich-server:
         controller: main
@@ -378,11 +380,3 @@ spec:
               - path: *configLocation
                 subPath: immich.json
                 readOnly: true
-      redis:
-        enabled: true
-        type: emptyDir
-        advancedMounts:
-          main:
-            redis:
-              - path: /opt/bitnami/redis
-                readOnly: false
