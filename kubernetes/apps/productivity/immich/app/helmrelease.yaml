@@ -385,3 +385,4 @@ spec:
           main:
             redis:
               - path: /opt/bitnami/redis
+                readOnly: false
