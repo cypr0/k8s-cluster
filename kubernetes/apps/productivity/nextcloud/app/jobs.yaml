@@ -65,6 +65,62 @@ spec:
           claimName: nextcloud-app-pvc
 ---
 apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-user-oidc-job
+spec:
+  template:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      securityContext:
+        runAsUser: 222
+        runAsGroup: 220
+        fsGroup: 220
+      containers:
+      - name: nextcloud-user-oidc-job
+        image: docker.io/library/nextcloud:30.0.4-fpm-alpine
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          until php /var/www/html/occ status --output json | grep -q '"installed":true'; do
+            echo "Waiting for Nextcloud installation...";
+            sleep 10;
+          done;
+          until php /var/www/html/occ app:list | grep -q 'user_oidc'; do
+            echo "Waiting for user_oidc app to be installed...";
+            sleep 10;
+          done;
+          echo "Configuring user_oidc provider...";
+          php /var/www/html/occ user_oidc:provider Authentik \
+            --clientid="${NEXTCLOUD_OPENID_CLIENT_ID}" \
+            --clientsecret="${NEXTCLOUD_OPENID_CLIENT_SECRET}" \
+            --discoveryuri="https://id.${SECRET_DOMAIN}/application/o/nextcloud/.well-known/openid-configuration" \
+            --endsessionendpointuri="https://id.${SECRET_DOMAIN}/application/o/nextcloud/end-session/" \
+            --scope="email profile" \
+            --unique-uid="0" \
+            --mapping-uid="user_id" \
+            --mapping-display-name="name" \
+            --mapping-email="email" \
+            --mapping-quota="quota" \
+            --group-provisioning="1" \
+            --mapping-groups="groups";
+        volumeMounts:
+        - name: app-config
+          mountPath: /var/www/html
+          subPath: config
+        - name: data
+          mountPath: /data
+          subPath: data
+      restartPolicy: OnFailure
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: nextcloud-data-pvc
+      - name: app-config
+        persistentVolumeClaim:
+          claimName: nextcloud-app-pvc
+---
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: nextcloud-cronjob
