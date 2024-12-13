@@ -47,7 +47,7 @@ spec:
         - name: RAILS_ENV
           value: production
         - name: REDIS_HOST
-          value: redis-lb.database.svc.cluster.local
+          value: dragonfly.database.svc.cluster.local
         - name: REDIS_PORT
           value: "6379"
         - name: MASTODON_ADMIN_USER
@@ -148,7 +148,7 @@ spec:
             - name: RAILS_ENV
               value: production
             - name: REDIS_HOST
-              value: redis-lb.database.svc.cluster.local
+              value: dragonfly.database.svc.cluster.local
             - name: REDIS_PORT
               value: "6379"
             - name: MASTODON_ADMIN_USER
