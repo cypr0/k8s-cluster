@@ -14,11 +14,17 @@ spec:
         resourceFieldRef:
           resource: limits.memory
           divisor: 1Mi
+    - name: DRAGONFLY_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: dragonfly-secret
+          key: DRAGONFLY_PASSWORD
   args:
     - --maxmemory=$(MAX_MEMORY)Mi
     - --proactor_threads=2
     - --cluster_mode=emulated
     - --lock_on_hashtags
+    - --requirepass=$(DRAGONFLY_PASSWORD)
   resources:
     requests:
       cpu: 100m

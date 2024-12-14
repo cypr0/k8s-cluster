@@ -105,6 +105,11 @@ spec:
             secretKeyRef:
               name: mastodon-secret
               key: AWS_SECRET_ACCESS_KEY
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: REDIS_PASSWORD
         volumeMounts:
         - name: config
           mountPath: /config
@@ -206,6 +211,11 @@ spec:
                 secretKeyRef:
                   name: mastodon-secret
                   key: AWS_SECRET_ACCESS_KEY
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: REDIS_PASSWORD
             volumeMounts:
             - name: config
               mountPath: /config
