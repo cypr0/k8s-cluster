@@ -110,14 +110,14 @@ spec:
           redis:
             # Doesn't work with dragonfly: https://github.com/immich-app/immich/issues/2542
             image:
-              repository: public.ecr.aws/docker/library/redis
-              tag: 7.4.1
-            resources:
-              requests:
-                cpu: 15m
-                memory: 10Mi
-              limits:
-                memory: 512Mi
+              repository: redis
+              tag: 7.4.1-alpine
+            command:
+              - sh
+            args:
+              - -c
+              - >-
+                redis-server --requirepass $REDIS_PASSWORD
             probes:
               startup:
                 enabled: true
@@ -126,10 +126,45 @@ spec:
                   periodSeconds: 5
               liveness:
                 enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - /health/ping_liveness.sh 5
+                  initialDelaySeconds: 5
+                  timeoutSeconds: 6
+                  periodSeconds: 5
+                  successThreshold: 1
+                  failureThreshold: 5
               readiness:
                 enabled: true
+                custom: true
+                spec:
+                  exec:
+                    command:
+                      - sh
+                      - -c
+                      - /health/ping_readiness.sh 1
+                  initialDelaySeconds: 5
+                  timeoutSeconds: 2
+                  periodSeconds: 5
+                  successThreshold: 1
+                  failureThreshold: 5
+            resources:
+              requests:
+                cpu: 34m
+                memory: 204Mi
+              limits:
+                memory: 241Mi
             env:
-              REDIS_REPLICATION_MODE: master
+              REDIS_PORT: "6379"
+              REDIS_PASSWORD:
+                valueFrom:
+                  secretKeyRef:
+                    name: immich-secret
+                    key: IMMICH_REDIS_PASSWORD
     service:
       immich-server:
         controller: main
@@ -363,6 +398,37 @@ spec:
                 "deleteDelay": 7
               }
             }
+      redis-healthcheck:
+        enabled: true
+        data:
+          ping_readiness.sh: |-
+            #!/bin/sh
+            export REDISCLI_AUTH="$REDIS_PASSWORD"
+            response=$(
+              timeout -s 3 $1 \
+              redis-cli \
+                -h localhost \
+                -p $REDIS_PORT \
+                ping
+            )
+            if [ "$response" != "PONG" ]; then
+              echo "$response"
+              exit 1
+            fi
+          ping_liveness.sh: |-
+            #!/bin/sh
+            export REDISCLI_AUTH="$REDIS_PASSWORD"
+            response=$(
+              timeout -s 3 $1 \
+              redis-cli \
+                -h localhost \
+                -p $REDIS_PORT \
+                ping
+            )
+            if [ "$response" != "PONG" ] && [ "$response" != "LOADING Redis is loading the dataset in memory" ]; then
+              echo "$response"
+              exit 1
+            fi
     persistence:
       data:
         enabled: true
@@ -373,7 +439,7 @@ spec:
         enabled: true
         type: emptyDir
       immich-json:
-        type: "configMap"
+        type: configMap
         name: immich-immich-json
         advancedMounts:
           main:
@@ -381,11 +447,21 @@ spec:
               - path: *configLocation
                 subPath: immich.json
                 readOnly: true
-      redis:
+      redis-data:
         enabled: true
-        type: emptyDir
+        existingClaim: immich-redis-data
         advancedMounts:
           main:
             redis:
               - path: /data
+                subPath: data
                 readOnly: false
+      healthcheck:
+        enabled: true
+        type: configMap
+        name: immich-redis-healthcheck
+        defaultMode: 0755
+        advancedMounts:
+          main:
+            redis:
+              - path: /health

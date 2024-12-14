@@ -28,3 +28,14 @@ spec:
   resources:
     requests:
       storage: 1Mi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: immich-redis-data
+spec:
+  accessModes: ["ReadWriteMany"]
+  storageClassName: longhorn-basic
+  resources:
+    requests:
+      storage: 2Gi
