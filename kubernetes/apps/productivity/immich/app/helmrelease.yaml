@@ -381,3 +381,11 @@ spec:
               - path: *configLocation
                 subPath: immich.json
                 readOnly: true
+      redis:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          main:
+            redis:
+              - path: /data
+                readOnly: false
