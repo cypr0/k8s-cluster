@@ -1,0 +1,207 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-post-install-job
+spec:
+  template:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      securityContext:
+        runAsUser: 222
+        runAsGroup: 220
+        fsGroup: 220
+      containers:
+      - name: nextcloud-post-install-job
+        image: docker.io/library/nextcloud:30.0.4-fpm-alpine
+        command: ["/bin/sh", "-c"]
+        args: ["until php /var/www/html/occ status --output json | grep -q '\"installed\":true'; do sleep 10; done && php /var/www/html/occ upgrade && php /var/www/html/occ db:add-missing-indices && php /var/www/html/occ db:add-missing-columns && php /var/www/html/occ db:add-missing-primary-keys && php /var/www/html/occ db:convert-filecache-bigint && php /var/www/html/occ maintenance:repair --include-expensive"]
+        volumeMounts:
+        - name: app-config
+          mountPath: /var/www/html
+          subPath: config
+        - name: data
+          mountPath: /data
+          subPath: data
+      restartPolicy: OnFailure
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: nextcloud-data-pvc
+      - name: app-config
+        persistentVolumeClaim:
+          claimName: nextcloud-app-pvc
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-add-apps-job
+spec:
+  template:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      securityContext:
+        runAsUser: 222
+        runAsGroup: 220
+        fsGroup: 220
+      containers:
+      - name: nextcloud-add-apps-job
+        image: docker.io/library/nextcloud:30.0.4-fpm-alpine
+        command: ["/bin/sh", "-c"]
+        args: ["until php /var/www/html/occ status --output json | grep -q '\"installed\":true'; do sleep 10; done && php /var/www/html/occ app:disable firstrunwizard && php /var/www/html/occ app:disable support && php /var/www/html/occ app:enable admin_audit && php /var/www/html/occ app:enable files_pdfviewer && php /var/www/html/occ app:enable groupfolders && php /var/www/html/occ app:install richdocuments && php /var/www/html/occ app:install files_antivirus && php /var/www/html/occ app:install whiteboard && php /var/www/html/occ app:install deck && php /var/www/html/occ app:install tables && php /var/www/html/occ app:install forms && php /var/www/html/occ app:install quota_warning && php /var/www/html/occ app:install user_oidc"]
+        volumeMounts:
+        - name: app-config
+          mountPath: /var/www/html
+          subPath: config
+        - name: data
+          mountPath: /data
+          subPath: data
+      restartPolicy: OnFailure
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: nextcloud-data-pvc
+      - name: app-config
+        persistentVolumeClaim:
+          claimName: nextcloud-app-pvc
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-user-oidc-job
+spec:
+  template:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      securityContext:
+        runAsUser: 222
+        runAsGroup: 220
+        fsGroup: 220
+      containers:
+      - name: nextcloud-user-oidc-job
+        image: docker.io/library/nextcloud:30.0.4-fpm-alpine
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          until php /var/www/html/occ status --output json | grep -q '"installed":true'; do
+            echo "Waiting for Nextcloud installation...";
+            sleep 10;
+          done;
+          until php /var/www/html/occ app:list | grep -q 'user_oidc'; do
+            echo "Waiting for user_oidc app to be installed...";
+            sleep 10;
+          done;
+          echo "Configuring user_oidc provider...";
+          php /var/www/html/occ user_oidc:provider Authentik \
+            --clientid="${NEXTCLOUD_OPENID_CLIENT_ID}" \
+            --clientsecret="${NEXTCLOUD_OPENID_CLIENT_SECRET}" \
+            --discoveryuri="https://id.${SECRET_DOMAIN}/application/o/nextcloud/.well-known/openid-configuration" \
+            --endsessionendpointuri="https://id.${SECRET_DOMAIN}/application/o/nextcloud/end-session/" \
+            --scope="email profile" \
+            --unique-uid="0" \
+            --mapping-uid="user_id" \
+            --mapping-display-name="name" \
+            --mapping-email="email" \
+            --mapping-quota="quota" \
+            --group-provisioning="1" \
+            --mapping-groups="groups";
+          echo "Successfully configured user_oidc provider.";
+          echo "Making the OIDC provider the default login method...";
+          php /var/www/html/occ config:app:set --value=0 user_oidc allow_multiple_user_backends;
+          echo "Completely finished user_oidc configuration.";
+        volumeMounts:
+        - name: app-config
+          mountPath: /var/www/html
+          subPath: config
+        - name: data
+          mountPath: /data
+          subPath: data
+      restartPolicy: OnFailure
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: nextcloud-data-pvc
+      - name: app-config
+        persistentVolumeClaim:
+          claimName: nextcloud-app-pvc
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nextcloud-cronjob
+spec:
+  schedule: "*/5 * * * *" # Every 5 minutes
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 60
+      template:
+        spec:
+          securityContext:
+            runAsUser: 222
+            runAsGroup: 220
+            fsGroup: 220
+          containers:
+            - name: nextcloud-cron
+              image: docker.io/library/nextcloud:30.0.4-fpm-alpine
+              command:
+                - sh
+                - -c
+                - |
+                  if [ -f /var/www/html/cron.php ]; then
+                    php -f /var/www/html/cron.php;
+                  else
+                    echo "cron.php not found, skipping execution";
+                  fi
+              volumeMounts:
+                - name: app-config
+                  mountPath: /var/www/html
+                  subPath: config
+                - name: data
+                  mountPath: /data
+                  subPath: data
+          restartPolicy: OnFailure
+          volumes:
+            - name: app-config
+              persistentVolumeClaim:
+                claimName: nextcloud-app-pvc
+            - name: data
+              persistentVolumeClaim:
+                claimName: nextcloud-data-pvc
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nextcloud-add-missing-indices
+  namespace: nextcloud
+spec:
+  schedule: "0 3 * * *"  # every day at 3:00 a.m.
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          securityContext:
+            runAsUser: 222
+            runAsGroup: 220
+            fsGroup: 220
+          containers:
+          - name: add-missing-indices
+            image: docker.io/library/nextcloud:30.0.4-fpm-alpine
+            command: ["/bin/sh", "-c"]
+            args: ["php /var/www/html/occ maintenance:mode --on && php /var/www/html/occ db:add-missing-indices && php /var/www/html/occ maintenance:mode --off"]
+            volumeMounts:
+            - name: app-config
+              mountPath: /var/www/html
+              subPath: config
+            - name: data
+              mountPath: /data
+              subPath: data
+          restartPolicy: OnFailure
+          volumes:
+          - name: app-config
+            persistentVolumeClaim:
+              claimName: nextcloud-app-pvc
+          - name: data
+            persistentVolumeClaim:
+              claimName: nextcloud-data-pvc

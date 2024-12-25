@@ -1,0 +1,168 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: mastodon
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.5.1
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      interval: 15m
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    defaultPodOptions:
+      annotations:
+        reloader.stakater.com/auto: "true"
+    controllers:
+      main:
+        replicas: 1
+        strategy: RollingUpdate
+        initContainers:
+          wait-for-db:
+            image:
+              repository: lscr.io/linuxserver/mastodon
+              tag: 4.3.2
+            command:
+              - sh
+              - -c
+              - |
+                echo "Checking database connectivity..."
+                until nc -zv cnpg-mastodon-rw.productivity.svc.cluster.local 5432; do
+                  echo "Database is not ready yet. Retrying in 5 seconds..."
+                  sleep 5
+                done
+                echo "Database is ready. Proceeding with startup."
+        containers:
+          mastodon:
+            image:
+              repository: lscr.io/linuxserver/mastodon
+              tag: 4.3.2
+            resources:
+              requests:
+                cpu: 100m
+                memory: 250Mi
+              limits:
+                memory: 4096Mi
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            env:
+              DB_HOST: cnpg-mastodon-rw.productivity.svc.cluster.local
+              DB_NAME: mastodondb
+              DB_PORT: 5432
+              DB_USER: mastodonusr
+              DEFAULT_LOCALE: de
+              EMAIL_DOMAIN_ALLOWLIST: ${SECRET_DOMAIN}
+              ES_ENABLED: true
+              ES_HOST: mastodon-elasticsearch.productivity.svc.cluster.local
+              ES_PORT: 9200
+              LOCAL_DOMAIN: ${SECRET_DOMAIN}
+              OIDC_ENABLED: true
+              OIDC_DISPLAY_NAME: Authentik
+              OIDC_DISCOVERY: true
+              OIDC_ISSUER: https://id.${SECRET_DOMAIN}/application/o/mastodon/
+              OIDC_AUTH_ENDPOINT: https://id.${SECRET_DOMAIN}/application/o/authorize/
+              OIDC_SCOPE: openid,profile,email
+              OIDC_UID_FIELD: preferred_username
+              OIDC_REDIRECT_URI: https://social.${SECRET_DOMAIN}/auth/auth/openid_connect/callback
+              OIDC_SECURITY_ASSUME_EMAIL_IS_VERIFIED: true
+              PGID: 1000
+              PUID: 1000
+              RAILS_ENV: production
+              RAILS_LOG_LEVEL: info
+              REDIS_HOST: dragonfly.database.svc.cluster.local
+              REDIS_PORT: 6379
+              S3_BUCKET: k8s-mastodon
+              S3_ENABLED: true
+              S3_ENDPOINT: https://s3.${SECRET_DOMAIN}
+              S3_HOSTNAME: s3.${SECRET_DOMAIN}
+              S3_PROTOCOL: https
+              S3_REGION: eu-central-1
+              SMTP_FROM_ADDRESS: service@${SECRET_DOMAIN}
+              SMTP_PORT: 25
+              SMTP_SERVER: ${SECRET_MAIL_SERVER}
+              TZ: ${TIMEZONE}
+              WEB_DOMAIN: social.${SECRET_DOMAIN}
+            envFrom:
+              - secretRef:
+                  name: mastodon-secret
+          elasticsearch:
+            image:
+              repository: elasticsearch
+              tag: 7.17.26@sha256:340f15d5e07488e6bddc60e90690cab1288ffbccb4d20841fa282a7b6501fe51
+            resources:
+              requests:
+                cpu: 100m
+                memory: 250Mi
+              limits:
+                memory: 4096Mi
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            env:
+              TZ: ${TIMEZONE}
+              xpack.security.enabled: "false"
+              discovery.type: "single-node"
+              ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    service:
+      mastodon:
+        controller: main
+        ports:
+          http:
+            port: 80
+      elasticsearch:
+        controller: main
+        ports:
+          http:
+            port: 9200
+    ingress:
+      main:
+        enabled: true
+        className: external
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        hosts:
+          - host: &host social.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: mastodon
+                  port: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      config:
+        existingClaim: mastodon-config-pvc
+        globalMounts:
+          - path: /config

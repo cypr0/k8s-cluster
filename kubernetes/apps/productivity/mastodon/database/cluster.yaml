@@ -1,0 +1,70 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cnpg-mastodon
+spec:
+  description: Postgresql cluster for Mastodon
+  # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql repository=ghcr.io
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+  instances: 1
+  storage:
+    size: 100Gi
+    storageClass: external-nfs
+  postgresql:
+    parameters:
+      max_connections: "200"
+      shared_buffers: 2GB
+      effective_cache_size: 6GB
+      maintenance_work_mem: 512MB
+      checkpoint_completion_target: "0.9"
+      wal_buffers: 16MB
+      default_statistics_target: "100"
+      random_page_cost: "1.1"
+      effective_io_concurrency: "200"
+      work_mem: 2621kB
+      huge_pages: off
+      min_wal_size: 1GB
+      max_wal_size: 4GB
+      max_worker_processes: "4"
+      max_parallel_workers_per_gather: "2"
+      max_parallel_workers: "4"
+      max_parallel_maintenance_workers: "2"
+  # bootstrap:
+  #   initdb:
+  #     database: mastodondb
+  #     owner: mastodonusr
+  #     secret:
+  #       name: mastodon-db-secret
+  primaryUpdateStrategy: unsupervised
+  monitoring:
+    enablePodMonitor: true
+  # Bootstrap to recover from an existing backup
+  # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
+  bootstrap:
+    recovery:
+      source: &previousCluster mastodon-postgres17-v1
+  backup:
+    retentionPolicy: 7d
+    barmanObjectStore: &barmanObjectStore
+      data:
+        compression: bzip2
+      wal:
+        compression: bzip2
+        maxParallel: 8
+      destinationPath: s3://k8s-postgres/mastodon/
+      endpointURL: https://s3.${SECRET_DOMAIN}
+      serverName: &currentCluster mastodon-postgres17-v2
+      s3Credentials:
+        accessKeyId:
+          name: mastodon-db-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: mastodon-db-secret
+          key: SECRET_ACCESS_KEY
+ # Note: externalClusters is needed when recovering from an existing cnpg cluster
+  externalClusters:
+    - name: *previousCluster
+      barmanObjectStore:
+        <<: *barmanObjectStore
+        serverName: *previousCluster

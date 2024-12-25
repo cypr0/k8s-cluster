@@ -1,0 +1,62 @@
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cnpg-immich
+spec:
+  description: Postgresql cluster for Immich
+  # renovate: datasource=docker depName=ghcr.io/tensorchord/cloudnative-pgvecto.rs repository=ghcr.io
+  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16.6
+  instances: 1
+  storage:
+    size: 50Gi
+    storageClass: external-nfs
+  enableSuperuserAccess: true
+  postgresql:
+    shared_preload_libraries:
+      - "vectors.so"
+    parameters:
+      max_connections: "200"
+      shared_buffers: 256MB
+  nodeMaintenanceWindow:
+    inProgress: false
+    reusePVC: true
+  primaryUpdateStrategy: unsupervised
+  monitoring:
+    enablePodMonitor: true
+  # Initial bootstrap for first install
+  # bootstrap:
+  #   initdb:
+  #     database: immichdb
+  #     postInitSQL:
+  #       - ALTER SYSTEM SET search_path TO "$user", public, vectors;
+  #       - CREATE EXTENSION IF NOT EXISTS "vectors";
+  # Bootstrap to recover from an existing backup
+  # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
+  bootstrap:
+    recovery:
+      source: &previousCluster immich-postgres17-v1
+  backup:
+    retentionPolicy: 7d
+    barmanObjectStore: &barmanObjectStore
+      data:
+        compression: bzip2
+      wal:
+        compression: bzip2
+        maxParallel: 8
+      destinationPath: s3://k8s-postgres/immich/
+      endpointURL: https://s3.${SECRET_DOMAIN}
+      serverName: &currentCluster immich-postgres17-v2
+      s3Credentials:
+        accessKeyId:
+          name: immich-db-secret
+          key: ACCESS_KEY_ID
+        secretAccessKey:
+          name: immich-db-secret
+          key: SECRET_ACCESS_KEY
+ # Note: externalClusters is needed when recovering from an existing cnpg cluster
+  externalClusters:
+   - name: *previousCluster
+     barmanObjectStore:
+       <<: *barmanObjectStore
+       serverName: *previousCluster

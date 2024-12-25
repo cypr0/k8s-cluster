@@ -207,6 +207,15 @@
         "imageName: (?<imageName>ghcr\\.io\\/cloudnative-pg\\/postgresql:\\S+)"
       ],
       "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "description": ["Process CNPG Cluster resources for Immich"],
+      "fileMatch": ["(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$"],
+      "matchStrings": [
+        "imageName: (?<imageName>ghcr\\.io\\/tensorchord\\/cloudnative-pgvecto\\.rs:\\S+)"
+      ],
+      "datasourceTemplate": "docker"
     }
   ]
 }

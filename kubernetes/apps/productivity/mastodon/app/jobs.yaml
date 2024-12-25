@@ -1,0 +1,226 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mastodon-create-admin-account
+spec:
+  template:
+    spec:
+      containers:
+      - name: mastodon-create-admin-account
+        image: lscr.io/linuxserver/mastodon:4.3.2
+        command:
+          - sh
+          - -c
+          - |
+            echo "Waiting for Mastodon to be ready..."
+            until [ "$(curl -sf -o /dev/null -w "%{http_code}" https://social.${SECRET_DOMAIN}/api/v2/instance)" -eq 200 ]; do
+              echo "Mastodon is not ready yet. Waiting for 5 seconds..."
+              sleep 5
+            done
+            echo "Mastodon is ready. Checking if admin user exists..."
+
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" -X GET \
+              "https://social.${SECRET_DOMAIN}/api/v1/accounts/lookup?acct=${MASTODON_ADMIN_USER}")
+
+            if [ "$RESPONSE" -eq 200 ]; then
+              echo "User ${MASTODON_ADMIN_USER} already exists."
+            elif [ "$RESPONSE" -eq 404 ]; then
+              echo "User does not exist. Creating user..."
+              tootctl accounts create $MASTODON_ADMIN_USER --email=admin@${SECRET_DOMAIN} --confirmed --approve --role=Owner
+            else
+              echo "Unexpected response ($RESPONSE) while checking for user. Exiting..."
+              exit 1
+            fi
+        env:
+        - name: DB_HOST
+          value: cnpg-mastodon-rw.productivity.svc.cluster.local
+        - name: DB_NAME
+          value: mastodondb
+        - name: DB_USER
+          value: mastodonusr
+        - name: DB_PORT
+          value: "5432"
+        - name: PGID
+          value: "1000"
+        - name: PUID
+          value: "1000"
+        - name: RAILS_ENV
+          value: production
+        - name: REDIS_HOST
+          value: dragonfly.database.svc.cluster.local
+        - name: REDIS_PORT
+          value: "6379"
+        - name: MASTODON_ADMIN_USER
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: MASTODON_ADMIN_USER
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: DB_PASS
+        - name: SECRET_KEY_BASE
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: SECRET_KEY_BASE
+        - name: OTP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: OTP_SECRET
+        - name: VAPID_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: VAPID_PRIVATE_KEY
+        - name: VAPID_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: VAPID_PUBLIC_KEY
+        - name: ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+        - name: ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+        - name: ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: AWS_SECRET_ACCESS_KEY
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mastodon-secret
+              key: REDIS_PASSWORD
+        volumeMounts:
+        - name: config
+          mountPath: /config
+      restartPolicy: OnFailure
+      volumes:
+      - name: config
+        persistentVolumeClaim:
+          claimName: mastodon-config-pvc
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: mastodon-cronjob
+spec:
+  schedule: "0 3 * * *"  # every day at 3:00 a.m.
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 60
+      template:
+        spec:
+          containers:
+          - name: mastodon-cronjob
+            image: lscr.io/linuxserver/mastodon:4.3.2
+            command: ["/bin/sh", "-c"]
+            args: ["tootctl search deploy --only=tags statuses public_statuses"]
+            env:
+            - name: DB_HOST
+              value: cnpg-mastodon-rw.productivity.svc.cluster.local
+            - name: DB_NAME
+              value: mastodondb
+            - name: DB_USER
+              value: mastodonusr
+            - name: DB_PORT
+              value: "5432"
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: RAILS_ENV
+              value: production
+            - name: REDIS_HOST
+              value: dragonfly.database.svc.cluster.local
+            - name: REDIS_PORT
+              value: "6379"
+            - name: MASTODON_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: MASTODON_ADMIN_USER
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: DB_PASS
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: SECRET_KEY_BASE
+            - name: OTP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: OTP_SECRET
+            - name: VAPID_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: VAPID_PRIVATE_KEY
+            - name: VAPID_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: VAPID_PUBLIC_KEY
+            - name: ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: ACTIVE_RECORD_ENCRYPTION_DETERMINISTIC_KEY
+            - name: ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: ACTIVE_RECORD_ENCRYPTION_KEY_DERIVATION_SALT
+            - name: ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: ACTIVE_RECORD_ENCRYPTION_PRIMARY_KEY
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: AWS_ACCESS_KEY_ID
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: AWS_SECRET_ACCESS_KEY
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mastodon-secret
+                  key: REDIS_PASSWORD
+            volumeMounts:
+            - name: config
+              mountPath: /config
+          restartPolicy: OnFailure
+          volumes:
+          - name: config
+            persistentVolumeClaim:
+              claimName: mastodon-config-pvc
