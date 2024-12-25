@@ -9,7 +9,7 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17.2
   instances: 1
   storage:
-    size: 50Gi
+    size: 100Gi
     storageClass: external-nfs
   postgresql:
     parameters:
@@ -22,17 +22,17 @@ spec:
   monitoring:
     enablePodMonitor: true
   # Initial bootstrap for first install
-  # bootstrap:
-  #   initdb:
-  #     database: authentikdb
-  #     owner: authentikusr
-  #     secret:
-  #       name: authentik-db-secret
+  bootstrap:
+    initdb:
+      database: authentikdb
+      owner: authentikusr
+      secret:
+        name: authentik-db-secret
   # Bootstrap to recover from an existing backup
   # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
-  bootstrap:
-    recovery:
-      source: &previousCluster authentik-postgres17-v4
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster authentik-postgres17-v4
   backup:
     retentionPolicy: 7d
     barmanObjectStore: &barmanObjectStore
@@ -52,8 +52,8 @@ spec:
           name: authentik-db-secret
           key: SECRET_ACCESS_KEY
  # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-   - name: *previousCluster
-     barmanObjectStore:
-       <<: *barmanObjectStore
-       serverName: *previousCluster
+ #  externalClusters:
+ #   - name: *previousCluster
+ #     barmanObjectStore:
+ #       <<: *barmanObjectStore
+ #       serverName: *previousCluster
