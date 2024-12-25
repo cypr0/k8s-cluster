@@ -25,17 +25,17 @@ spec:
   monitoring:
     enablePodMonitor: true
   # Initial bootstrap for first install
-  # bootstrap:
-  #   initdb:
-  #     database: immichdb
-  #     postInitSQL:
-  #       - ALTER SYSTEM SET search_path TO "$user", public, vectors;
-  #       - CREATE EXTENSION IF NOT EXISTS "vectors";
+  bootstrap:
+    initdb:
+      database: immichdb
+      postInitSQL:
+        - ALTER SYSTEM SET search_path TO "$user", public, vectors;
+        - CREATE EXTENSION IF NOT EXISTS "vectors";
   # Bootstrap to recover from an existing backup
   # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
-  bootstrap:
-    recovery:
-      source: &previousCluster immich-postgres17-v1
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster immich-postgres17-v1
   backup:
     retentionPolicy: 7d
     barmanObjectStore: &barmanObjectStore
@@ -55,8 +55,8 @@ spec:
           name: immich-db-secret
           key: SECRET_ACCESS_KEY
  # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-   - name: *previousCluster
-     barmanObjectStore:
-       <<: *barmanObjectStore
-       serverName: *previousCluster
+ #  externalClusters:
+ #   - name: *previousCluster
+ #     barmanObjectStore:
+ #       <<: *barmanObjectStore
+ #       serverName: *previousCluster
