@@ -125,6 +125,49 @@ spec:
           claimName: nextcloud-app-pvc
 ---
 apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-whiteboard-config
+spec:
+  template:
+    spec:
+      ttlSecondsAfterFinished: 7200
+      securityContext:
+        runAsUser: 222
+        runAsGroup: 220
+        fsGroup: 220
+      containers:
+      - name: nextcloud-whiteboard-config
+        image: docker.io/library/nextcloud:30.0.4-fpm-alpine
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            until php /var/www/html/occ status --output json | grep -q '"installed":true'; do sleep 10; done;
+
+            if php /var/www/html/occ app:list | grep -q 'whiteboard'; then
+              echo "Whiteboard is installed. Configuring..."";
+              php /var/www/html/occ config:app:set whiteboard collabBackendUrl --value="https://cloud.${SECRET_DOMAIN}/whiteboard/";
+              php /var/www/html/occ config:app:set whiteboard jwt_secret_key --value="${NEXTLOUD_WHITEBOARD_SECRET}";
+              echo "Whiteboard configuration completed."";
+            else
+              echo "Whiteboard is not installed. Skipping configuration.";
+            fi
+        volumeMounts:
+        - name: app-config
+          mountPath: /var/www/html
+          subPath: config
+        - name: data
+          mountPath: /var/www/html/data
+      restartPolicy: OnFailure
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: nextcloud-data-pvc
+      - name: app-config
+        persistentVolumeClaim:
+          claimName: nextcloud-app-pvc
+---
+apiVersion: batch/v1
 kind: CronJob
 metadata:
   name: nextcloud-cronjob
