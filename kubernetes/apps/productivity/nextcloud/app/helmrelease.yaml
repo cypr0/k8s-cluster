@@ -160,13 +160,8 @@ spec:
                     key: WHITEBOARD_JWT_SECRET_KEY
               - name: STORAGE_STRATEGY
                 value: "redis"
-              - name: REDIS_HOST_PASSWORD
-                valueFrom:
-                  secretKeyRef:
-                    name: nextcloud-secret
-                    key: REDIS_PASSWORD
               - name: REDIS_URL
-                value: "redis://:${REDIS_HOST_PASSWORD}@dragonfly.database.svc.cluster.local:6379"
+                value: "redis://:${REDIS_HOST_PASSWORD}@dragonfly.database.svc.cluster.local:6379/9"
         initContainers:
           init-chmod-pvc:
             image:
