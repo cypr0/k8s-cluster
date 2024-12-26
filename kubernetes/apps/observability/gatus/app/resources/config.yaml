@@ -8,8 +8,8 @@ storage:
 metrics: true
 debug: false
 ui:
-  title: Status | Gatus
-  header: Status
+  title: Health status | Cisotop.de
+  header: Health Status for Cisotop applications
 alerting:
   pushover:
     title: Gatus
