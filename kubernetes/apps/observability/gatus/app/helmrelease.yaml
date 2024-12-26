@@ -54,7 +54,7 @@ spec:
               TZ: ${TIMEZONE}
               GATUS_CONFIG_PATH: /config
               GATUS_DELAY_START_SECONDS: 5
-              WEB_PORT: &port 80
+              WEB_PORT: &port 8080
             envFrom:
               - secretRef:
                   name: gatus-secret
