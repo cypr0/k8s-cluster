@@ -142,13 +142,19 @@ spec:
         command: ["/bin/sh", "-c"]
         args:
           - |
-            until php /var/www/html/occ status --output json | grep -q '"installed": true'; do sleep 10; done;
-              echo "Nextcloud is installed. Waiting for Whiteboard..."
-            until php /var/www/html/occ app:list | grep -q 'whiteboard'; do sleep 10; done;
-              echo "Whiteboard is installed. Configuring...";
-              php /var/www/html/occ config:app:set whiteboard collabBackendUrl --value="https://cloud.${SECRET_DOMAIN}/whiteboard/";
-              php /var/www/html/occ config:app:set whiteboard jwt_secret_key --value="${NEXTLOUD_WHITEBOARD_SECRET}";
-              echo "Whiteboard configuration completed.";
+            until php /var/www/html/occ status --output json | grep -q '"installed":true'; do
+              echo "Waiting for Nextcloud installation...";
+              sleep 10;
+            done;
+            echo "Nextcloud is installed. Waiting for Whiteboard..."
+            until php /var/www/html/occ app:list | grep -q 'whiteboard'; do
+              echo "Waiting for Whiteboard installation..."
+              sleep 10;
+            done;
+            echo "Whiteboard is installed. Configuring...";
+            php /var/www/html/occ config:app:set whiteboard collabBackendUrl --value="https://cloud.${SECRET_DOMAIN}/whiteboard/";
+            php /var/www/html/occ config:app:set whiteboard jwt_secret_key --value="${NEXTLOUD_WHITEBOARD_SECRET}";
+            echo "Whiteboard configuration completed.";
         volumeMounts:
         - name: app-config
           mountPath: /var/www/html
