@@ -36,7 +36,6 @@ endpoints:
       dns-resolver: tcp://1.1.1.1:53
     conditions:
       - "[STATUS] == 200"
-      - "[BODY].includes('Immich')"
     alerts:
       - type: pushover
         description: Immich health-check failed
@@ -49,7 +48,6 @@ endpoints:
       dns-resolver: tcp://1.1.1.1:53
     conditions:
       - "[STATUS] == 200"
-      - "[BODY].includes('Nextcloud')"
     alerts:
       - type: pushover
         description: Nextcloud health-check failed
@@ -62,7 +60,6 @@ endpoints:
       dns-resolver: tcp://1.1.1.1:53
     conditions:
       - "[STATUS] == 200"
-      - "[BODY].includes('Mastodon')"
     alerts:
       - type: pushover
         description: Mastodon health-check failed
@@ -75,7 +72,6 @@ endpoints:
       dns-resolver: tcp://1.1.1.1:53
     conditions:
       - "[STATUS] == 200"
-      - "[BODY].includes('Authentik')"
     alerts:
       - type: pushover
         description: Authentik health-check failed
