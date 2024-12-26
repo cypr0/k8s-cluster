@@ -27,13 +27,55 @@ connectivity:
     target: 1.1.1.1:53
     interval: 1m
 endpoints:
-  - name: flux-webhook
-    group: external
-    url: https://flux-webhook.${SECRET_DOMAIN}
+
+  - name: immich
+    group: applications
+    url: https://media.${SECRET_DOMAIN}
     interval: 1m
     client:
       dns-resolver: tcp://1.1.1.1:53
     conditions:
-      - "[STATUS] == 404"
+      - "[STATUS] == 200"
+      - "[BODY].includes('Immich')"
     alerts:
       - type: pushover
+        description: Immich health-check failed
+
+  - name: nextcloud
+    group: applications
+    url: https://cloud.${SECRET_DOMAIN}
+    interval: 1m
+    client:
+      dns-resolver: tcp://1.1.1.1:53
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].includes('Nextcloud')"
+    alerts:
+      - type: pushover
+        description: Nextcloud health-check failed
+
+  - name: mastodon
+    group: applications
+    url: https://social.${SECRET_DOMAIN}
+    interval: 1m
+    client:
+      dns-resolver: tcp://1.1.1.1:53
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].includes('Mastodon')"
+    alerts:
+      - type: pushover
+        description: Mastodon health-check failed
+
+  - name: authentik
+    group: applications
+    url: https://id.${SECRET_DOMAIN}
+    interval: 1m
+    client:
+      dns-resolver: tcp://1.1.1.1:53
+    conditions:
+      - "[STATUS] == 200"
+      - "[BODY].includes('Authentik')"
+    alerts:
+      - type: pushover
+        description: Authentik health-check failed
