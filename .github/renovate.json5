@@ -185,7 +185,7 @@
       "description": ["Process custom dependencies"],
       "fileMatch": ["(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$"],
       "matchStrings": [
-        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( repository=(?<registryUrl>\\S+))?\\n.+: (&\\S+\\s)?(?<currentValue>\\S+)"
+        "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?:\\n.+: (&\\S+\\s)?(?<currentValue>\\S+))?"
       ],
       "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
       "currentValueTemplate": "{{currentValue}}"
