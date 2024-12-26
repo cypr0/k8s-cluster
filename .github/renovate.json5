@@ -190,28 +190,6 @@
       "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
       "currentValueTemplate": "{{currentValue}}",
       "depName": "{{depName}}"
-    },
-    {
-      "customType": "regex",
-      "description": ["Process CNPG Cluster resources"],
-      "fileMatch": ["(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$"],
-      "matchStrings": [
-        "imageName: (?<imageName>ghcr\\.io\\/cloudnative-pg\\/postgresql:\\S+)"
-      ],
-      "datasourceTemplate": "docker",
-      "currentValueTemplate": "{{imageName}}",
-      "depName": "{{imageName}}"
-    },
-    {
-      "customType": "regex",
-      "description": ["Process CNPG Cluster resources for Immich"],
-      "fileMatch": ["(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$"],
-      "matchStrings": [
-        "imageName: (?<imageName>ghcr\\.io\\/tensorchord\\/cloudnative-pgvecto\\.rs:\\S+)"
-      ],
-      "datasourceTemplate": "docker",
-      "currentValueTemplate": "{{imageName}}",
-      "depName": "{{imageName}}"
     }
   ]
 }
