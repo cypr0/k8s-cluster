@@ -9,7 +9,7 @@ metrics: true
 debug: false
 ui:
   title: Health status | Cisotop.de
-  header: Health Status for Cisotop applications
+  header: Health Status
 alerting:
   pushover:
     title: Gatus
