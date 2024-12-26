@@ -333,11 +333,6 @@ spec:
                 'default_timezone' => 'Europe/Berlin',
                 'maintenance_window_start' => 1,
 
-                "log_type" => "file",
-                "logfile" => "nextcloud.log",
-                "loglevel" => 0,
-                "logdateformat" => "F d, Y H:i:s",
-
               );
           opcache-recommended-ini: |
             opcache.enable=1
