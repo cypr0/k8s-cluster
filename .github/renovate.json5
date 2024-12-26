@@ -188,8 +188,7 @@
         "datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)( repository=(?<registryUrl>\\S+))?\\n.+: (&\\S+\\s)?(?<currentValue>\\S+)"
       ],
       "datasourceTemplate": "{{#if datasource}}{{{datasource}}}{{else}}github-releases{{/if}}",
-      "currentValueTemplate": "{{currentValue}}",
-      "depName": "{{depName}}"
+      "currentValueTemplate": "{{currentValue}}"
     }
   ]
 }
