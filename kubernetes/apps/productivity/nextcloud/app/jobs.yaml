@@ -145,10 +145,10 @@ spec:
             until php /var/www/html/occ status --output json | grep -q '"installed":true'; do sleep 10; done;
 
             if php /var/www/html/occ app:list | grep -q 'whiteboard'; then
-              echo "Whiteboard is installed. Configuring..."";
+              echo "Whiteboard is installed. Configuring...";
               php /var/www/html/occ config:app:set whiteboard collabBackendUrl --value="https://cloud.${SECRET_DOMAIN}/whiteboard/";
               php /var/www/html/occ config:app:set whiteboard jwt_secret_key --value="${NEXTLOUD_WHITEBOARD_SECRET}";
-              echo "Whiteboard configuration completed."";
+              echo "Whiteboard configuration completed.";
             else
               echo "Whiteboard is not installed. Skipping configuration.";
             fi
