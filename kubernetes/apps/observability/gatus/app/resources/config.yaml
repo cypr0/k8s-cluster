@@ -37,13 +37,3 @@ endpoints:
       - "[STATUS] == 404"
     alerts:
       - type: pushover
-  - name: status
-    group: external
-    url: https://status.${SECRET_DOMAIN}
-    interval: 1m
-    client:
-      dns-resolver: tcp://1.1.1.1:53
-    conditions:
-      - "[STATUS] == 200"
-    alerts:
-      - type: pushover
