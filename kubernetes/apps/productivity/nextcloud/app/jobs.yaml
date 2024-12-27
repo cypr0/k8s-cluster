@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: nextcloud-post-install-job
+  name: nextcloud-job-config-postinstall
 spec:
   template:
     spec:
@@ -11,7 +11,7 @@ spec:
         runAsGroup: 220
         fsGroup: 220
       containers:
-      - name: nextcloud-post-install-job
+      - name: nextcloud-job-config-postinstall
         image: docker.io/library/nextcloud:30.0.4-fpm-alpine
         command: ["/bin/sh", "-c"]
         args: ["until php /var/www/html/occ status --output json | grep -q '\"installed\":true'; do sleep 10; done && php /var/www/html/occ upgrade && php /var/www/html/occ db:add-missing-indices && php /var/www/html/occ db:add-missing-columns && php /var/www/html/occ db:add-missing-primary-keys && php /var/www/html/occ db:convert-filecache-bigint && php /var/www/html/occ maintenance:repair --include-expensive"]
@@ -34,7 +34,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: nextcloud-add-apps-job
+  name: nextcloud-job-config-addapps
 spec:
   template:
     spec:
@@ -44,7 +44,7 @@ spec:
         runAsGroup: 220
         fsGroup: 220
       containers:
-      - name: nextcloud-add-apps-job
+      - name: nextcloud-job-config-addapps
         image: docker.io/library/nextcloud:30.0.4-fpm-alpine
         command: ["/bin/sh", "-c"]
         args: ["until php /var/www/html/occ status --output json | grep -q '\"installed\":true'; do sleep 10; done && php /var/www/html/occ app:disable firstrunwizard && php /var/www/html/occ app:disable support && php /var/www/html/occ app:enable admin_audit && php /var/www/html/occ app:enable files_pdfviewer && php /var/www/html/occ app:enable groupfolders && php /var/www/html/occ app:install richdocuments && php /var/www/html/occ app:install files_antivirus && php /var/www/html/occ app:install whiteboard && php /var/www/html/occ app:install deck && php /var/www/html/occ app:install tables && php /var/www/html/occ app:install forms && php /var/www/html/occ app:install quota_warning && php /var/www/html/occ app:install user_oidc"]
@@ -67,7 +67,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: nextcloud-user-oidc-job
+  name: nextcloud-job-config-oidc
 spec:
   template:
     spec:
@@ -77,7 +77,7 @@ spec:
         runAsGroup: 220
         fsGroup: 220
       containers:
-      - name: nextcloud-user-oidc-job
+      - name: nextcloud-job-config-oidc
         image: docker.io/library/nextcloud:30.0.4-fpm-alpine
         command: ["/bin/sh", "-c"]
         args:
@@ -127,7 +127,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: nextcloud-whiteboard-config
+  name: nextcloud-job-config-whiteboard
 spec:
   template:
     spec:
@@ -137,7 +137,7 @@ spec:
         runAsGroup: 220
         fsGroup: 220
       containers:
-      - name: nextcloud-whiteboard-config
+      - name: nextcloud-job-config-whiteboard
         image: docker.io/library/nextcloud:30.0.4-fpm-alpine
         command: ["/bin/sh", "-c"]
         args:
@@ -172,9 +172,56 @@ spec:
           claimName: nextcloud-app-pvc
 ---
 apiVersion: batch/v1
+kind: Job
+metadata:
+  name: nextcloud-job-config-richdocuments
+spec:
+  template:
+    spec:
+      ttlSecondsAfterFinished: 7200
+      securityContext:
+        runAsUser: 222
+        runAsGroup: 220
+        fsGroup: 220
+      containers:
+      - name: nextcloud-job-config-richdocuments
+        image: docker.io/library/nextcloud:30.0.4-fpm-alpine
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            until php /var/www/html/occ status --output json | grep -q '"installed":true'; do
+              echo "Waiting for Nextcloud installation...";
+              sleep 10;
+            done;
+            echo "Nextcloud is installed. Waiting for Nextcloud Office..."
+            until php /var/www/html/occ app:list | grep -q 'richdocuments'; do
+              echo "Waiting for Nextcloud Office installation..."
+              sleep 10;
+            done;
+            echo "Nextcloud Office is installed. Configuring...";
+            php /var/www/html/occ config:app:set --value cloud.${SECRET_DOMAIN} richdocuments wopi_url
+            php /var/www/html/occ richdocuments:activate-config
+            echo "Nextcloud Office configuration completed.";
+        volumeMounts:
+        - name: app-config
+          mountPath: /var/www/html
+          subPath: config
+        - name: data
+          mountPath: /data
+          subPath: data
+      restartPolicy: OnFailure
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: nextcloud-data-pvc
+      - name: app-config
+        persistentVolumeClaim:
+          claimName: nextcloud-app-pvc
+---
+apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: nextcloud-cronjob
+  name: nextcloud-cronjob-cron
 spec:
   schedule: "*/5 * * * *" # Every 5 minutes
   successfulJobsHistoryLimit: 1
@@ -189,7 +236,7 @@ spec:
             runAsGroup: 220
             fsGroup: 220
           containers:
-            - name: nextcloud-cron
+            - name: nextcloud-cronjob-cron
               image: docker.io/library/nextcloud:30.0.4-fpm-alpine
               command:
                 - sh
@@ -219,7 +266,7 @@ spec:
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: nextcloud-add-missing-indices
+  name: nextcloud-cronjob-missingindices
   namespace: nextcloud
 spec:
   schedule: "0 3 * * *"  # every day at 3:00 a.m.
@@ -233,7 +280,7 @@ spec:
             runAsGroup: 220
             fsGroup: 220
           containers:
-          - name: add-missing-indices
+          - name: nextcloud-cronjob-missingindices
             image: docker.io/library/nextcloud:30.0.4-fpm-alpine
             command: ["/bin/sh", "-c"]
             args: ["php /var/www/html/occ maintenance:mode --on && php /var/www/html/occ db:add-missing-indices && php /var/www/html/occ maintenance:mode --off"]
