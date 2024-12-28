@@ -37,7 +37,7 @@ spec:
             fsGroup: 220
             fsGroupChangePolicy: OnRootMismatch
         containers:
-          app:
+          home-assistant:
             image:
               repository: ghcr.io/home-assistant/home-assistant
               tag: 2024.12.5
@@ -92,7 +92,7 @@ spec:
               limits:
                 memory: 500M
     service:
-      app:
+      home-assistant:
         controller: home-assistant
         type: LoadBalancer
         annotations:
@@ -106,16 +106,17 @@ spec:
           code-server:
             port: 8080
     ingress:
-      app:
+      home-assistant:
         className: internal
         annotations:
+          nginx.org/websocket-services: home-assistant
           external-dns.alpha.kubernetes.io/target: internal.${SECRET_DOMAIN}
         hosts:
           - host: &host "hass.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
-                  identifier: app
+                  identifier: home-assistant
                   port: http
         tls:
           - hosts:
@@ -128,7 +129,7 @@ spec:
             paths:
               - path: /
                 service:
-                  identifier: app
+                  identifier: home-assistant
                   port: code-server
         tls:
           - hosts:
@@ -138,7 +139,7 @@ spec:
         existingClaim: home-assistant-nfs-pvc
         advancedMounts:
           home-assistant:
-            app:
+            home-assistant:
               - path: /config
             code-server:
               - path: /config
@@ -147,6 +148,6 @@ spec:
         type: emptyDir
         advancedMounts:
           home-assistant:
-            app:
+            home-assistant:
               - path: /.dockerenv
                 subPath: .dockerenv
