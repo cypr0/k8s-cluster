@@ -29,15 +29,6 @@ spec:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
-        initContainers:
-          fix-permissions:
-            image:
-              repository: docker.io/library/alpine
-              tag: 3.21.0
-            command: ["sh", "-c", "chown -R 226:220 /app"]
-            securityContext:
-              runAsUser: 0
-              runAsGroup: 220
         containers:
           automad-portfolio:
             image:
@@ -46,7 +37,7 @@ spec:
             securityContext:
               runAsUser: 226
               runAsGroup: 220
-              runAsNonRoot: true
+              runAsNonRoot: false
               fsGroup: 220
               fsGroupChangePolicy: OnRootMismatch
             probes:
@@ -91,10 +82,6 @@ spec:
         advancedMounts:
           main:
             automad-portfolio:
-              - path: /app
-                subPath: portfolio
-                readOnly: false
-            fix-permissions:
               - path: /app
                 subPath: portfolio
                 readOnly: false
