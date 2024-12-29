@@ -85,3 +85,4 @@ spec:
             automad-portfolio:
               - path: /app
                 subPath: portfolio
+                readOnly: false
