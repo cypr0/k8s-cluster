@@ -35,7 +35,7 @@ spec:
               repository: automad/automad
               tag: 2.0.0-alpha.16@sha256:9199e527760608350cd4fc194fc7acfe586ff3deb15630de7119ebc223ced1a4
             securityContext:
-              runAsUser: 226
+              runAsUser: 0
               runAsGroup: 220
               runAsNonRoot: false
               fsGroup: 220
