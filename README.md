@@ -40,6 +40,8 @@ The repository is organized as follows:
 
 The cluster hosts the following applications:
 
+- **[Automad](https://automad.org/)**: A flat-file content management system.
+- **[Home Assistant](https://www.home-assistant.io/)**: A self-hosted home automation platform.
 - **[Immich](https://immich.app/)**: Photo and video backup service with AI-based search capabilities.
 - **[Mastodon](https://joinmastodon.org/)**: A decentralized social network instance.
 - **[Nextcloud](https://nextcloud.com/)**: A self-hosted productivity platform.
