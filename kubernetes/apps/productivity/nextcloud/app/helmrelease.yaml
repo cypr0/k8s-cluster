@@ -675,4 +675,3 @@ spec:
               - path: /usr/local/etc/php/conf.d/redis-session.ini
                 subPath: redis-session.ini
                 readOnly: true
-
