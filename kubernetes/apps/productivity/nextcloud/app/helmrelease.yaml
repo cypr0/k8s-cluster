@@ -380,11 +380,11 @@ spec:
             error_log  /var/log/nginx/error.log warn;
             pid        /tmp/nginx.pid;
 
-
             events {
-                worker_connections  1024;
+                worker_connections 2048;
+                multi_accept on;
+                use epoll;
             }
-
 
             http {
                 proxy_temp_path /tmp/proxy_temp;
@@ -396,56 +396,80 @@ spec:
                 include       /etc/nginx/mime.types;
                 default_type  application/octet-stream;
 
-                log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
-                                  '$status $body_bytes_sent "$http_referer" '
-                                  '"$http_user_agent" "$http_x_forwarded_for"';
+                # Log settings
+                log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                                '$status $body_bytes_sent "$http_referer" '
+                                '"$http_user_agent" "$http_x_forwarded_for"';
 
-                access_log  /var/log/nginx/access.log  main;
+                log_format costum escape=json
+                '{'
+                  '"time_local":"$time_local",'
+                  '"remote_addr":"$remote_addr",'
+                  '"remote_user":"$remote_user",'
+                  '"request":"$request",'
+                  '"status": "$status",'
+                  '"body_bytes_sent":"$body_bytes_sent",'
+                  '"request_time":"$request_time",'
+                  '"http_referrer":"$http_referer",'
+                  '"http_user_agent":"$http_user_agent"'
+                '}';
 
-                sendfile        on;
-                #tcp_nopush     on;
+                access_log /var/log/nginx/access.log custom;
 
-                # Prevent nginx HTTP Server Detection
-                server_tokens   off;
+                sendfile on;
+                tcp_nopush on;
+                tcp_nodelay on;
+                keepalive_timeout 65;
+                reset_timedout_connection on;
+                server_tokens off;
 
-                keepalive_timeout  65;
+                # DNS Resolver
+                resolver 176.9.93.198 176.9.1.117 valid=30s;
+                resolver_timeout 5s;
 
-                #gzip  on;
+                # Rate limiting
+                limit_req_zone $binary_remote_addr zone=NextcloudRateLimit:10m rate=2r/s;
 
                 upstream php-handler {
                     server 127.0.0.1:9000;
                 }
 
-                # Set the `immutable` cache control options only for assets with a cache busting `v` argument
-                map $arg_v $asset_immutable {
-                    "" "";
-                    default "immutable";
-                }
-
-                map $http_user_agent $ignore_log_ua {
-                  default                 1;
-                  "~kube-probe.*"         0;
-                }
-
                 server {
                     listen 8080;
 
-                    # Path to the root of your installation
+                    # Root directory
                     root /var/www/html;
 
-                    # HSTS settings
-                    # WARNING: Only add the preload option once you read about
-                    # the consequences in https://hstspreload.org/. This option
-                    # will add the domain to a hardcoded list that is shipped
-                    # in all major browsers and getting removed from this list
-                    # could take several months.
+                    # Security Headers
                     add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;" always;
-                    # set max upload size
-                    client_max_body_size 1024M;
-                    client_body_timeout 300s;
+                    add_header Permissions-Policy "interest-cohort=()";
+                    add_header Referrer-Policy "no-referrer" always;
+                    add_header X-Content-Type-Options "nosniff" always;
+                    add_header X-Download-Options "noopen" always;
+                    add_header X-Frame-Options "SAMEORIGIN" always;
+                    add_header X-Permitted-Cross-Domain-Policies "none" always;
+                    add_header X-Robots-Tag "noindex, nofollow" always;
+                    add_header X-XSS-Protection "1; mode=block" always;
+
+                    # Remove X-Powered-By
+                    fastcgi_hide_header X-Powered-By;
+
+                    # Proxy headers
+                    proxy_set_header X-Forwarded-Host $host;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header Host $host;
+
+                    # Path index
+                    index index.php index.html /index.php$request_uri;
+
+                    # Client upload limits
+                    client_max_body_size 10G;
+                    client_body_timeout 3600s;
+                    client_body_buffer_size 512k;
                     fastcgi_buffers 64 4K;
 
-                    # Enable gzip but do not remove ETag headers
+                    # Gzip compression
                     gzip on;
                     gzip_vary on;
                     gzip_comp_level 4;
@@ -453,156 +477,38 @@ spec:
                     gzip_proxied expired no-cache no-store private no_last_modified no_etag auth;
                     gzip_types application/atom+xml text/javascript application/javascript application/json application/ld+json application/manifest+json application/rss+xml application/vnd.geo+json application/vnd.ms-fontobject application/wasm application/x-font-ttf application/x-web-app-manifest+json application/xhtml+xml application/xml font/opentype image/bmp image/svg+xml image/x-icon text/cache-manifest text/css text/plain text/vcard text/vnd.rim.location.xloc text/vtt text/x-component text/x-cross-domain-policy;
 
-                    # Pagespeed is not supported by Nextcloud, so if your server is built
-                    # with the `ngx_pagespeed` module, uncomment this line to disable it.
-                    #pagespeed off;
-
-                    # The settings allows you to optimize the HTTP2 bandwitdth.
-                    # See https://blog.cloudflare.com/delivering-http-2-upload-speed-improvements/
-                    # for tunning hints
-                    client_body_buffer_size 512k;
-
-                    # HTTP response headers borrowed from Nextcloud `.htaccess`
-                    add_header Referrer-Policy                      "no-referrer"       always;
-                    add_header X-Content-Type-Options               "nosniff"           always;
-                    add_header X-Download-Options                   "noopen"            always;
-                    add_header X-Frame-Options                      "SAMEORIGIN"        always;
-                    add_header X-Permitted-Cross-Domain-Policies    "none"              always;
-                    add_header X-Robots-Tag                         "noindex, nofollow" always;
-                    add_header X-XSS-Protection                     "1; mode=block"     always;
-
-                    # Remove X-Powered-By, which is an information leak
-                    fastcgi_hide_header X-Powered-By;
-
-                    # OIDC-related headers
-                    proxy_set_header X-Forwarded-Host $host;
-                    proxy_set_header X-Forwarded-Proto $scheme;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header Host $host;
-
-                    # Add .mjs as a file extension for javascript
-                    # Either include it in the default mime.types list
-                    # or include you can include that list explicitly and add the file extension
-                    # only for Nextcloud like below:
-                    include mime.types;
-                    types {
-                        text/javascript  js mjs;
-                    }
-
-                    # Make /.well-known/openid-configuration redirect to Authentik
-                    location = /.well-known/openid-configuration {
-                        proxy_pass https://id.${SECRET_DOMAIN};
-                    }
-
-                    # Specify how to handle directories -- specifying `/index.php$request_uri`
-                    # here as the fallback means that Nginx always exhibits the desired behaviour
-                    # when a client requests a path that corresponds to a directory that exists
-                    # on the server. In particular, if that directory contains an index.php file,
-                    # that file is correctly served; if it doesn't, then the request is passed to
-                    # the front-end controller. This consistent behaviour means that we don't need
-                    # to specify custom rules for certain paths (e.g. images and other assets,
-                    # `/updater`, `/ocm-provider`, `/ocs-provider`), and thus
-                    # `try_files $uri $uri/ /index.php$request_uri`
-                    # always provides the desired behaviour.
-                    index index.php index.html /index.php$request_uri;
-
-                    # Rule borrowed from `.htaccess` to handle Microsoft DAV clients
+                    # Microsoft DAV client rule
                     location = / {
-                        if ( $http_user_agent ~ ^DavClnt ) {
+                        if ($http_user_agent ~ ^DavClnt) {
                             return 302 /remote.php/webdav/$is_args$args;
                         }
                     }
 
+                    # Robots.txt
                     location = /robots.txt {
                         allow all;
                         log_not_found off;
                         access_log off;
                     }
 
-                    # Make a regex exception for `/.well-known` so that clients can still
-                    # access it despite the existence of the regex rule
-                    # `location ~ /(\.|autotest|...)` which would otherwise handle requests
-                    # for `/.well-known`.
+                    # Well-known URLs
                     location ^~ /.well-known {
-                        # The rules in this block are an adaptation of the rules
-                        # in `.htaccess` that concern `/.well-known`.
-
-                        location = /.well-known/carddav { return 301 https://$host/remote.php/dav/; }
-                        location = /.well-known/caldav  { return 301 https://$host/remote.php/dav/; }
-
-                        location /.well-known/acme-challenge    { try_files $uri $uri/ =404; }
-                        location /.well-known/pki-validation    { try_files $uri $uri/ =404; }
-
-                        # Let Nextcloud's API for `/.well-known` URIs handle all other
-                        # requests by passing them to the front-end controller.
-                        return 301 https://$host/index.php$request_uri;
+                        location = /.well-known/carddav { return 301 /remote.php/dav/; }
+                        location = /.well-known/caldav { return 301 /remote.php/dav/; }
+                        location /.well-known/acme-challenge { try_files $uri $uri/ =404; }
+                        location /.well-known/pki-validation { try_files $uri $uri/ =404; }
+                        return 301 /index.php$request_uri;
                     }
 
-                    # Rules borrowed from `.htaccess` to hide certain paths from clients
-                    location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)(?:$|/)  { return 404; }
-                    location ~ ^/(?:\.|autotest|occ|issue|indie|db_|console)                { return 404; }
+                    # Deny access to sensitive directories
+                    location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)(?:$|/) { return 404; }
+                    location ~ ^/(?:\.|autotest|occ|issue|indie|db_|console) { return 404; }
 
-                    ### Start Collabora Online ###
-                    # static files
-                    location ^~ /browser {
-                      proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
-                      proxy_set_header Host $http_host;
-                    }
-                    # WOPI discovery URL
-                    location ^~ /hosting/discovery {
-                      proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
-                      proxy_set_header Host $http_host;
-                    }
-                    # Capabilities
-                    location ^~ /hosting/capabilities {
-                      proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
-                      proxy_set_header Host $http_host;
-                    }
-                    # main websocket
-                    location ~ ^/cool/(.*)/ws$ {
-                      proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
-                      proxy_set_header Upgrade $http_upgrade;
-                      proxy_set_header Connection "Upgrade";
-                      proxy_set_header Host $http_host;
-                      proxy_read_timeout 36000s;
-                    }
-                    # download, presentation and image upload
-                    location ~ ^/(c|l)ool {
-                      proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
-                      proxy_set_header Host $http_host;
-                    }
-                    # Admin Console websocket
-                    location ^~ /cool/adminws {
-                      proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
-                      proxy_set_header Upgrade $http_upgrade;
-                      proxy_set_header Connection "Upgrade";
-                      proxy_set_header Host $http_host;
-                      proxy_read_timeout 36000s;
-                    }
-                    ### End Collabora Online ###
-
-                    ### Start Nextcloud Whiteboard ###
-                    location /whiteboard/ {
-                      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                      proxy_set_header Host $host;
-
-                      proxy_pass http://nextcloud-whiteboard.productivity.svc.cluster.local:3002/;
-
-                      proxy_http_version 1.1;
-                      proxy_set_header Upgrade $http_upgrade;
-                      proxy_set_header Connection "upgrade";
-                    }
-                    ### End Nextcloud Whiteboard ###
-
-                    # Ensure this block, which passes PHP files to the PHP process, is above the blocks
-                    # which handle static assets (as seen below). If this block is not declared first,
-                    # then Nginx will encounter an infinite rewriting loop when it prepends `/index.php`
-                    # to the URI, resulting in a HTTP 500 error response.
+                    # PHP handling
                     location ~ \.php(?:$|/) {
-                        # Required for legacy support
                         rewrite ^/(?!index|remote|public|cron|core\/ajax\/update|status|ocs\/v[12]|updater\/.+|oc[ms]-provider\/.+|.+\/richdocumentscode\/proxy) /index.php$request_uri;
 
-                        access_log /var/log/nginx/access.log main if=$ignore_log_ua;
+                        access_log /var/log/nginx/access.log main;
 
                         fastcgi_split_path_info ^(.+?\.php)(/.*)$;
                         set $path_info $fastcgi_path_info;
@@ -614,39 +520,93 @@ spec:
                         fastcgi_param PATH_INFO $path_info;
                         fastcgi_param HTTPS on;
 
-                        fastcgi_param modHeadersAvailable true;         # Avoid sending the security headers twice
-                        fastcgi_param front_controller_active true;     # Enable pretty urls
+                        fastcgi_param modHeadersAvailable true;  # Avoid sending the security headers twice
+                        fastcgi_param front_controller_active true;
+
                         fastcgi_pass php-handler;
 
                         fastcgi_intercept_errors on;
                         fastcgi_request_buffering off;
-
+                        fastcgi_read_timeout 3600;
+                        fastcgi_send_timeout 3600;
+                        fastcgi_connect_timeout 3600;
                         fastcgi_max_temp_file_size 0;
                     }
 
-                    location ~ \.(?:css|js|svg|gif|png|jpg|ico|wasm|tflite|map)$ {
+                    # Static files
+                    location ~ \.(?:css|js|mjs|svg|gif|ico|jpg|png|webp|wasm|tflite|map|ogg|flac)$ {
                         try_files $uri /index.php$request_uri;
-                        add_header Cache-Control "public, max-age=15778463, $asset_immutable";
-                        access_log off;     # Optional: Don't log access to assets
-
-                        location ~ \.wasm$ {
-                            default_type application/wasm;
-                        }
-                    }
-                    location ~ \.woff2?$ {
-                        try_files $uri /index.php$request_uri;
-                        expires 7d;         # Cache-Control policy borrowed from `.htaccess`
-                        access_log off;     # Optional: Don't log access to assets
+                        add_header Cache-Control "public, max-age=15768000, immutable";
+                        expires 6M;
+                        access_log off;
                     }
 
-                    # Rule borrowed from `.htaccess`
+                    # Font files
+                    location ~ \.(otf|woff2?)$ {
+                        try_files $uri /index.php$request_uri;
+                        expires 7d;
+                        access_log off;
+                    }
+
+                    # Remote requests
                     location /remote {
-                        return 301 https://$host/remote.php$request_uri;
+                        return 301 /remote.php$request_uri;
                     }
 
+                    # Rate limit for login
+                    location /login {
+                        limit_req zone=NextcloudRateLimit burst=5 nodelay;
+                        limit_req_status 429;
+                        try_files $uri $uri/ /index.php$request_uri;
+                    }
+
+                    # Default fallback
                     location / {
                         try_files $uri $uri/ /index.php$request_uri;
                     }
+
+                    # Collabora Online
+                    location ^~ /browser {
+                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_set_header Host $http_host;
+                    }
+                    location ^~ /hosting/discovery {
+                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_set_header Host $http_host;
+                    }
+                    location ^~ /hosting/capabilities {
+                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_set_header Host $http_host;
+                    }
+                    location ~ ^/cool/(.*)/ws$ {
+                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "Upgrade";
+                        proxy_set_header Host $http_host;
+                        proxy_read_timeout 36000s;
+                    }
+                    location ~ ^/(c|l)ool {
+                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_set_header Host $http_host;
+                    }
+                    location ^~ /cool/adminws {
+                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "Upgrade";
+                        proxy_set_header Host $http_host;
+                        proxy_read_timeout 36000s;
+                    }
+
+                    # Nextcloud Whiteboard
+                    location /whiteboard/ {
+                        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                        proxy_set_header Host $host;
+                        proxy_pass http://nextcloud-whiteboard.productivity.svc.cluster.local:3002/;
+                        proxy_http_version 1.1;
+                        proxy_set_header Upgrade $http_upgrade;
+                        proxy_set_header Connection "upgrade";
+                    }
+
                 }
             }
     persistence:
