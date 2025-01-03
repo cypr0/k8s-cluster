@@ -1,0 +1,44 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: home-assistant-job-installhacs
+spec:
+  backoffLimit: 3
+  template:
+    spec:
+      containers:
+        - name: check-hacs
+          image: ghcr.io/linuxserver/docker-baseimage-alpine:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Checking if Home Assistant is running..."
+              if ! curl -s http://home-assistant.home-assistant.svc.cluster.local:8123 > /dev/null; then
+                echo "Home Assistant is not reachable. Exiting the job."
+                exit 1
+              fi
+
+              echo "Home Assistant is running. Checking for HACS..."
+              CONFIG_DIR="/config"
+              HACS_DIR="$CONFIG_DIR/custom_components/hacs"
+
+              if [ -d "$HACS_DIR" ]; then
+                echo "HACS is already installed."
+              else
+                echo "HACS is not installed. Starting installation..."
+                wget -O - https://get.hacs.xyz | bash -
+                echo "HACS successfully installed."
+              fi
+          env:
+            - name: CONFIG_DIR
+              value: "/config"
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+      restartPolicy: OnFailure
+      volumes:
+        - name: config-volume
+          persistentVolumeClaim:
+            claimName: home-assistant-nfs-pvc
