@@ -440,7 +440,6 @@ spec:
                     # in all major browsers and getting removed from this list
                     # could take several months.
                     add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;" always;
-                    add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self';";
                     # set max upload size
                     client_max_body_size 1024M;
                     client_body_timeout 300s;
