@@ -202,10 +202,6 @@ spec:
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-buffer-size: "512k"
-          nginx.ingress.kubernetes.io/limit-connections: "20"
-          nginx.ingress.kubernetes.io/limit-rps: "2"
-          nginx.ingress.kubernetes.io/x-forwarded-for: "true"
-          nginx.ingress.kubernetes.io/x-forwarded-proto: "true"
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
@@ -417,6 +413,11 @@ spec:
 
                 upstream php-handler {
                     server 127.0.0.1:9000;
+                }
+
+                types {
+                    text/javascript mjs;
+                    application/wasm wasm;
                 }
 
                 server {
