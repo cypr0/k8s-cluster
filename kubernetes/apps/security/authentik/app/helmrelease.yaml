@@ -68,6 +68,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           nginx.ingress.kubernetes.io/enable-global-auth: "false"
+          nginx.org/websocket-services: authentik
         hosts:
           - &host id.${SECRET_DOMAIN}
         paths:
