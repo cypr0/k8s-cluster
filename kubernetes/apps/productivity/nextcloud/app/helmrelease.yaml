@@ -256,6 +256,10 @@ spec:
                 'skeletondirectory' => '',
                 'trashbin_retention_obligation' => 'auto, 7',
 
+                'log_type' => 'file',
+                'logfile' => 'nextcloud.log'.
+                'loglevel' => 0,
+
                 'memcache.local' => '\OC\Memcache\APCu',
                 'memcache.distributed' => '\OC\Memcache\Redis',
                 'memcache.locking' => '\OC\Memcache\Redis',
