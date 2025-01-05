@@ -37,6 +37,7 @@ spec:
             - key: ingress-class
               operator: In
               values: ["internal"]
+      allowSnippetAnnotations: true
       config:
         add-headers:
           X-Content-Type-Options: "nosniff"
