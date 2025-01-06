@@ -204,6 +204,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+          nginx.org/websocket-services: nextcloud-collabora
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
             paths:
@@ -238,7 +239,6 @@ spec:
                     1 => '10.0.0.0/8',
                     2 => '172.16.0.0/12',
                     3 => '192.168.0.0/16',
-                    4 => '${SECRET_GATEWAY}',
                 ),
                 'forwarded_for_headers' => array(
                   0 => 'HTTP_X_FORWARDED_FOR',

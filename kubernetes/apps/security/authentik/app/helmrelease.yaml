@@ -68,7 +68,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           nginx.ingress.kubernetes.io/enable-global-auth: "false"
-          nginx.org/websocket-services: authentik
+          nginx.org/websocket-services: authentik-server
           nginx.ingress.kubernetes.io/configuration-snippet: |
             more_set_headers "X-Forwarded-Proto: https";
             more_set_headers "X-Forwarded-For: $remote_addr";
