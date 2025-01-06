@@ -204,6 +204,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
+          nginx.ingress.kubernetes.io/enable-websocket: "true"
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
             paths:
