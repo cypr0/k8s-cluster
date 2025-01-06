@@ -227,7 +227,7 @@ spec:
             location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
               deny all;
             }
-            external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
             paths:
