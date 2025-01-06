@@ -203,30 +203,8 @@ spec:
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-          nginx.ingress.kubernetes.io/server-snippet: |-
-            server_tokens off;
-            proxy_hide_header X-Powered-By;
-
-            rewrite ^/.well-known/webfinger /public.php?service=webfinger last;
-            rewrite ^/.well-known/host-meta /public.php?service=host-meta last;
-            rewrite ^/.well-known/host-meta.json /public.php?service=host-meta-json;
-            location = /.well-known/carddav {
-              return 301 $scheme://$host/remote.php/dav;
-            }
-            location = /.well-known/caldav {
-              return 301 $scheme://$host/remote.php/dav;
-            }
-            location = /robots.txt {
-              allow all;
-              log_not_found off;
-              access_log off;
-            }
-            location ~ ^/(?:build|tests|config|lib|3rdparty|templates|data)/ {
-              deny all;
-            }
-            location ~ ^/(?:autotest|occ|issue|indie|db_|console) {
-              deny all;
-            }
+          nginx.ingress.kubernetes.io/server-snippet: |
+            add_header Content-Security-Policy "script-src 'strict-dynamic' 'nonce-<nonce>' https://cloud.${SECRET_DOMAIN}/cdn-cgi/scripts/7d0fa10a/cloudflare-static/; default-src 'self';";
           external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
@@ -260,8 +238,9 @@ spec:
                 'trusted_proxies' => array(
                     0 => '127.0.0.1',
                     1 => '10.0.0.0/8',
-                    2 => '192.168.0.0/16',
-                    3 => '${SECRET_GATEWAY}',
+                    2 => '172.16.0.0/12',
+                    3 => '192.168.0.0/16',
+                    4 => '${SECRET_GATEWAY}',
                 ),
                 'forwarded_for_headers' => array(
                   0 => 'HTTP_X_FORWARDED_FOR',
