@@ -203,9 +203,6 @@ spec:
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-buffering: "off"
           nginx.ingress.kubernetes.io/proxy-request-buffering: "off"
-          nginx.ingress.kubernetes.io/server-snippet: |
-            add_header Content-Security-Policy "default-src 'self'; script-src 'self' https://cloud.${SECRET_DOMAIN}/cdn-cgi/scripts/7d0fa10a/cloudflare-static/;";
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
             paths:
