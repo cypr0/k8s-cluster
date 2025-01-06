@@ -50,7 +50,7 @@ spec:
         enable-brotli: "true"
         enable-ocsp: "true"
         enable-real-ip: "true"
-        force-ssl-redircet: "true"
+        # force-ssl-redircet: "true"
         hide-headers: Server,X-Powered-By
         hsts-include-subdomains: "true"
         hsts-max-age: 63072000 # 2 years
