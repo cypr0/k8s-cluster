@@ -121,7 +121,7 @@ spec:
             # Doesn't work with dragonfly: https://github.com/immich-app/immich/issues/2542
             image:
               repository: redis
-              tag: 7.4.1-alpine
+              tag: 7.4.2-alpine
             command:
               - sh
             args:
