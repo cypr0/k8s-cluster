@@ -42,7 +42,7 @@ spec:
           immich-server:
             image:
               repository: ghcr.io/immich-app/immich-server
-              tag: v1.123.0
+              tag: v1.124.2
             resources:
               requests:
                 cpu: 100m
@@ -81,7 +81,7 @@ spec:
           immich-machine-learning:
             image:
               repository: ghcr.io/immich-app/immich-machine-learning
-              tag: v1.123.0
+              tag: v1.124.2
             resources:
               requests:
                 cpu: 15m
@@ -121,7 +121,7 @@ spec:
             # Doesn't work with dragonfly: https://github.com/immich-app/immich/issues/2542
             image:
               repository: redis
-              tag: 7.4.1-alpine
+              tag: 7.4.2-alpine
             command:
               - sh
             args:

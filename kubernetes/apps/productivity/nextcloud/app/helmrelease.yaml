@@ -108,7 +108,7 @@ spec:
           clamav:
             image:
               repository: clamav/clamav
-              tag: 1.4.1@sha256:a7b4e7dd2b6e7f6ee23198b8c027c328785ca32f7cb37d6317e78c7198417dc8
+              tag: 1.4.1@sha256:79f12e1ac65c3e9c52c424e0438d9b888518cef6fa976e73c5739602315cd453
             env:
               CLAMAV_NO_CLAMD: false
               CLAMAV_NO_FRESHCLAMD: false
@@ -124,7 +124,7 @@ spec:
           collabora:
             image:
               repository: collabora/code
-              tag: 24.04.11.1.1@sha256:d5b2d6e54f074d8d936a21dccd7bff258446443733e1fa87a4171e51ecd974dc
+              tag: 24.04.11.2.1@sha256:1cf62aa5db7f7e94d0b286f5acdd2ff823f1ef87fedffef1f487abcec5d30e9a
             env:
               - name: username
                 valueFrom:
@@ -166,7 +166,7 @@ spec:
           init-chmod-pvc:
             image:
               repository: docker.io/library/alpine
-              tag: 3.21.0
+              tag: 3.21.2
             command: ["/bin/sh"]
             args: ["-c", "mkdir -p /var/www/html/config && chmod 0770 /var/www/html/config && chown 222:220 /var/www/html/config && mkdir -p /usr/local/etc/php/conf.d && chmod 0770 /usr/local/etc/php/conf.d && chown 222:220 /usr/local/etc/php/conf.d"]
             securityContext:
