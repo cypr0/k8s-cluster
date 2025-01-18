@@ -43,7 +43,7 @@ spec:
           nextcloud:
             image:
               repository: docker.io/library/nextcloud
-              tag: 30.0.4-fpm-alpine
+              tag: 30.0.5-fpm-alpine
             env:
               - name: TZ
                 value: "${TIMEZONE}"
