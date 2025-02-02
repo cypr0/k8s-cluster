@@ -42,7 +42,7 @@ spec:
       email:
         host: mail.${SECRET_DOMAIN}
         port: 465
-        from: "Authentik <admin@${SECRET_DOMAIN}>"
+        from: "Authentik <mail@${SECRET_DOMAIN}>"
         timeout: 30
         use_tls: false
         use_ssl: true

@@ -1,24 +1,4 @@
 ---
-# yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.26.1-standalone-strict/persistentvolume-v1.json
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: nextcloud-nfs
-spec:
-  capacity:
-    storage: 1Mi # Size does not matter
-  accessModes:
-    - ReadWriteMany
-  storageClassName: nextcloud-nfs
-  persistentVolumeReclaimPolicy: Retain
-  nfs:
-    server: "${SECRET_NFS_SERVER}"
-    path: /mnt/data/nextcloud
-  mountOptions:
-    - vers=4.2
-    - nconnect=8
-    - hard
----
 # yaml-language-server: $schema=https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master/v1.26.1-standalone-strict/persistentvolumeclaim-v1.json
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -26,10 +6,10 @@ metadata:
   name: nextcloud-data-pvc
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: nextcloud-nfs
+  storageClassName: nfs
   resources:
     requests:
-      storage: 1Mi # Size does not matter
+      storage: 200Gi # Size does not matter
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -37,7 +17,7 @@ metadata:
   name: nextcloud-app-pvc
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: longhorn-backup
+  storageClassName: iscsi
   resources:
     requests:
-      storage: 20Gi
+      storage: 30Gi

@@ -160,7 +160,7 @@ spec:
     persistence:
       library:
         enabled: true
-        existingClaim: paperless-nfs-pvc
+        existingClaim: paperless-pvc
         advancedMounts:
           main:
             paperless-ngx:

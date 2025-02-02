@@ -9,8 +9,8 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:16.6
   instances: 1
   storage:
-    size: 100Gi
-    storageClass: external-nfs
+    size: 20Gi
+    storageClass: iscsi
   postgresql:
     parameters:
       max_connections: "200"

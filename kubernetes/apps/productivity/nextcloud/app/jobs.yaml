@@ -269,7 +269,7 @@ metadata:
   name: nextcloud-cronjob-missingindices
   namespace: nextcloud
 spec:
-  schedule: "0 3 * * *"  # every day at 3:00 a.m.
+  schedule: "0 3 * * *"  # Every day at 3:00 a.m.
   jobTemplate:
     spec:
       ttlSecondsAfterFinished: 3600

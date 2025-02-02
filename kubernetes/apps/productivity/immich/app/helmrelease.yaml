@@ -442,7 +442,7 @@ spec:
     persistence:
       data:
         enabled: true
-        existingClaim: immich-nfs-pvc
+        existingClaim: immich-pvc
         globalMounts:
           - path: *mediaLocation
       cache:

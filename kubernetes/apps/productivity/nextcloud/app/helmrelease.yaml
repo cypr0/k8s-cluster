@@ -67,7 +67,7 @@ spec:
               - name: SMTP_AUTHTYPE
                 value: ""
               - name: MAIL_FROM_ADDRESS
-                value: "service"
+                value: "mail"
               - name: MAIL_DOMAIN
                 value: "${SECRET_DOMAIN}"
               - name: POSTGRES_HOST
