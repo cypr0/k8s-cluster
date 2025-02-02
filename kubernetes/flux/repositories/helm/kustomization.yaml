@@ -17,7 +17,7 @@ resources:
   - ./k8s-gateway.yaml
   - ./authentik.yaml
   - ./cloudnative-pg.yaml
-  - ./democratic-csi/ks.yaml
+  - ./democratic-csi.yaml
   - ./external-secrets.yaml
   - ./grafana.yaml
   - ./minio.yaml
