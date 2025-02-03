@@ -46,7 +46,7 @@ spec:
         enable-brotli: "true"
         enable-real-ip: "true"
         hsts: "true"
-        hsts-max-age: "63072000" # 2 Jahre in Sekunden
+        hsts-max-age: "63072000" # 2 years
         hsts-include-subdomains: "true"
         hsts-preload: "true"
         keep-alive-requests: 10000
