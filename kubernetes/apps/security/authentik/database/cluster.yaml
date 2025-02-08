@@ -32,7 +32,7 @@ spec:
   # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
   # bootstrap:
   #   recovery:
-  #     source: &previousCluster authentik-postgres17-v4
+  #     source: &previousCluster authentik-postgres17-v1
   backup:
     retentionPolicy: 7d
     barmanObjectStore: &barmanObjectStore
@@ -43,7 +43,7 @@ spec:
         maxParallel: 8
       destinationPath: s3://k8s-postgres/authentik/
       endpointURL: https://s3.${SECRET_DOMAIN}
-      serverName: &currentCluster authentik-postgres17-v5
+      serverName: &currentCluster authentik-postgres17-v1
       s3Credentials:
         accessKeyId:
           name: authentik-db-secret
