@@ -40,12 +40,12 @@ spec:
       log_level: info
       avatars: "gravatar,initials"
       email:
-        host: mail.${SECRET_DOMAIN}
-        port: 465
+        host: ${SECRET_MAIL_SERVER}
+        port: 25
         from: "Authentik <mail@${SECRET_DOMAIN}>"
         timeout: 30
         use_tls: false
-        use_ssl: true
+        use_ssl: false
       error_reporting:
         enable: false
         send_pii: false
