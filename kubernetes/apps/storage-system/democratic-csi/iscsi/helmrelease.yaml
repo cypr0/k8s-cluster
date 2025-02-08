@@ -86,7 +86,7 @@ spec:
     csiDriver:
       name: "iscsi"
     storageClasses:
-      - name: nas-iscsi
+      - name: iscsi
         defaultClass: true
         reclaimPolicy: Delete
         volumeBindingMode: Immediate
