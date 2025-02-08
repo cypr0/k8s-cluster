@@ -23,7 +23,7 @@ spec:
       strategy: rollback
       retries: 3
   dependsOn:
-    - name: democratic-csi-iscsi-controller
+    - name: democratic-csi-iscsi
       namespace: storage-system
   values:
     crds:
