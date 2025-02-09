@@ -101,6 +101,13 @@ spec:
           node-stage-secret:
           node-publish-secret:
           controller-expand-secret:
+    volumeSnapshotClasses:
+      - name: iscsi
+        deletionPolicy: Delete
+        parameters:
+          detachedSnapshots: "true"
+        secrets:
+          snapshotter-secret:
     node:
       hostPID: true
       driver:

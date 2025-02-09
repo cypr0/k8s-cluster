@@ -102,6 +102,13 @@ spec:
           node-stage-secret:
           node-publish-secret:
           controller-expand-secret:
+    volumeSnapshotClasses:
+      - name: nfs
+        deletionPolicy: Delete
+        parameters:
+          detachedSnapshots: "true"
+        secrets:
+          snapshotter-secret:
     node:
       driver:
         resources:
