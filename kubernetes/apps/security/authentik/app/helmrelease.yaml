@@ -83,9 +83,9 @@ spec:
           serviceMonitor:
             enabled: true
     geoip:
-      enabled: true
+      enabled: false
       editionIds: "GeoLite2-City GeoLite2-ASN"
-      updateInterval: 24
+      updateInterval: 48
       existingSecret:
         secretName: *secret
         accountId: MAXMIND_ACCOUNT_ID
