@@ -9,8 +9,8 @@ spec:
   imageName: ghcr.io/cloudnative-pg/postgresql:17.2
   instances: 1
   storage:
-    size: 30Gi
-    storageClass: iscsi
+    size: 20Gi
+    storageClass: openebs-hostpath
   postgresql:
     parameters:
       max_connections: "200"
