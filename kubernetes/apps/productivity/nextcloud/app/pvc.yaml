@@ -9,7 +9,7 @@ spec:
   storageClassName: nfs
   resources:
     requests:
-      storage: 200Gi # Size does not matter
+      storage: 250Gi # Size does not matter
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -20,4 +20,4 @@ spec:
   storageClassName: iscsi
   resources:
     requests:
-      storage: 30Gi
+      storage: 50Gi
