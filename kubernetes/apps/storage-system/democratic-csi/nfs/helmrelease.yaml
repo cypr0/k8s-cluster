@@ -163,5 +163,5 @@ spec:
           shareAllowedNetworks: []
           shareMaprootUser: root
           shareMaprootGroup: root
-          shareMapallUser: ""
-          shareMapallGroup: ""
+          shareMapallUser: k8susr
+          shareMapallGroup: k8s
