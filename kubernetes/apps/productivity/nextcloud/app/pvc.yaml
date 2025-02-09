@@ -16,8 +16,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: nextcloud-app-pvc
 spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: iscsi
+  accessModes: ["ReadWriteMany"]
+  storageClassName: nfs
   resources:
     requests:
       storage: 50Gi
