@@ -103,7 +103,7 @@ spec:
                 value: /data
           nginx:
             image:
-              repository: docker.io/nginxinc/nginx-unprivileged
+              repository: nginx
               tag: 1.27-alpine
           clamav:
             image:
