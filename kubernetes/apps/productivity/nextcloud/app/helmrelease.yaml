@@ -30,9 +30,9 @@ spec:
         reloader.stakater.com/auto: "true"
         secret.reloader.stakater.com/reload: "nextcloud-secret"
       securityContext:
-        runAsUser: 222
-        runAsGroup: 220
-        fsGroup: 220
+        runAsUser: 0
+        runAsGroup: 0
+        fsGroup: 0
     controllers:
       main:
         replicas: 1
@@ -168,10 +168,10 @@ spec:
               repository: docker.io/library/alpine
               tag: 3.21.2
             command: ["/bin/sh"]
-            args: ["-c", "mkdir -p /var/www/html/config && chmod 0770 /var/www/html/config && chown 222:220 /var/www/html/config && mkdir -p /usr/local/etc/php/conf.d && chmod 0770 /usr/local/etc/php/conf.d && chown 222:220 /usr/local/etc/php/conf.d"]
+            args: ["-c", "mkdir -p /var/www/html/config && chmod 0770 /var/www/html/config && chown 0:0 /var/www/html/config && mkdir -p /usr/local/etc/php/conf.d && chmod 0770 /usr/local/etc/php/conf.d && chown 0:0 /usr/local/etc/php/conf.d && mkdir -p /data && chmod 0770 /data/ && chown 0:0 /data"]
             securityContext:
               runAsUser: 0
-              runAsGroup: 220
+              runAsGroup: 0
     service:
       nginx:
         controller: main
