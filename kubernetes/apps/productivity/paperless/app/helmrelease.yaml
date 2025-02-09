@@ -41,7 +41,7 @@ spec:
               PAPERLESS_CONSUMER_POLLING: 60
               PAPERLESS_CONSUMER_RECURSIVE: "true"
               PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS: "true"
-              PAPERLESS_CONSUMPTION_DIR: /library/consume
+              PAPERLESS_CONSUMPTION_DIR: /consume
               PAPERLESS_DATA_DIR: /library/data
               PAPERLESS_EXPORT_DIR: /library/export
               PAPERLESS_LOGOUT_REDIRECT_URL: https://id.${SECRET_DOMAIN}/application/o/paperless-ngx/end-session/
@@ -73,8 +73,8 @@ spec:
               PAPERLESS_TIME_ZONE: ${TIMEZONE}
               PAPERLESS_TRUSTED_PROXIES: 10.69.0.0/16,192.168.0.0/16
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
-              USERMAP_UID: 223
-              USERMAP_GID: 220
+              USERMAP_UID: 3000
+              USERMAP_GID: 3000
             envFrom:
               - secretRef:
                   name: paperless-secret
@@ -105,8 +105,8 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-              runAsUser: 223
-              runAsGroup: 220
+              runAsUser: 3000
+              runAsGroup: 3000
               runAsNonRoot: true
           tika:
             image:
@@ -121,8 +121,8 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-              runAsUser: 223
-              runAsGroup: 220
+              runAsUser: 3000
+              runAsGroup: 3000
               runAsNonRoot: true
     service:
       paperless-ngx:
@@ -165,6 +165,13 @@ spec:
           main:
             paperless-ngx:
               - path: /library
+      consume:
+        enabled: true
+        existingClaim: paperless-consume-pvc
+        advancedMounts:
+          main:
+            paperless-ngx:
+              - path: /consume
       gotenberg-tmp:
         enabled: true
         type: emptyDir

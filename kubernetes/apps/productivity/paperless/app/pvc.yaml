@@ -2,10 +2,39 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: paperless-pvc
+  name: paperless-data-pvc
 spec:
   accessModes: ["ReadWriteMany"]
   storageClassName: nfs
   resources:
     requests:
       storage: 200Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: paperless-consume-pv
+spec:
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: paperless-consume-nfs
+  mountOptions:
+    - hard
+    - nfsvers=4.2
+  nfs:
+    path: /mnt/hdd/shr/pls
+    server: ${SECRET_NAS_SERVER}
+    readOnly: false
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: paperless-consume-pvc
+spec:
+  storageClassName: paperless-consume-nfs
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
