@@ -92,7 +92,7 @@ spec:
     geoip:
       enabled: true
       editionIds: "GeoLite2-City GeoLite2-ASN"
-      updateInterval: 12
+      updateInterval: 24
       existingSecret:
         secretName: *secret
         accountId: MAXMIND_ACCOUNT_ID
