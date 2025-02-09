@@ -7,9 +7,9 @@ spec:
     spec:
       ttlSecondsAfterFinished: 3600
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        runAsUser: 3000
+        runAsGroup: 3000
+        fsGroup: 3000
       containers:
       - name: nextcloud-job-config-postinstall
         image: docker.io/library/nextcloud:30.0.5-fpm-alpine
@@ -40,9 +40,9 @@ spec:
     spec:
       ttlSecondsAfterFinished: 3600
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        runAsUser: 3000
+        runAsGroup: 3000
+        fsGroup: 3000
       containers:
       - name: nextcloud-job-config-addapps
         image: docker.io/library/nextcloud:30.0.5-fpm-alpine
@@ -73,9 +73,9 @@ spec:
     spec:
       ttlSecondsAfterFinished: 3600
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        runAsUser: 3000
+        runAsGroup: 3000
+        fsGroup: 3000
       containers:
       - name: nextcloud-job-config-oidc
         image: docker.io/library/nextcloud:30.0.5-fpm-alpine
@@ -133,9 +133,9 @@ spec:
     spec:
       ttlSecondsAfterFinished: 7200
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        runAsUser: 3000
+        runAsGroup: 3000
+        fsGroup: 3000
       containers:
       - name: nextcloud-job-config-whiteboard
         image: docker.io/library/nextcloud:30.0.5-fpm-alpine
@@ -180,9 +180,9 @@ spec:
     spec:
       ttlSecondsAfterFinished: 7200
       securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-        fsGroup: 0
+        runAsUser: 3000
+        runAsGroup: 3000
+        fsGroup: 3000
       containers:
       - name: nextcloud-job-config-richdocuments
         image: docker.io/library/nextcloud:30.0.5-fpm-alpine
@@ -232,9 +232,9 @@ spec:
       template:
         spec:
           securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-            fsGroup: 0
+            runAsUser: 3000
+            runAsGroup: 3000
+            fsGroup: 3000
           containers:
             - name: nextcloud-cronjob-cron
               image: docker.io/library/nextcloud:30.0.5-fpm-alpine
@@ -276,9 +276,9 @@ spec:
       template:
         spec:
           securityContext:
-            runAsUser: 0
-            runAsGroup: 0
-            fsGroup: 0
+            runAsUser: 3000
+            runAsGroup: 3000
+            fsGroup: 3000
           containers:
           - name: nextcloud-cronjob-missingindices
             image: docker.io/library/nextcloud:30.0.5-fpm-alpine
