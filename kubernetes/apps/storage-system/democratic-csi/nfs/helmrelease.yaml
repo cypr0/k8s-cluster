@@ -161,7 +161,7 @@ spec:
           shareAlldirs: false
           shareAllowedHosts: []
           shareAllowedNetworks: []
-          shareMaprootUser: root
-          shareMaprootGroup: root
+          shareMaprootUser: ""
+          shareMaprootGroup: ""
           shareMapallUser: k8susr
           shareMapallGroup: k8s
