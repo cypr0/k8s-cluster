@@ -169,7 +169,7 @@ spec:
           nameSuffix: "-k8s-cluster"
           targetGroups:
             - targetGroupPortalGroup: 1
-              targetGroupInitiatorGroup: 2
+              targetGroupInitiatorGroup: 3
               targetGroupAuthType: None
               targetGroupAuthGroup:
           extentInsecureTpc: true
