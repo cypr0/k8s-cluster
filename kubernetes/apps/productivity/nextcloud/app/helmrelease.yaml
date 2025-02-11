@@ -147,7 +147,7 @@ spec:
             securityContext:
               runAsUser: 100
               runAsGroup: 101
-              fsGroup: 3000
+              fsGroup: 101
               capabilities:
                 add:
                   - SYS_CHROOT
