@@ -146,11 +146,8 @@ spec:
                 value: "cloud.${SECRET_DOMAIN}"
             securityContext:
               runAsUser: 100
-              runAsGroup: 3000
-              fsGroup: 3000
-              runAsNonRoot: false
-              capabilities:
-                add: ["SYS_ADMIN"]
+              runAsGroup: 101
+              fsGroup: 101
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
