@@ -147,9 +147,7 @@ spec:
             securityContext:
               runAsUser: 100
               runAsGroup: 101
-              fsGroup: 101
-              capabilities:
-                add: ["CHOWN", "FOWNER", "DAC_OVERRIDE"]
+              fsGroup: 3000
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
@@ -210,6 +208,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-body-size: "10G"
           nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+          nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
             paths:
