@@ -146,8 +146,8 @@ spec:
                 value: "cloud.${SECRET_DOMAIN}"
             securityContext:
               runAsUser: 100
-              runAsGroup: 101
-              fsGroup: 101
+              runAsGroup: 3000
+              fsGroup: 3000
               runAsNonRoot: false
           whiteboard:
             image:
