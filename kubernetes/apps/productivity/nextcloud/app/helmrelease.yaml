@@ -149,7 +149,6 @@ spec:
               runAsGroup: 3000
               fsGroup: 3000
               runAsNonRoot: false
-              privileged: true
               capabilities:
                 add: ["SYS_ADMIN"]
           whiteboard:
