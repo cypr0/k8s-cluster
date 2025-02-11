@@ -148,7 +148,7 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 101
-              runAsNonRoot: true
+              runAsNonRoot: false
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
