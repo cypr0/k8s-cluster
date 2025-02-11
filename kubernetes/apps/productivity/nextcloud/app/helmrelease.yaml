@@ -624,13 +624,21 @@ spec:
               - path: /var/www/html
                 subPath: config
                 readOnly: false
-      collabora:
+      collabora-child-roots:
         enabled: true
         type: emptyDir
         advancedMounts:
           main:
             collabora:
-              - path: /opt/cool/
+              - path: /opt/cool/child-roots
+                readOnly: false
+      collabora-systempalte:
+        enabled: true
+        type: emptyDir
+        advancedMounts:
+          main:
+            collabora:
+              - path: /opt/cool/systemplate
                 readOnly: false
       nginx-config:
         type: "configMap"
