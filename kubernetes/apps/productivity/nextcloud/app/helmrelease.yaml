@@ -148,6 +148,8 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 101
+              capabilities:
+                add: ["CHOWN", "FOWNER", "DAC_OVERRIDE"]
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
@@ -622,22 +624,6 @@ spec:
             nextcloud:
               - path: /var/www/html
                 subPath: config
-                readOnly: false
-      collabora-child-roots:
-        enabled: true
-        type: emptyDir
-        advancedMounts:
-          main:
-            collabora:
-              - path: /opt/cool/child-roots
-                readOnly: false
-      collabora-systempalte:
-        enabled: true
-        type: emptyDir
-        advancedMounts:
-          main:
-            collabora:
-              - path: /opt/cool/systemplate
                 readOnly: false
       nginx-config:
         type: "configMap"
