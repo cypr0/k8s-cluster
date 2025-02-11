@@ -120,9 +120,9 @@ spec:
               readiness:
                 enabled: true
             securityContext:
-              runAsUser: 0
-              runAsGroup: 0
-              fsGroup: 0
+              runAsUser: 100
+              runAsGroup: 101
+              fsGroup: 101
           collabora:
             image:
               repository: collabora/code
