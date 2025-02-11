@@ -150,7 +150,9 @@ spec:
               fsGroup: 3000
               capabilities:
                 add:
-                  - CAP_SYS_ADMIN
+                  - SYS_CHROOT
+                  - FOWNER
+                  - CHOWN
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
