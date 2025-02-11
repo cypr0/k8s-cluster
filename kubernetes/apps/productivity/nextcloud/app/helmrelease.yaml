@@ -148,6 +148,9 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 3000
+              capabilities:
+                add:
+                  - CAP_SYS_ADMIN
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
