@@ -148,6 +148,7 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 3000
+              privileged: true
               capabilities:
                 add:
                   - MKNOD
