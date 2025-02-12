@@ -148,10 +148,6 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 3000
-              privileged: true
-              capabilities:
-                add:
-                  - MKNOD
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
@@ -626,6 +622,18 @@ spec:
             nextcloud:
               - path: /var/www/html
                 subPath: config
+                readOnly: false
+      collabora:
+        type: persistentVolumeClaim
+        existingClaim: collabora-pvc
+        advancedMounts:
+          main:
+            collabora:
+              - path: /var/cache/coolwsd
+                subPath: coolwsd
+                readOnly: false
+              - path: /opt/cool
+                subPath: cool
                 readOnly: false
       nginx-config:
         type: "configMap"
