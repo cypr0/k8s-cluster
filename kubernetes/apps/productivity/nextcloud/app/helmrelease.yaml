@@ -145,10 +145,6 @@ spec:
               - name: server_name
                 value: "cloud.${SECRET_DOMAIN}"
             securityContext:
-              runAsUser: 100
-              runAsGroup: 101
-              fsGroup: 101
-              allowPrivilegeEscalation: true
               capabilities:
                 add:
                   - SYS_CHROOT
