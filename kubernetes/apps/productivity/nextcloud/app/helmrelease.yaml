@@ -126,7 +126,7 @@ spec:
           collabora:
             image:
               repository: collabora/code
-              tag: 24.04.11.3.1
+              tag: 24.04.2.1
             env:
               - name: username
                 valueFrom:
