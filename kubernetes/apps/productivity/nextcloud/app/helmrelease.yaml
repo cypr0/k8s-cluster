@@ -126,7 +126,7 @@ spec:
           collabora:
             image:
               repository: collabora/code
-              tag: 23.05.10.1.1
+              tag: 24.04.12.3.1
             env:
               - name: username
                 valueFrom:
@@ -144,13 +144,6 @@ spec:
                 value: "de_DE en_GB en_US es_ES fr_FR"
               - name: server_name
                 value: "cloud.${SECRET_DOMAIN}"
-            securityContext:
-              runAsUser: 100
-              runAsGroup: 101
-              fsGroup: 101
-              capabilities:
-                add:
-                  - SYS_ADMIN
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
