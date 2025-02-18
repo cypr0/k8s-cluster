@@ -624,17 +624,6 @@ spec:
               - path: /var/www/html
                 subPath: config
                 readOnly: false
-      collabora:
-        type: emptyDir
-        advancedMounts:
-          main:
-            collabora:
-              - path: /var/cache/coolwsd
-                subPath: coolwsd
-                readOnly: false
-              - path: /opt/cool
-                subPath: cool
-                readOnly: false
       nginx-config:
         type: "configMap"
         name: nextcloud-nginx-config
