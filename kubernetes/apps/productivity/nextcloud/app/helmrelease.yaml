@@ -139,17 +139,11 @@ spec:
                     name: nextcloud-secret
                     key: COLLABORA_PASSWORD
               - name: extra_params
-                value: "--o:ssl.termination=true --o:ssl.enable=false --o:welcome.enable=false --o:net.proto=IPv4"
+                value: "--o:ssl.termination=true --o:ssl.enable=false --o:welcome.enable=false"
               - name: dictionaries
                 value: "de_DE en_GB en_US es_ES fr_FR"
               - name: server_name
                 value: "cloud.${SECRET_DOMAIN}"
-            securityContext:
-              capabilities:
-                add:
-                  - SYS_CHROOT
-                  - FOWNER
-                  - CHOWN
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
@@ -213,6 +207,7 @@ spec:
           nginx.ingress.kubernetes.io/forwarded-for-header: "X-Forwarded-For"
           nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
           nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
+          nginx.ingress.kubernetes.io/enable-global-auth: "false"
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
             paths:
