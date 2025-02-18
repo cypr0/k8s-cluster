@@ -214,6 +214,7 @@ spec:
           nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
           nginx.ingress.kubernetes.io/forwarded-for-header: "X-Forwarded-For"
           nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+          nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_WOPISrc"
         hosts:
           - host: &host cloud.${SECRET_DOMAIN}
             paths:
