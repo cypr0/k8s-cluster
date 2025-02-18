@@ -144,6 +144,10 @@ spec:
                 value: "de_DE en_GB en_US es_ES fr_FR"
               - name: server_name
                 value: "cloud.${SECRET_DOMAIN}"
+            securityContext:
+              runAsUser: 100
+              runAsGroup: 101
+              fsGroup: 0
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
