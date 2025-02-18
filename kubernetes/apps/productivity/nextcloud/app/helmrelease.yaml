@@ -29,10 +29,6 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
         secret.reloader.stakater.com/reload: "nextcloud-secret"
-      securityContext:
-        runAsUser: 3000
-        runAsGroup: 3000
-        fsGroup: 3000
     controllers:
       main:
         replicas: 1
@@ -44,6 +40,10 @@ spec:
             image:
               repository: docker.io/library/nextcloud
               tag: 30.0.5-fpm-alpine
+            securityContext:
+              runAsUser: 3000
+              runAsGroup: 3000
+              fsGroup: 3000
             env:
               - name: TZ
                 value: "${TIMEZONE}"
@@ -148,6 +148,7 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 101
+              allowPrivilegeEscalation: false
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
