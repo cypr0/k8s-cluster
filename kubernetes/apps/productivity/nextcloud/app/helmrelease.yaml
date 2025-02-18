@@ -145,8 +145,8 @@ spec:
               - name: server_name
                 value: "cloud.${SECRET_DOMAIN}"
             securityContext:
-              runAsUser: 100
-              runAsGroup: 101
+              runAsUser: 0
+              runAsGroup: 0
               fsGroup: 0
           whiteboard:
             image:
