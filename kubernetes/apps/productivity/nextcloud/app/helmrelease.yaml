@@ -419,6 +419,12 @@ spec:
                     server 127.0.0.1:9000;
                 }
 
+                # Upstream with hashing for Collabora
+                upstream collabora {
+                    hash $arg_WOPISrc consistent;
+                    server nextcloud-collabora.productivity.svc.cluster.local:9980;
+                }
+
                 types {
                     text/javascript mjs;
                 }
