@@ -151,7 +151,9 @@ spec:
               allowPrivilegeEscalation: true
               capabilities:
                 add:
-                  - SYS_ADMIN
+                  - SYS_CHROOT
+                  - FOWNER
+                  - CHOWN
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
