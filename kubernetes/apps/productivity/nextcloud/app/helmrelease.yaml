@@ -148,6 +148,7 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 101
+              runAsNonRoot: false
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
@@ -168,7 +169,6 @@ spec:
               runAsUser: 65534
               runAsGroup: 65534
               fsGroup: 65534
-              runAsNonRoot: false
         initContainers:
           init-chmod-pvc:
             image:
