@@ -168,6 +168,7 @@ spec:
               runAsUser: 65534
               runAsGroup: 65534
               fsGroup: 65534
+              runAsNonRoot: false
         initContainers:
           init-chmod-pvc:
             image:
