@@ -560,30 +560,30 @@ spec:
 
                     # Collabora Online
                     location ^~ /browser {
-                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_pass http://collabora;
                         proxy_set_header Host $http_host;
                     }
                     location ^~ /hosting/discovery {
-                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_pass http://collabora;
                         proxy_set_header Host $http_host;
                     }
                     location ^~ /hosting/capabilities {
-                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_pass http://collabora;
                         proxy_set_header Host $http_host;
                     }
                     location ~ ^/cool/(.*)/ws$ {
-                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_pass http://collabora;
                         proxy_set_header Upgrade $http_upgrade;
                         proxy_set_header Connection "Upgrade";
                         proxy_set_header Host $http_host;
                         proxy_read_timeout 36000s;
                     }
                     location ~ ^/(c|l)ool {
-                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_pass http://collabora;
                         proxy_set_header Host $http_host;
                     }
                     location ^~ /cool/adminws {
-                        proxy_pass http://nextcloud-collabora.productivity.svc.cluster.local:9980;
+                        proxy_pass http://collabora:9980;
                         proxy_set_header Upgrade $http_upgrade;
                         proxy_set_header Connection "Upgrade";
                         proxy_set_header Host $http_host;
