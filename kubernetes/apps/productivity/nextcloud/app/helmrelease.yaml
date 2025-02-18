@@ -147,7 +147,7 @@ spec:
             securityContext:
               runAsUser: 100
               runAsGroup: 101
-              fsGroup: 3000
+              fsGroup: 101
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
