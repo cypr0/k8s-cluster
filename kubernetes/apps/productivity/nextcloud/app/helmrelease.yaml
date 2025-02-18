@@ -149,6 +149,9 @@ spec:
               runAsGroup: 101
               fsGroup: 101
               allowPrivilegeEscalation: true
+              capabilities:
+                add:
+                  - SYS_ADMIN
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
