@@ -21,14 +21,3 @@ spec:
   resources:
     requests:
       storage: 50Gi
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: collabora-pvc
-spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: iscsi
-  resources:
-    requests:
-      storage: 1Gi

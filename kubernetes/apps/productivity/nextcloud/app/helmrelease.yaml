@@ -624,8 +624,7 @@ spec:
                 subPath: config
                 readOnly: false
       collabora:
-        type: persistentVolumeClaim
-        existingClaim: collabora-pvc
+        type: emptyDir
         advancedMounts:
           main:
             collabora:
