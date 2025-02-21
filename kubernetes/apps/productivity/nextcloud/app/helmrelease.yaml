@@ -39,7 +39,7 @@ spec:
           nextcloud:
             image:
               repository: docker.io/library/nextcloud
-              tag: 30.0.5-fpm-alpine
+              tag: 30.0.6-fpm-alpine
             securityContext:
               runAsUser: 3000
               runAsGroup: 3000
@@ -139,7 +139,7 @@ spec:
                     name: nextcloud-secret
                     key: COLLABORA_PASSWORD
               - name: extra_params
-                value: "--o:ssl.termination=true --o:ssl.enable=false --o:welcome.enable=false"
+                value: "--o:ssl.termination=true --o:ssl.enable=false --o:welcome.enable=false --o:alias_group.host.0=nextcloud-collabora.productivity.svc.cluster.local"
               - name: dictionaries
                 value: "de_DE en_GB en_US es_ES fr_FR"
               - name: server_name
