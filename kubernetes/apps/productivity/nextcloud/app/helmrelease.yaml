@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 3.7.1
+      version: 3.7.0
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -39,7 +39,7 @@ spec:
           nextcloud:
             image:
               repository: docker.io/library/nextcloud
-              tag: 30.0.6-fpm-alpine
+              tag: 30.0.5-fpm-alpine
             securityContext:
               runAsUser: 3000
               runAsGroup: 3000
@@ -108,7 +108,7 @@ spec:
           clamav:
             image:
               repository: clamav/clamav
-              tag: 1.4.2@sha256:607b6da62d7151c1509b2182b152a14bd5532c409fe78bc124b2659aa9e18d2c
+              tag: 1.4.2@sha256:cb9aed55ec997eacd768af9e9d4a6194f2dad2eba4d63e32128739b2bc0d2bbd
             env:
               CLAMAV_NO_CLAMD: false
               CLAMAV_NO_FRESHCLAMD: false
@@ -126,7 +126,7 @@ spec:
           collabora:
             image:
               repository: collabora/code
-              tag: 24.04.12.3.1
+              tag: 24.04.12.4.1
             env:
               - name: username
                 valueFrom:
@@ -148,7 +148,6 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 101
-              runAsNonRoot: false
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
@@ -173,7 +172,7 @@ spec:
           init-chmod-pvc:
             image:
               repository: docker.io/library/alpine
-              tag: 3.21.3
+              tag: 3.21.2
             command: ["/bin/sh"]
             args: ["-c", "mkdir -p /var/www/html/config && chmod 0770 /var/www/html/config && chown 3000:3000 /var/www/html/config && mkdir -p /usr/local/etc/php/conf.d && chmod 0770 /usr/local/etc/php/conf.d && chown 3000:3000 /usr/local/etc/php/conf.d"]
             securityContext:
