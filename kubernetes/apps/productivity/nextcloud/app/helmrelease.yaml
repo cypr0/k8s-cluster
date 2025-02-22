@@ -263,7 +263,8 @@ spec:
                     0 => 'localhost',
                     1 => 'cloud.${SECRET_DOMAIN}',
                     2 => 'id.${SECRET_DOMAIN}',
-                    3 => 'office.${SECRET_DOMAIN}'
+                    3 => 'office.${SECRET_DOMAIN}',
+                    4 => 'ai.${SECRET_DOMAIN}'
                 ),
                 'trusted_proxies' => array(
                     0 => '127.0.0.1',
