@@ -52,6 +52,7 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: false
               capabilities: { drop: ["ALL"] }
+              fsGroup: 3000
             resources:
               requests:
                 cpu: 500m
