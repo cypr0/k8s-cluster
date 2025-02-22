@@ -126,7 +126,7 @@ spec:
           collabora:
             image:
               repository: collabora/code
-              tag: 24.04.12.4.1
+              tag: 24.04.12.4.1@sha256:580ae484f914582cc24d13803a37c33820434a11aed105a922ffd079c5adcfd0
             env:
               - name: username
                 valueFrom:
@@ -139,7 +139,7 @@ spec:
                     name: nextcloud-secret
                     key: COLLABORA_PASSWORD
               - name: extra_params
-                value: "--o:ssl.termination=true --o:ssl.enable=false --o:welcome.enable=false --o:net.proxy_allowed_hosts=192.168.0.0/16,10.0.0.0/8,${SECRET_GATEWAY},cloud.${SECRET_DOMAIN},office.${SECRET_DOMAIN}"
+                value: "--o:ssl.termination=true --o:ssl.enable=false --o:welcome.enable=false --o:languagetool.enabled=true --o:languagetool.base_url=http://nextcloud-languagetool.productivity.svc.cluster.local:8010/v2 --o:net.proxy_allowed_hosts=192.168.0.0/16,10.0.0.0/8,${SECRET_GATEWAY},cloud.${SECRET_DOMAIN},office.${SECRET_DOMAIN}"
               - name: dictionaries
                 value: "de_DE en_GB en_US es_ES fr_FR"
               - name: server_name
@@ -148,6 +148,10 @@ spec:
               runAsUser: 100
               runAsGroup: 101
               fsGroup: 101
+          languagetool:
+            image:
+              repository: collabora/languagetool
+              tag: 6.4@sha256:09a095cb078026e832bfa3d8fafaf18656dee00b6fd86e1f2c6a323a107fa697
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
@@ -194,6 +198,11 @@ spec:
         ports:
           http:
             port: 9980
+      languagetool:
+        controller: main
+        ports:
+          http:
+            port: 8010
       whiteboard:
         controller: main
         ports:
@@ -438,12 +447,6 @@ spec:
                     server 127.0.0.1:9000;
                 }
 
-                # Upstream with hashing for Collabora
-                upstream collabora {
-                    hash $arg_WOPISrc consistent;
-                    server nextcloud-collabora.productivity.svc.cluster.local:9980;
-                }
-
                 types {
                     text/javascript mjs;
                 }
@@ -575,38 +578,6 @@ spec:
                     # Default fallback
                     location / {
                         try_files $uri $uri/ /index.php$request_uri;
-                    }
-
-                    # Collabora Online
-                    location ^~ /browser {
-                        proxy_pass http://collabora;
-                        proxy_set_header Host $http_host;
-                    }
-                    location ^~ /hosting/discovery {
-                        proxy_pass http://collabora;
-                        proxy_set_header Host $http_host;
-                    }
-                    location ^~ /hosting/capabilities {
-                        proxy_pass http://collabora;
-                        proxy_set_header Host $http_host;
-                    }
-                    location ~ ^/cool/(.*)/ws$ {
-                        proxy_pass http://collabora;
-                        proxy_set_header Upgrade $http_upgrade;
-                        proxy_set_header Connection "Upgrade";
-                        proxy_set_header Host $http_host;
-                        proxy_read_timeout 36000s;
-                    }
-                    location ~ ^/(c|l)ool {
-                        proxy_pass http://collabora;
-                        proxy_set_header Host $http_host;
-                    }
-                    location ^~ /cool/adminws {
-                        proxy_pass http://collabora;
-                        proxy_set_header Upgrade $http_upgrade;
-                        proxy_set_header Connection "Upgrade";
-                        proxy_set_header Host $http_host;
-                        proxy_read_timeout 36000s;
                     }
 
                     # Nextcloud Whiteboard
