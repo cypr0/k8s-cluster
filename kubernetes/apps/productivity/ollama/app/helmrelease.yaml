@@ -48,6 +48,10 @@ spec:
                 value: "24h"
               - name: OLLAMA_LOAD_TIMEOUT
                 value: "600"
+            securityContext:
+              allowPrivilegeEscalation: false
+              readOnlyRootFilesystem: false
+              capabilities: { drop: ["ALL"] }
             resources:
               requests:
                 cpu: 500m
