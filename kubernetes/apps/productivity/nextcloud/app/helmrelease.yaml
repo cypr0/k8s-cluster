@@ -143,7 +143,7 @@ spec:
               - name: dictionaries
                 value: "de_DE en_GB en_US es_ES fr_FR"
               - name: server_name
-                value: "cloud.${SECRET_DOMAIN}"
+                value: "office.${SECRET_DOMAIN}"
             securityContext:
               runAsUser: 100
               runAsGroup: 101
