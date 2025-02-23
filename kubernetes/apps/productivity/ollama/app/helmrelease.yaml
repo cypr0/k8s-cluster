@@ -25,6 +25,8 @@ spec:
     keepHistory: false
   values:
     replicaCount: 1
+    updateStrategy:
+      type: RollingUpdate
     image:
       repository: ollama/ollama
       tag: 0.5.12
@@ -45,6 +47,19 @@ spec:
     service:
       type: ClusterIP
       port: 11434
+    ingress:
+      enabled: true
+      className: external
+      annotations:
+        external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+      hosts:
+        - host: &host ai.${SECRET_DOMAIN}
+          paths:
+            - path: /
+              pathType: Prefix
+      tls:
+        - hosts:
+           - *host
     persistentVolume:
       enabled: true
       accessMode: ReadWriteOnce
