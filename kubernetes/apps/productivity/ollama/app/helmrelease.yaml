@@ -25,7 +25,8 @@ spec:
     keepHistory: false
   values:
     replicaCount: 1
-    updateStrategy: RollingUpdate
+    updateStrategy:
+      type: "RollingUpdate"
     image:
       repository: ollama/ollama
       tag: 0.5.12
