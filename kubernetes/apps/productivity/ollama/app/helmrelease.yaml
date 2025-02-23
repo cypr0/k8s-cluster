@@ -47,9 +47,6 @@ spec:
     service:
       type: ClusterIP
       port: 11434
-      tls:
-        - hosts:
-           - *host
     persistentVolume:
       enabled: true
       accessMode: ReadWriteOnce
