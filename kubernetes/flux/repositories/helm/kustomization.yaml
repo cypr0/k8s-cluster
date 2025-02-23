@@ -21,4 +21,5 @@ resources:
   - ./external-secrets.yaml
   - ./grafana.yaml
   - ./minio.yaml
+  - ./ollama.yaml
   - ./piraeus.yaml
