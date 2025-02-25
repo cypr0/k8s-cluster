@@ -309,7 +309,7 @@ spec:
   schedule: "*/1 * * * *"  # Every minute
   jobTemplate:
     spec:
-      ttlSecondsAfterFinished: 3600
+      ttlSecondsAfterFinished: 60
       template:
         spec:
           securityContext:
