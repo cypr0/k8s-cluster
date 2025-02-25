@@ -30,26 +30,6 @@ spec:
         reloader.stakater.com/auto: "true"
         secret.reloader.stakater.com/reload: "nextcloud-secret"
     controllers:
-      ai-tasks:
-        replicas: 4
-        strategy: RollingUpdate
-        annotations:
-          reloader.stakater.com/auto: "true"
-        containers:
-          ai-worker:
-            image:
-              repository: docker.io/library/nextcloud
-              tag: 30.0.6-fpm-alpinesha256:fd092d936643c2e0c0b80c27d5518c793e5e215d5b5836e5ecdca973395b2c34
-            command: ["/bin/sh", "-c"]
-            args:
-              - set -e;
-                while true; do
-                  php /var/www/html/occ background-job:worker -t 60 "OC\\TaskProcessing\\SynchronousBackgroundJob";
-                done
-            securityContext:
-              runAsUser: 3000
-              runAsGroup: 3000
-              fsGroup: 3000
       main:
         replicas: 1
         strategy: RollingUpdate
@@ -623,11 +603,6 @@ spec:
               - path: /data
                 subPath: data
                 readOnly: false
-          ai-tasks:
-            ai-worker:
-              - path: /data
-                subPath: data
-                readOnly: false
       app-config:
         type: persistentVolumeClaim
         existingClaim: nextcloud-app-pvc
@@ -642,11 +617,6 @@ spec:
                 subPath: config
                 readOnly: true
             nextcloud:
-              - path: /var/www/html
-                subPath: config
-                readOnly: false
-          ai-tasks:
-            ai-worker:
               - path: /var/www/html
                 subPath: config
                 readOnly: false

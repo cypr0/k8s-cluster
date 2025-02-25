@@ -299,3 +299,41 @@ spec:
           - name: data
             persistentVolumeClaim:
               claimName: nextcloud-data-pvc
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: nextcloud-cronjob-ai-worker
+  namespace: nextcloud
+spec:
+  schedule: "*/1 * * * *"  # Every minute
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          securityContext:
+            runAsUser: 3000
+            runAsGroup: 3000
+            fsGroup: 3000
+          containers:
+          - name: nextcloud-cronjob-ai-worker
+            image: docker.io/library/nextcloud:30.0.6-fpm-alpine
+            command: ["/bin/sh", "-c"]
+            args:
+              - php /var/www/html/occ background-job:worker -v -t 60 "OC\TaskProcessing\SynchronousBackgroundJob"
+            volumeMounts:
+            - name: app-config
+              mountPath: /var/www/html
+              subPath: config
+            - name: data
+              mountPath: /data
+              subPath: data
+          restartPolicy: OnFailure
+          volumes:
+          - name: app-config
+            persistentVolumeClaim:
+              claimName: nextcloud-app-pvc
+          - name: data
+            persistentVolumeClaim:
+              claimName: nextcloud-data-pvc
