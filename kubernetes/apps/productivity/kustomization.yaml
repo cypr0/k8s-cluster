@@ -7,4 +7,4 @@ resources:
  # - ./mastodon/ks.yaml
   - ./nextcloud/ks.yaml
   - ./ollama/ks.yaml
- # - ./paperless/ks.yaml
+  - ./paperless/ks.yaml
