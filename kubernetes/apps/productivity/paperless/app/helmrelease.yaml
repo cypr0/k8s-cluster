@@ -160,7 +160,7 @@ spec:
     persistence:
       library:
         enabled: true
-        existingClaim: paperless-pvc
+        existingClaim: paperless-data-pvc
         advancedMounts:
           main:
             paperless-ngx:
