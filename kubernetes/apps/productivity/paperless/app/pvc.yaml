@@ -23,6 +23,7 @@ spec:
   storageClassName: paperless-consume-nfs
   mountOptions:
     - hard
+    - rw
     - nfsvers=4.2
   nfs:
     path: /mnt/hdd/shr/pls
