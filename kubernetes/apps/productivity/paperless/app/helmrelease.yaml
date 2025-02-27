@@ -88,8 +88,6 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 5
-            securityContext:
-              fsGroup: 3000
           gotenberg:
             image:
               repository: docker.io/gotenberg/gotenberg
