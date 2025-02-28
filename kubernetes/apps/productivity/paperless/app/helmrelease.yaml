@@ -36,7 +36,6 @@ spec:
               repository: ghcr.io/paperless-ngx/paperless-ngx
               tag: 2.14.7
             env:
-              PAPERLESS_ALLOWED_HOSTS: paperless.${SECRET_DOMAIN},paperless-paperless-ngx.productivity.svc.cluster.local,paperless-ai.ai.svc.cluster.local
               PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
               PAPERLESS_CONSUMER_POLLING: 60
               PAPERLESS_CONSUMER_RECURSIVE: "true"
