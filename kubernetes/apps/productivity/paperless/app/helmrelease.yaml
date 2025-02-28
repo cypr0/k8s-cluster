@@ -126,6 +126,30 @@ spec:
               runAsGroup: 3000
               fsGroup: 3000
               runAsNonRoot: true
+          paperless-ai:
+            image:
+              repository: docker.io/clusterzx/paperless-ai
+              tag: 2.6.7
+            env:
+              PAPERLESS_API_URL: http://paperless-paperless-ngx.productivity.svc.cluster.local:80/api
+              AI_PROVIDER: ollama
+              SCAN_INTERVAL: "*/30 * * * *"
+              PROCESS_PREDEFINED_DOCUMENTS: yes
+              ADD_AI_PROCESSED_TAG: yes
+              AI_PROCESSED_TAG_NAME: ai-processed
+              USE_PROMPT_TAGS: no
+              OLLAMA_API_URL: http://ollama.productivity.svc.cluster.local:11434
+              OLLAMA_MODEL: llama3.2
+            envFrom:
+              - secretRef:
+                  name: paperless-secret
+            resources:
+              requests:
+                cpu: 500m
+                memory: 512Mi
+              limits:
+                cpu: 700m
+                memory: 2Gi
     service:
       paperless-ngx:
         controller: main
@@ -142,6 +166,11 @@ spec:
         ports:
           http:
             port: 9998
+      paperless-ai:
+        controller: main
+        ports:
+          http:
+            port: 3000
     ingress:
       paperless-ngx:
         enabled: true
@@ -159,6 +188,16 @@ spec:
         tls:
           - hosts:
               - *host
+      paperless-ai:
+        enabled: true
+        className: internal
+        hosts:
+          - host: paperless-ai.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                service:
+                  identifier: paperless-ai
+                  port: http
     persistence:
       library:
         enabled: true
