@@ -81,3 +81,17 @@ spec:
         tls:
           - hosts:
               - *host
+    persistence:
+      config:
+        enabled: true
+        existingClaim: paperless-ai-pvc
+        globalMounts:
+          - path: /app/data
+      logs:
+        type: emptyDir
+        globalMounts:
+          - path: /app/logs
+      tmp:
+        type: emptyDir
+        globalMounts:
+          - path: /tmp
