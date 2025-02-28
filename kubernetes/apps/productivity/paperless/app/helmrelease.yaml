@@ -71,7 +71,7 @@ spec:
               PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-gotenberg.productivity.svc.cluster.local:3000
               PAPERLESS_TIKA_ENDPOINT: http://paperless-tika.productivity.svc.cluster.local:9998
               PAPERLESS_TIME_ZONE: ${TIMEZONE}
-              PAPERLESS_TRUSTED_PROXIES: 10.69.0.0/16,192.168.0.0/16
+              PAPERLESS_TRUSTED_PROXIES: 10.96.0.0/16,10.69.0.0/16,192.168.0.0/16
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
               USERMAP_UID: 3000
               USERMAP_GID: 3000
