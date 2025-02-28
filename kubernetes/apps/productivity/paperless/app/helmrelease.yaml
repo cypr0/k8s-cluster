@@ -170,7 +170,8 @@ spec:
         controller: main
         ports:
           http:
-            port: 3000
+            port: 3010
+            targetPort: 3000
     ingress:
       paperless-ngx:
         enabled: true
