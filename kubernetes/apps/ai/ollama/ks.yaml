@@ -5,11 +5,11 @@ metadata:
   name: &app ollama
   namespace: flux-system
 spec:
-  targetNamespace: productivity
+  targetNamespace: ai
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  path: ./kubernetes/apps/productivity/ollama/app
+  path: ./kubernetes/apps/ai/ollama/app
   prune: true
   sourceRef:
     kind: GitRepository

@@ -39,8 +39,6 @@ spec:
           - llama3.2
           - mistral
           - deepseek-r1
-        run:
-          - deepseek-r1
     extraEnv:
       - name: OLLAMA_DEBUG
         value: "1"
