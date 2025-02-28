@@ -29,9 +29,9 @@ spec:
       annotations:
         reloader.stakater.com/auto: "true"
       securityContext:
-        runAsUser: 224
-        runAsGroup: 220
-        fsGroup: 220
+        runAsUser: 3000
+        runAsGroup: 3000
+        fsGroup: 3000
     controllers:
       main:
         replicas: 1

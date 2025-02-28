@@ -47,7 +47,6 @@ spec:
       port: 11434
     persistentVolume:
       enabled: true
-      accessMode: ReadWriteOnce
       size: 50Gi
       storageClass: openebs-hostpath
     resources:

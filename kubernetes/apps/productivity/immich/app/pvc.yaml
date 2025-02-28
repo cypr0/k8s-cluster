@@ -15,8 +15,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: immich-redis-data
 spec:
-  accessModes: ["ReadWriteMany"]
-  storageClassName: iscsi
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: openebs-hostpath
   resources:
     requests:
       storage: 2Gi
