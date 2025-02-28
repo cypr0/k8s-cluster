@@ -37,7 +37,6 @@ spec:
       models:
         pull:
           - llama3.2
-          - deepseek-r1
     extraEnv:
       - name: OLLAMA_DEBUG
         value: "1"
