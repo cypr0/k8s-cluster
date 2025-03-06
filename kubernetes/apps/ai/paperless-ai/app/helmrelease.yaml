@@ -38,7 +38,7 @@ spec:
             env:
               PAPERLESS_AI_INITIAL_SETUP: "no"
               PAPERLESS_API_URL: "http://paperless-paperless-ngx.productivity.svc.cluster.local/api"
-              AI_PROVIDER: "ollama"
+              AI_PROVIDER: "custom"
               SCAN_INTERVAL: "*/30 * * * *"
               OLLAMA_API_URL: "http://ollama.ai.svc.cluster.local:11434"
               OLLAMA_MODEL: "llama3.2"
@@ -50,6 +50,8 @@ spec:
               USE_PROMPT_TAGS: "no"
               PROMPT_TAGS: ""
               USE_EXISTING_DATA: "yes"
+              CUSTOM_BASE_URL: "https://generativelanguage.googleapis.com/v1beta/openai"
+              CUSTOM_MODEL: "gemini-1.5-flash"
             envFrom:
               - secretRef:
                   name: paperless-ai-secret
