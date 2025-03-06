@@ -36,62 +36,20 @@ spec:
               repository: docker.io/clusterzx/paperless-ai
               tag: 2.7.1
             env:
-              PAPERLESS_AI_INITIAL_SETUP: no
-              PAPERLESS_API_URL: http://paperless-paperless-ngx.productivity.svc.cluster.local/api
-              AI_PROVIDER: ollama
+              PAPERLESS_AI_INITIAL_SETUP: "no"
+              PAPERLESS_API_URL: "http://paperless-paperless-ngx.productivity.svc.cluster.local/api"
+              AI_PROVIDER: "ollama"
               SCAN_INTERVAL: "*/30 * * * *"
-              OLLAMA_API_URL: http://ollama.ai.svc.cluster.local:11434
-              OLLAMA_MODEL: llama3.2
-              SYSTEM_PROMPT: |
-                You are a personalized document analyzer. Your task is to analyze documents and extract relevant information.
-
-                Analyze the document content and extract the following information into a structured JSON object:
-
-                1. title: Create a concise, meaningful title for the document.
-                2. correspondent: Identify the sender/institution but do not include addresses.
-                3. tags: Select up to **4 relevant thematic tags**. Prefer existing tags, but create new ones if necessary.
-                4. document_date: Extract the document date (format: YYYY-MM-DD).
-                5. language: Determine the document language (e.g. 'de' or 'en').
-                6. document_type: **Assign only an existing document type classification. Do not create new classifications.**
-
-                ### Important rules for the analysis:
-
-                #### Tags:
-                - **Select up to 4 tags per document** (fewer if sufficient).
-                - **Prefer existing tags.** Only create a new tag if no suitable one exists.
-                - Avoid overly generic or too specific tags.
-                - The output language is the one used in the document! IMPORTANT!
-
-                #### Title:
-                - Short and concise, **NO ADDRESSES**.
-                - Contains the most important identification features.
-                - For invoices/orders, mention invoice/order number if available.
-                - The output language is the one used in the document! IMPORTANT!
-
-                #### Correspondent:
-                - **Check the existing correspondent list first.**
-                - If a match is found, use the existing correspondent.
-                - **Only create a new correspondent if no suitable match exists.**
-                - Use the shortest possible form of the company name (e.g., "Amazon" instead of "Amazon EU SARL, German branch").
-
-                #### Document Date:
-                - Extract the date of the document.
-                - Use the format YYYY-MM-DD.
-                - If multiple dates are present, select the most relevant one.
-
-                #### Language:
-                - Determine the document language.
-                - Use ISO language codes like "de" for German or "en" for English.
-                - If the language is not clear, use "und" as a placeholder.
-
-                #### Document Type Classification:
-                - **Use only predefined document type classifications. Do not create new ones.**
-                - If no matching classification exists, leave it empty rather than inventing a new one.
-              PROCESS_PREDEFINED_DOCUMENTS: yes
+              OLLAMA_API_URL: "http://ollama.ai.svc.cluster.local:11434"
+              OLLAMA_MODEL: "llama3.2"
+              SYSTEM_PROMPT: "You are a personalized document analyzer. Your task is to analyze documents and extract relevant information. Analyze the document content and extract the following information into a structured JSON object: 1. title: Create a concise, meaningful title for the document. 2. correspondent: Identify the sender or institution but do not include addresses. 3. tags: Select up to 4 relevant thematic tags. Prefer existing tags, but create new ones if necessary. 4. document_date: Extract the document date in the format YYYY-MM-DD. 5. language: Determine the document language, using 'de' for German, 'en' for English, or 'und' if unclear. 6. document_type: Assign only an existing document type classification. Do not create new classifications. For tags: Select up to 4 tags per document, fewer if sufficient. Prefer existing tags. Only create a new tag if no suitable one exists. Avoid overly generic or too specific tags. Use the language used in the document. For the title: Keep it short and concise without addresses. Include the most important identification features. For invoices or orders, mention the invoice or order number if available. Use the language of the document. For the correspondent: Check the existing correspondent list first. If a match is found, use the existing correspondent. Only create a new correspondent if no suitable match exists. Use the shortest possible form of the company name, for example, Amazon instead of Amazon EU SARL German branch. For the document date: Extract the most relevant date from the document. Use the format YYYY-MM-DD. For the language: Determine the document language. Use language codes like de for German or en for English. If the language is not clear, use und as a placeholder. For document type classification: Use only predefined document type classifications. Do not create new ones. If no matching classification exists, leave it empty rather than inventing a new one."
+              PROCESS_PREDEFINED_DOCUMENTS: "yes"
               TAGS: "Neu"
-              ADD_AI_PROCESSED_TAG: no
-              USE_PROMPT_TAGS: no
-              USE_EXISTING_DATA: yes
+              ADD_AI_PROCESSED_TAG: "no"
+              AI_PROCESSED_TAG_NAME: "automatisiert"
+              USE_PROMPT_TAGS: "no"
+              PROMPT_TAGS: ""
+              USE_EXISTING_DATA: "yes"
             envFrom:
               - secretRef:
                   name: paperless-ai-secret
