@@ -5,4 +5,5 @@ namespace: productivity
 resources:
   - ./externalsecret.yaml
   - ./helmrelease.yaml
+  - ./jobs.yaml
   - ./pvc.yaml

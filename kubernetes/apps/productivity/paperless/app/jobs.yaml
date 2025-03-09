@@ -1,0 +1,45 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: paperless-cronjob-fix-tags
+spec:
+  schedule: "*/15 * * * *" # Every 15 minutes
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 60
+      template:
+        spec:
+          containers:
+            - name: paperless-fix-tags
+              image: alpine/curl:8.12.1
+              envFrom:
+                - secretRef:
+                    name: paperless-secret
+              command:
+                - sh
+                - -c
+                - |
+                  PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
+                  GROUP_ID=1  # Group ID for tag assignment
+
+                  HEADERS="-H 'Authorization: Token $PAPERLESS_API_TOKEN' -H 'Content-Type: application/json'"
+
+                  # Fetch tags that are owned by the API user but not yet assigned to the group
+                  NEW_TAGS=$(curl -s $HEADERS "$PAPERLESS_URL/api/tags/" | jq -r '.results[] | select(.ownership != "group") | .id')
+
+                  # If no new tags are found, exit
+                  if [ -z "$NEW_TAGS" ]; then
+                    echo "✅ No new tags found, exiting."
+                    exit 0
+                  fi
+
+                  # Assign new tags to the group
+                  for TAG_ID in $NEW_TAGS; do
+                      echo "🔄 Updating permissions for tag $TAG_ID..."
+                      curl -X PATCH "$PAPERLESS_URL/api/tags/$TAG_ID/" $HEADERS -d "{\"ownership\": \"group\", \"group\": $GROUP_ID}"
+                  done
+
+                  echo "✅ Tag permissions updated successfully!"
+          restartPolicy: OnFailure
