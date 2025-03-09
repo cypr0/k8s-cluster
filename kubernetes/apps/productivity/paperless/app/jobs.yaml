@@ -24,51 +24,51 @@ spec:
                   echo "🔍 Installing jq..."
                   apk add --no-cache jq > /dev/null 2>&1
 
-                  echo "🔍 Starting Paperless tag and correspondent permissions fix..."
+                  echo "🔍 Starting Paperless bulk permissions fix..."
                   PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
                   GROUP_ID=3  # Group ID for assignment
                   AUTH_HEADER="Authorization: Token $PAPERLESS_API_TOKEN"
 
-                  # Function to update ownership and permissions for an item (tag or correspondent)
-                  update_permissions() {
+                  # Function to update permissions using bulk API
+                  update_bulk_permissions() {
                       ITEM_TYPE=$1  # Either "tags" or "correspondents"
                       echo "🔍 Checking for new $ITEM_TYPE..."
 
                       # Fetch items that are owned by the API user but not yet assigned to the group
-                      NEW_ITEMS=$(curl -s -H "$AUTH_HEADER" -H "Content-Type: application/json" "$PAPERLESS_URL/api/$ITEM_TYPE/" | jq -r '.results[] | select(.ownership != "group") | .id')
+                      ITEM_IDS=$(curl -s -H "$AUTH_HEADER" -H "Content-Type: application/json" "$PAPERLESS_URL/api/$ITEM_TYPE/" | jq -r '.results[] | select(.ownership != "group") | .id')
 
-                      if [ -z "$NEW_ITEMS" ]; then
+                      if [ -z "$ITEM_IDS" ]; then
                           echo "✅ No new $ITEM_TYPE found, exiting."
                           return
                       fi
 
-                    # Assign new items to the group and set group permissions
-                    for ITEM_ID in $NEW_ITEMS; do
-                        echo "🔄 Updating permissions for $ITEM_TYPE ID $ITEM_ID..."
+                      # Convert list of IDs to JSON array
+                      ID_LIST=$(echo "$ITEM_IDS" | jq -s '.')
 
-                        RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X PATCH -H "$AUTH_HEADER" -H "Content-Type: application/json" \
-                          "$PAPERLESS_URL/api/$ITEM_TYPE/$ITEM_ID/" -d "{
-                            \"owner\": null,
-                            \"set_permissions\": {
-                                \"view\": {\"groups\": [$GROUP_ID]},
-                                \"change\": {\"groups\": [$GROUP_ID]}
-                            }
-                          }")
+                      echo "🔄 Bulk updating permissions for $ITEM_TYPE: $ID_LIST"
 
-                        if [ "$RESPONSE" -ne 200 ]; then
-                            echo "❌ Error updating $ITEM_TYPE ID $ITEM_ID! HTTP Status: $RESPONSE"
-                            cat response.json
-                        else
-                            echo "✅ Successfully updated $ITEM_TYPE ID $ITEM_ID"
-                        fi
-                    done
+                      RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X POST -H "$AUTH_HEADER" -H "Content-Type: application/json" \
+                        "$PAPERLESS_URL/api/bulk_edit_objects/" -d "{
+                          \"objects\": $ID_LIST,
+                          \"object_type\": \"$ITEM_TYPE\",
+                          \"operation\": \"set_permissions\",
+                          \"permissions\": {
+                              \"view\": { \"groups\": [$GROUP_ID] },
+                              \"change\": { \"groups\": [$GROUP_ID] }
+                          }
+                        }")
 
-                      echo "✅ $ITEM_TYPE permissions updated successfully!"
+                      if [ "$RESPONSE" -ne 200 ]; then
+                          echo "❌ Error updating $ITEM_TYPE! HTTP Status: $RESPONSE"
+                          cat response.json
+                      else
+                          echo "✅ Successfully updated permissions for $ITEM_TYPE"
+                      fi
                   }
 
                   # Fix permissions for both tags and correspondents
-                  update_permissions "tags"
-                  update_permissions "correspondents"
+                  update_bulk_permissions "tags"
+                  update_bulk_permissions "correspondents"
 
-                  echo "✅ Paperless permissions fix completed!"
+                  echo "✅ Paperless bulk permissions fix completed!"
           restartPolicy: OnFailure
