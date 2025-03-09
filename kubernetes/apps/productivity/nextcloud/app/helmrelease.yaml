@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: app-template
-      version: 3.7.1
+      version: 3.7.2
       sourceRef:
         kind: HelmRepository
         name: bjw-s
@@ -108,7 +108,7 @@ spec:
           clamav:
             image:
               repository: clamav/clamav
-              tag: 1.4.2@sha256:2f7de5b7e7ac68345d533aaee24c6ba93363bfaaa60584786224c5777de78956
+              tag: 1.4.2@sha256:9962849432a172948ad3a9f84727a494d2ee8c3818117f291829a55286b3620a
             env:
               CLAMAV_NO_CLAMD: false
               CLAMAV_NO_FRESHCLAMD: false
@@ -126,7 +126,7 @@ spec:
           collabora:
             image:
               repository: collabora/code
-              tag: 24.04.12.4.1@sha256:580ae484f914582cc24d13803a37c33820434a11aed105a922ffd079c5adcfd0
+              tag: 24.04.13.1.1@sha256:0398c25fa8e787d6a4480ef30ffac5a9e13943945e8c2484b331c53855bb928f
             env:
               - name: username
                 valueFrom:
