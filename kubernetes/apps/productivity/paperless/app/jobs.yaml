@@ -29,8 +29,8 @@ spec:
                   GROUP_ID=3  # Group ID for assignment
                   AUTH_HEADER="Authorization: Token $PAPERLESS_API_TOKEN"
 
-                  # Function to update ownership of an item (tag or correspondent)
-                  update_ownership() {
+                  # Function to update ownership and permissions for an item (tag or correspondent)
+                  update_permissions() {
                       ITEM_TYPE=$1  # Either "tags" or "correspondents"
                       echo "🔍 Checking for new $ITEM_TYPE..."
 
@@ -42,18 +42,24 @@ spec:
                           return
                       fi
 
-                      # Assign new items to the group
+                      # Assign new items to the group and set group permissions
                       for ITEM_ID in $NEW_ITEMS; do
                           echo "🔄 Updating permissions for $ITEM_TYPE ID $ITEM_ID..."
-                          curl -X PATCH -H "$AUTH_HEADER" -H "Content-Type: application/json" "$PAPERLESS_URL/api/$ITEM_TYPE/$ITEM_ID/" -d "{\"ownership\": \"group\", \"group\": $GROUP_ID}"
+                          curl -X PATCH -H "$AUTH_HEADER" -H "Content-Type: application/json" "$PAPERLESS_URL/api/$ITEM_TYPE/$ITEM_ID/" -d "{
+                              \"owner\": null,
+                              \"set_permissions\": {
+                                  \"view\": {\"groups\": [$GROUP_ID]},
+                                  \"change\": {\"groups\": [$GROUP_ID]}
+                              }
+                          }"
                       done
 
                       echo "✅ $ITEM_TYPE permissions updated successfully!"
                   }
 
-                  # Fix tags and correspondents
-                  update_ownership "tags"
-                  update_ownership "correspondents"
+                  # Fix permissions for both tags and correspondents
+                  update_permissions "tags"
+                  update_permissions "correspondents"
 
                   echo "✅ Paperless permissions fix completed!"
           restartPolicy: OnFailure
