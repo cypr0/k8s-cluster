@@ -21,6 +21,10 @@ spec:
                 - sh
                 - -c
                 - |
+                  echo "🔍 Installing jq..."
+                  apk add --no-cache jq > /dev/null 2>&1
+
+                  echo "🔍 Starting Paperless tag permissions fix..."
                   PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
                   GROUP_ID=1  # Group ID for tag assignment
 
