@@ -90,7 +90,7 @@ kind: CronJob
 metadata:
   name: paperless-cronjob-medical-invoice-check
 spec:
-  schedule: "*/15 * * * *" # Runs every 15 minutes
+  schedule: "0 6 * * 0" # Every Sunday at 06:00 AM
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -108,11 +108,10 @@ spec:
                 - sh
                 - -c
                 - |
-
                   echo "🔍 Starting Paperless invoice email automation..."
                   PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
                   API_TOKEN="$PAPERLESS_API_TOKEN"
-                  EMAIL_TO="mail@{SECRET_DOMAIN}"
+                  EMAIL_TO="mail@${SECRET_DOMAIN}"
                   SMTP_SERVER="${SECRET_MAIL_SERVER}"
                   SMTP_PORT="25"
 
@@ -139,8 +138,8 @@ spec:
                   LAST_WEEK=$(date -I -d "@$(($(date +%s) - 7 * 86400))")
 
                   # Get current month and year
-                  CUR_MONTH=$(date +%m)
                   CUR_YEAR=$(date +%Y)
+                  CUR_MONTH=$(date +%m)
 
                   # Determine previous month and year
                   if [ "$CUR_MONTH" -eq 1 ]; then
@@ -170,9 +169,6 @@ spec:
 
                   echo "📅 Today: $TODAY | Last Week: $LAST_WEEK"
                   echo "📅 Last Month: $FIRST_DAY_LAST_MONTH to $LAST_DAY_LAST_MONTH"
-
-                  # Flag to track if any emails were sent
-                  EMAILS_SENT=0
 
                   # Function to add a tag to documents
                   add_tag_to_documents() {
@@ -209,12 +205,12 @@ spec:
                   # Function to generate a merged PDF for a given time range
                   generate_merged_pdf() {
                       TIME_RANGE="$1"
-                      START_DATE="$2"
+                      QUERY="$2"
                       PDF_FILE="/tmp/invoices_$TIME_RANGE.pdf"
 
                       echo "🔄 Fetching invoices from $TIME_RANGE..."
                       INVOICES=$(curl -s -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" \
-                        "$PAPERLESS_URL/api/documents/?tags__name__in=Rechnung,Gesundheit&document_date__gte=$START_DATE")
+                        "$PAPERLESS_URL/api/documents/?query=$QUERY")
 
                       PDF_LIST=""
                       DOC_IDS=""
@@ -248,31 +244,35 @@ spec:
                       echo "$PDF_FILE $DOC_IDS"
                   }
 
-                  # Generate weekly PDF for invoices to be paid
-                  WEEKLY_RESULT=$(generate_merged_pdf "week" "$LAST_WEEK")
+                  # 1️⃣ Generate weekly PDF for invoices to be paid
+                  WEEKLY_QUERY="created:[$LAST_WEEK TO $TODAY] AND (tag:Rechnung OR tag:Gesundheit)"
+                  WEEKLY_RESULT=$(generate_merged_pdf "week" "$WEEKLY_QUERY")
                   PDF_FILE_WEEKLY=$(echo "$WEEKLY_RESULT" | awk '{print $1}')
                   WEEKLY_DOC_IDS=$(echo "$WEEKLY_RESULT" | awk '{$1=""; print $0}')
 
                   if [ -f "$PDF_FILE_WEEKLY" ]; then
                       echo "📧 Sending weekly invoice report..."
-                      echo "Attached is the PDF containing all invoices from the past 7 days for payment." | mailx -a "$PDF_FILE_WEEKLY" -s "Weekly Invoice Report - $TODAY" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@{SECRET_DOMAIN}" "$EMAIL_TO"
+                      echo "Attached is the PDF containing all invoices from the past 7 days for payment." | mailx -a "$PDF_FILE_WEEKLY" -s "Weekly Invoice Report - $TODAY" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@$SECRET_DOMAIN" "$EMAIL_TO"
                       add_tag_to_documents "Bezahlt" "$WEEKLY_DOC_IDS"
                       rm "$PDF_FILE_WEEKLY" $PDF_LIST
-                      EMAILS_SENT=1
+                  else
+                      echo "⚠️ No invoices found for the past week. Skipping weekly email."
                   fi
 
-                  # Generate monthly PDF for Beihilfe/PKV
-                  MONTHLY_RESULT=$(generate_merged_pdf "month" "$FIRST_DAY_LAST_MONTH")
+                  # 2️⃣ Generate monthly PDF for Beihilfe/PKV
+                  MONTHLY_QUERY="created:[$FIRST_DAY_LAST_MONTH TO $LAST_DAY_LAST_MONTH] AND (tag:Rechnung OR tag:Gesundheit)"
+                  MONTHLY_RESULT=$(generate_merged_pdf "month" "$MONTHLY_QUERY")
                   PDF_FILE_MONTHLY=$(echo "$MONTHLY_RESULT" | awk '{print $1}')
                   MONTHLY_DOC_IDS=$(echo "$MONTHLY_RESULT" | awk '{$1=""; print $0}')
 
                   if [ -f "$PDF_FILE_MONTHLY" ]; then
                       echo "📧 Sending monthly invoice summary..."
-                      echo "Attached is the PDF containing all invoices from the past month for Beihilfe/PKV submission." | mailx -a "$PDF_FILE_MONTHLY" -s "Monthly Invoice Summary - $LAST_MONTH" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@{SECRET_DOMAIN}" "$EMAIL_TO"
+                      echo "Attached is the PDF containing all invoices from the past month for Beihilfe/PKV submission." | mailx -a "$PDF_FILE_MONTHLY" -s "Monthly Invoice Summary - $LAST_MONTH" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@$SECRET_DOMAIN" "$EMAIL_TO"
                       add_tag_to_documents "Eingereicht" "$MONTHLY_DOC_IDS"
                       rm "$PDF_FILE_MONTHLY" $PDF_LIST
-                      EMAILS_SENT=1
+                  else
+                      echo "⚠️ No invoices found for the past month. Skipping monthly email."
                   fi
 
-                  [ "$EMAILS_SENT" -eq 1 ] && echo "✅ All reports sent via email successfully!" || echo "⚠️ No reports sent. No invoices found."
+                  echo "✅ All reports sent via email successfully!"
           restartPolicy: OnFailure
