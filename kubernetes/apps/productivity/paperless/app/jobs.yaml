@@ -132,17 +132,17 @@ spec:
                       apk add --no-cache jq
                   fi
 
-                  # Get today's date and calculate date ranges
+                  # Get today's date
                   TODAY=$(date -I)
-                  LAST_WEEK=$(date -I -d "@$(($(date +%s) - 7 * 86400))")   # 7 days ago
 
-                  # Get today's date and calculate date ranges
-                  TODAY=$(date -I)
-                  LAST_WEEK=$(date -I -d "@$(($(date +%s) - 7 * 86400))")   # 7 days ago
+                  # Weekly calculation (7 days ago)
+                  LAST_WEEK=$(date -I -d "@$(($(date +%s) - 7 * 86400))")
 
-                  # Monthly calculation (Alpine-compatible)
-                  LAST_MONTH_FIRST=$(date -I -d "@$(($(date +%s) - $(date +%d) * 86400))")  # First day of last month
-                  LAST_MONTH_LAST=$(date -I -d "@$(($(date -d "$LAST_MONTH_FIRST +1 month" +%s) - 86400))")  # Last day of last month
+                  # Calculate the first day of last month
+                  LAST_MONTH_FIRST=$(date -I -d "@$(($(date +%s) - $(date +%d) * 86400))")
+
+                  # Calculate the last day of last month (First day of this month - 1 day)
+                  LAST_MONTH_LAST=$(date -I -d "@$(($(date -d "$LAST_MONTH_FIRST" +%s) - 86400))")
 
                   echo "📅 Today: $TODAY | Last Week: $LAST_WEEK"
                   echo "📅 Last Month: $LAST_MONTH_FIRST to $LAST_MONTH_LAST"
