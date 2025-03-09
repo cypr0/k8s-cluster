@@ -28,11 +28,12 @@ spec:
                   PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
                   GROUP_ID=3  # Group ID for tag assignment
 
-                  HEADERS="-H 'Authorization: Token $PAPERLESS_API_TOKEN' -H 'Content-Type: application/json'"
-
-                  # Fetch tags and log response for debugging
                   echo "🔍 Fetching tags from Paperless-ngx API..."
-                  API_RESPONSE=$(curl -s $HEADERS "$PAPERLESS_URL/api/tags/")
+                  echo "🔍 Using API Token: ${PAPERLESS_API_TOKEN:0:4}******** (Masked for Security)"
+
+                  # Fetch tags correctly with headers
+                  API_RESPONSE=$(curl -s -H "Authorization: Token $PAPERLESS_API_TOKEN" -H "Content-Type: application/json" "$PAPERLESS_URL/api/tags/")
+
                   echo "🔍 API Response: $API_RESPONSE"
 
                   # Extract tag IDs safely
@@ -47,7 +48,7 @@ spec:
                   # Assign new tags to the group
                   for TAG_ID in $NEW_TAGS; do
                       echo "🔄 Updating permissions for tag $TAG_ID..."
-                      curl -X PATCH "$PAPERLESS_URL/api/tags/$TAG_ID/" $HEADERS -d "{\"ownership\": \"group\", \"group\": $GROUP_ID}"
+                      curl -X PATCH -H "Authorization: Token $PAPERLESS_API_TOKEN" -H "Content-Type: application/json" "$PAPERLESS_URL/api/tags/$TAG_ID/" -d "{\"ownership\": \"group\", \"group\": $GROUP_ID}"
                   done
 
                   echo "✅ Tag permissions updated successfully!"
