@@ -42,17 +42,26 @@ spec:
                           return
                       fi
 
-                      # Assign new items to the group and set group permissions
-                      for ITEM_ID in $NEW_ITEMS; do
-                          echo "🔄 Updating permissions for $ITEM_TYPE ID $ITEM_ID..."
-                          curl -X PATCH -H "$AUTH_HEADER" -H "Content-Type: application/json" "$PAPERLESS_URL/api/$ITEM_TYPE/$ITEM_ID/" -d "{
-                              \"owner\": null,
-                              \"set_permissions\": {
-                                  \"view\": {\"groups\": [$GROUP_ID]},
-                                  \"change\": {\"groups\": [$GROUP_ID]}
-                              }
-                          }"
-                      done
+                    # Assign new items to the group and set group permissions
+                    for ITEM_ID in $NEW_ITEMS; do
+                        echo "🔄 Updating permissions for $ITEM_TYPE ID $ITEM_ID..."
+
+                        RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X PATCH -H "$AUTH_HEADER" -H "Content-Type: application/json" \
+                          "$PAPERLESS_URL/api/$ITEM_TYPE/$ITEM_ID/" -d "{
+                            \"owner\": null,
+                            \"set_permissions\": {
+                                \"view\": {\"groups\": [$GROUP_ID]},
+                                \"change\": {\"groups\": [$GROUP_ID]}
+                            }
+                          }")
+
+                        if [ "$RESPONSE" -ne 200 ]; then
+                            echo "❌ Error updating $ITEM_TYPE ID $ITEM_ID! HTTP Status: $RESPONSE"
+                            cat response.json
+                        else
+                            echo "✅ Successfully updated $ITEM_TYPE ID $ITEM_ID"
+                        fi
+                    done
 
                       echo "✅ $ITEM_TYPE permissions updated successfully!"
                   }
