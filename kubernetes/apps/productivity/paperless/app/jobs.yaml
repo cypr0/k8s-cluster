@@ -57,8 +57,8 @@ spec:
                           \"parameters\": {
                               \"owner\": $OWNER_ID,
                               \"set_permissions\": {
-                                  \"view\": { \"users\": [], \"groups\": [\"$GROUP_ID\"] },
-                                  \"change\": { \"users\": [], \"groups\": [\"$GROUP_ID\"] }
+                                  \"view\": { \"users\": [\"$OWNER_ID\"], \"groups\": [\"$GROUP_ID\"] },
+                                  \"change\": { \"users\": [\"$OWNER_ID\"], \"groups\": [\"$GROUP_ID\"] }
                               }
                           },
                           \"merge\": false
