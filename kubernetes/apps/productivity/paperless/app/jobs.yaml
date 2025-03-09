@@ -41,8 +41,8 @@ spec:
                           return
                       fi
 
-                      # Convert list of IDs into JSON array format
-                      ID_LIST=$(echo "$TAG_IDS" | jq -c '.')
+                      # Convert newline-separated list into a valid JSON array
+                      ID_LIST=$(echo "$TAG_IDS" | jq -c -s '.')
 
                       echo "🔄 Bulk updating permissions for tags: $ID_LIST"
 
