@@ -27,7 +27,8 @@ spec:
 
                   echo "🔍 Starting Paperless bulk permissions fix..."
                   PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
-                  GROUP_ID=3  # Group ID for assignment
+                  OWNER_ID="3"
+                  GROUP_ID="3"  # Group ID for assignment
                   AUTH_HEADER="Authorization: Token $PAPERLESS_API_TOKEN"
 
                   # Function to update permissions using the correct JSON structure
@@ -54,7 +55,7 @@ spec:
                           \"object_type\": \"$ITEM_TYPE\",
                           \"operation\": \"set_permissions\",
                           \"parameters\": {
-                              \"owner\": null,
+                              \"owner\": $OWNER_ID,
                               \"set_permissions\": {
                                   \"view\": { \"users\": [], \"groups\": [\"$GROUP_ID\"] },
                                   \"change\": { \"users\": [], \"groups\": [\"$GROUP_ID\"] }
