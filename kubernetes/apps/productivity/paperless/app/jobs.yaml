@@ -25,7 +25,7 @@ spec:
                   apk add --no-cache jq > /dev/null 2>&1
 
                   echo "🔍 Starting Paperless tag permissions fix..."
-                  PAPERLESS_URL="http://your-paperless-server"
+                  PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
                   GROUP_ID=3  # Group ID for tag assignment
 
                   HEADERS="-H 'Authorization: Token $PAPERLESS_API_TOKEN' -H 'Content-Type: application/json'"
