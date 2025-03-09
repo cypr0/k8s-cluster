@@ -133,9 +133,9 @@ spec:
                   fi
 
                   # Get today's date and calculate date ranges (Alpine-compatible)
-                  TODAY=$(date +"%Y-%m-%d")
-                  LAST_WEEK=$(date -I -d "$(date -I) -7 days")  # Alpine-compatible date calculation
-                  LAST_MONTH=$(date -I -d "$(date -I) -1 month")
+                  TODAY=$(date -I)
+                  LAST_WEEK=$(date -I -d "$(date -I) -7 days" 2>/dev/null || date -I -d "7 days ago")
+                  LAST_MONTH=$(date -I -d "$(date -I) -1 month" 2>/dev/null || date -I -d "1 month ago")
 
                   echo "📅 Today: $TODAY | Last Week: $LAST_WEEK | Last Month: $LAST_MONTH"
 
