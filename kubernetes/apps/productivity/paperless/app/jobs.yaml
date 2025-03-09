@@ -90,7 +90,7 @@ kind: CronJob
 metadata:
   name: paperless-cronjob-medical-invoice-check
 spec:
-  schedule: "*/15 * * * *" # Every 15 minutes
+  schedule: "*/15 * * * *" # Runs every 15 minutes
   successfulJobsHistoryLimit: 1
   failedJobsHistoryLimit: 1
   jobTemplate:
@@ -171,6 +171,9 @@ spec:
                   echo "📅 Today: $TODAY | Last Week: $LAST_WEEK"
                   echo "📅 Last Month: $FIRST_DAY_LAST_MONTH to $LAST_DAY_LAST_MONTH"
 
+                  # Flag to track if any emails were sent
+                  EMAILS_SENT=0
+
                   # Function to add a tag to documents
                   add_tag_to_documents() {
                       TAG_NAME="$1"
@@ -189,7 +192,6 @@ spec:
 
                           echo "🔄 Adding tag '$TAG_NAME' to document ID $DOC_ID..."
                           RESPONSE=$(curl -s -X PATCH -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" \
-                              -H "X-CSRFToken: $API_TOKEN" \
                               "$PAPERLESS_URL/api/documents/$DOC_ID/" -d "{
                                   \"modify_tags\": {\"add_tags\": [\"$TAG_NAME\"]}
                               }")
@@ -246,41 +248,31 @@ spec:
                       echo "$PDF_FILE $DOC_IDS"
                   }
 
-                  # 1️⃣ Generate weekly PDF for invoices to be paid
+                  # Generate weekly PDF for invoices to be paid
                   WEEKLY_RESULT=$(generate_merged_pdf "week" "$LAST_WEEK")
                   PDF_FILE_WEEKLY=$(echo "$WEEKLY_RESULT" | awk '{print $1}')
                   WEEKLY_DOC_IDS=$(echo "$WEEKLY_RESULT" | awk '{$1=""; print $0}')
 
-                  # Send weekly email with PDF
                   if [ -f "$PDF_FILE_WEEKLY" ]; then
                       echo "📧 Sending weekly invoice report..."
                       echo "Attached is the PDF containing all invoices from the past 7 days for payment." | mailx -a "$PDF_FILE_WEEKLY" -s "Weekly Invoice Report - $TODAY" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@{SECRET_DOMAIN}" "$EMAIL_TO"
-
-                      # Tag documents as "Bezahlt"
                       add_tag_to_documents "Bezahlt" "$WEEKLY_DOC_IDS"
-
-                      rm "$PDF_FILE_WEEKLY" $PDF_LIST  # Cleanup
-                  else
-                      echo "⚠️ No invoices found for the past week. Skipping weekly email."
+                      rm "$PDF_FILE_WEEKLY" $PDF_LIST
+                      EMAILS_SENT=1
                   fi
 
-                  # 2️⃣ Generate monthly PDF for Beihilfe/PKV
-                  MONTHLY_RESULT=$(generate_merged_pdf "month" "$LAST_MONTH")
+                  # Generate monthly PDF for Beihilfe/PKV
+                  MONTHLY_RESULT=$(generate_merged_pdf "month" "$FIRST_DAY_LAST_MONTH")
                   PDF_FILE_MONTHLY=$(echo "$MONTHLY_RESULT" | awk '{print $1}')
                   MONTHLY_DOC_IDS=$(echo "$MONTHLY_RESULT" | awk '{$1=""; print $0}')
 
-                  # Send monthly email with PDF
                   if [ -f "$PDF_FILE_MONTHLY" ]; then
                       echo "📧 Sending monthly invoice summary..."
                       echo "Attached is the PDF containing all invoices from the past month for Beihilfe/PKV submission." | mailx -a "$PDF_FILE_MONTHLY" -s "Monthly Invoice Summary - $LAST_MONTH" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@{SECRET_DOMAIN}" "$EMAIL_TO"
-
-                      # Tag documents as "Eingereicht"
                       add_tag_to_documents "Eingereicht" "$MONTHLY_DOC_IDS"
-
-                      rm "$PDF_FILE_MONTHLY" $PDF_LIST  # Cleanup
-                  else
-                      echo "⚠️ No invoices found for the past month. Skipping monthly email."
+                      rm "$PDF_FILE_MONTHLY" $PDF_LIST
+                      EMAILS_SENT=1
                   fi
 
-                  echo "✅ All reports sent via email successfully!"
+                  [ "$EMAILS_SENT" -eq 1 ] && echo "✅ All reports sent via email successfully!" || echo "⚠️ No reports sent. No invoices found."
           restartPolicy: OnFailure
