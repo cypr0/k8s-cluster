@@ -47,25 +47,34 @@ spec:
                       # Convert list of IDs into JSON array format
                       ID_LIST=$(echo "$ITEM_IDS" | jq -c -s '.')
 
-                      echo "🔄 Bulk updating permissions for $ITEM_TYPE: $ID_LIST"
+                      # Construct JSON payload and print it for debugging
+                      JSON_PAYLOAD=$(cat <<EOF
+                  {
+                    "objects": $ID_LIST,
+                    "object_type": "$ITEM_TYPE",
+                    "operation": "set_permissions",
+                    "parameters": {
+                      "owner": $OWNER_ID,
+                      "set_permissions": {
+                        "view": { "users": [], "groups": ["$GROUP_ID"] },
+                        "change": { "users": [], "groups": ["$GROUP_ID"] }
+                      }
+                    },
+                    "merge": false
+                  }
+                  EOF
+                  )
 
+                      echo "📝 JSON Payload for $ITEM_TYPE:"
+                      echo "$JSON_PAYLOAD" | jq .  # Pretty print JSON for better readability
+
+                      # Send request and capture full response
+                      echo "🔄 Sending request to update $ITEM_TYPE..."
                       RESPONSE=$(curl -s -o response.json -w "%{http_code}" -X POST -H "$AUTH_HEADER" -H "Content-Type: application/json" \
-                        "$PAPERLESS_URL/api/bulk_edit_objects/" -d "{
-                          \"objects\": $ID_LIST,
-                          \"object_type\": \"$ITEM_TYPE\",
-                          \"operation\": \"set_permissions\",
-                          \"parameters\": {
-                              \"owner\": $OWNER_ID,
-                              \"set_permissions\": {
-                                  \"view\": { \"users\": [\"$OWNER_ID\"], \"groups\": [\"$GROUP_ID\"] },
-                                  \"change\": { \"users\": [\"$OWNER_ID\"], \"groups\": [\"$GROUP_ID\"] }
-                              }
-                          },
-                          \"merge\": false
-                        }")
+                        "$PAPERLESS_URL/api/bulk_edit_objects/" -d "$JSON_PAYLOAD")
 
                       echo "📜 API Response:"
-                      cat response.json
+                      cat response.json | jq .  # Pretty print response JSON for better debugging
 
                       if [ "$RESPONSE" -ne 200 ]; then
                           echo "❌ Error updating $ITEM_TYPE! HTTP Status: $RESPONSE"
