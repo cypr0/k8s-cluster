@@ -84,3 +84,146 @@ spec:
 
                   echo "✅ Paperless permissions fix completed!"
           restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: paperless-cronjob-medical-invoice-check
+spec:
+  schedule: "*/15 * * * *" # Every 15 minutes
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 60
+      template:
+        spec:
+          containers:
+            - name: paperless-medical-invoice-check
+              image: alpine/curl:8.12.1
+              envFrom:
+                - secretRef:
+                    name: paperless-secret
+              command:
+                - sh
+                - -c
+                - |
+
+                  echo "🔍 Starting Paperless invoice email automation..."
+                  PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
+                  API_TOKEN="$PAPERLESS_API_TOKEN"
+                  EMAIL_TO="mail@{SECRET_DOMAIN}"
+                  SMTP_SERVER="${SECRET_MAIL_SERVER}"
+                  SMTP_PORT="25"
+
+                  # Check for required utilities and install them if missing
+                  if ! command -v pdfunite > /dev/null; then
+                      echo "⚠️ pdfunite is missing. Installing poppler-utils..."
+                      apk add --no-cache poppler-utils
+                  fi
+
+                  if ! command -v mailx > /dev/null; then
+                      echo "⚠️ mailx is missing. Installing mailx..."
+                      apk add --no-cache mailx
+                  fi
+
+                  # Get today's date and calculate date ranges
+                  TODAY=$(date +"%Y-%m-%d")
+                  LAST_WEEK=$(date -d "7 days ago" +"%Y-%m-%d")
+                  LAST_MONTH=$(date -d "1 month ago" +"%Y-%m")
+
+                  echo "📅 Today: $TODAY | Last Week: $LAST_WEEK | Last Month: $LAST_MONTH"
+
+                  # Function to add a tag to documents
+                  add_tag_to_documents() {
+                      TAG_NAME="$1"
+                      DOCUMENT_IDS="$2"
+
+                      if [ -z "$DOCUMENT_IDS" ]; then
+                          echo "✅ No documents to update with tag '$TAG_NAME'."
+                          return
+                      fi
+
+                      for DOC_ID in $DOCUMENT_IDS; do
+                          echo "🔄 Adding tag '$TAG_NAME' to document ID $DOC_ID..."
+                          curl -s -X PATCH -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" \
+                              "$PAPERLESS_URL/api/documents/$DOC_ID/" -d "{
+                                  \"modify_tags\": {\"add_tags\": [\"$TAG_NAME\"]}
+                              }"
+                      done
+
+                      echo "✅ Documents successfully updated with tag '$TAG_NAME'."
+                  }
+
+                  # Function to generate a merged PDF for a given time range
+                  generate_merged_pdf() {
+                      TIME_RANGE="$1"
+                      START_DATE="$2"
+                      PDF_FILE="/tmp/invoices_$TIME_RANGE.pdf"
+
+                      echo "🔄 Fetching invoices from $TIME_RANGE..."
+                      INVOICES=$(curl -s -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" \
+                        "$PAPERLESS_URL/api/documents/?tags__name__in=Rechnung,Gesundheit&document_date__gte=$START_DATE")
+
+                      PDF_LIST=""
+                      DOC_IDS=""
+                      for DOC_ID in $(echo "$INVOICES" | jq -r '.results[].id'); do
+                          FILE_URL="$PAPERLESS_URL/api/documents/$DOC_ID/download/"
+                          PDF_TMP="/tmp/invoice_$DOC_ID.pdf"
+
+                          echo "📥 Downloading Invoice ID $DOC_ID..."
+                          curl -s -H "Authorization: Token $API_TOKEN" -o "$PDF_TMP" "$FILE_URL"
+
+                          PDF_LIST="$PDF_LIST $PDF_TMP"
+                          DOC_IDS="$DOC_IDS $DOC_ID"
+                      done
+
+                      if command -v pdfunite > /dev/null; then
+                          pdfunite $PDF_LIST "$PDF_FILE"
+                      else
+                          echo "⚠️ pdfunite installation failed! Unable to merge PDFs."
+                          return
+                      fi
+
+                      echo "✅ Merged PDF created: $PDF_FILE"
+                      echo "$PDF_FILE $DOC_IDS"
+                  }
+
+                  # 1️⃣ Generate weekly PDF for medical invoices to be paid
+                  WEEKLY_RESULT=$(generate_merged_pdf "week" "$LAST_WEEK")
+                  PDF_FILE_WEEKLY=$(echo "$WEEKLY_RESULT" | awk '{print $1}')
+                  WEEKLY_DOC_IDS=$(echo "$WEEKLY_RESULT" | awk '{$1=""; print $0}')
+
+                  # Send weekly email with PDF
+                  if [ -n "$PDF_FILE_WEEKLY" ]; then
+                      echo "📧 Sending weekly invoice report..."
+                      echo "Attached is the PDF containing all invoices from the past 7 days for payment." | mailx -a "$PDF_FILE_WEEKLY" -s "Weekly Invoice Report - $TODAY" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@{SECRET_DOMAIN}" "$EMAIL_TO"
+
+                      # Tag documents as "Bezahlt"
+                      add_tag_to_documents "Bezahlt" "$WEEKLY_DOC_IDS"
+
+                      rm "$PDF_FILE_WEEKLY" $PDF_LIST  # Cleanup
+                  else
+                      echo "⚠️ No invoices found for the past week. Skipping weekly email."
+                  fi
+
+                  # 2️⃣ Generate monthly PDF for Beihilfe/PKV
+                  MONTHLY_RESULT=$(generate_merged_pdf "month" "$LAST_MONTH")
+                  PDF_FILE_MONTHLY=$(echo "$MONTHLY_RESULT" | awk '{print $1}')
+                  MONTHLY_DOC_IDS=$(echo "$MONTHLY_RESULT" | awk '{$1=""; print $0}')
+
+                  # Send monthly email with PDF
+                  if [ -n "$PDF_FILE_MONTHLY" ]; then
+                      echo "📧 Sending monthly invoice summary..."
+                      echo "Attached is the PDF containing all invoices from the past month for Beihilfe/PKV submission." | mailx -a "$PDF_FILE_MONTHLY" -s "Monthly Invoice Summary - $LAST_MONTH" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@{SECRET_DOMAIN}" "$EMAIL_TO"
+
+                      # Tag documents as "Eingereicht"
+                      add_tag_to_documents "Eingereicht" "$MONTHLY_DOC_IDS"
+
+                      rm "$PDF_FILE_MONTHLY" $PDF_LIST  # Cleanup
+                  else
+                      echo "⚠️ No invoices found for the past month. Skipping monthly email."
+                  fi
+
+                  echo "✅ All reports sent via email successfully!"
+          restartPolicy: OnFailure
