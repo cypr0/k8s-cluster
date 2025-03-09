@@ -116,7 +116,7 @@ spec:
                   SMTP_SERVER="${SECRET_MAIL_SERVER}"
                   SMTP_PORT="25"
 
-                  # Check for required utilities and install them if missing
+                  # Install required packages if missing
                   if ! command -v pdfunite > /dev/null; then
                       echo "⚠️ pdfunite is missing. Installing poppler-utils..."
                       apk add --no-cache poppler-utils
@@ -145,11 +145,23 @@ spec:
                       fi
 
                       for DOC_ID in $DOCUMENT_IDS; do
+                          if [[ ! "$DOC_ID" =~ ^[0-9]+$ ]]; then
+                              echo "⚠️ Skipping invalid document ID: $DOC_ID"
+                              continue
+                          fi
+
                           echo "🔄 Adding tag '$TAG_NAME' to document ID $DOC_ID..."
-                          curl -s -X PATCH -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" \
+                          RESPONSE=$(curl -s -X PATCH -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" \
+                              -H "X-CSRFToken: $API_TOKEN" \
                               "$PAPERLESS_URL/api/documents/$DOC_ID/" -d "{
                                   \"modify_tags\": {\"add_tags\": [\"$TAG_NAME\"]}
-                              }"
+                              }")
+
+                          if echo "$RESPONSE" | grep -q "403 Forbidden"; then
+                              echo "❌ CSRF error while updating document ID $DOC_ID. Check API permissions."
+                          elif echo "$RESPONSE" | grep -q "Not found"; then
+                              echo "❌ Document ID $DOC_ID not found. Skipping."
+                          fi
                       done
 
                       echo "✅ Documents successfully updated with tag '$TAG_NAME'."
@@ -168,34 +180,42 @@ spec:
                       PDF_LIST=""
                       DOC_IDS=""
                       for DOC_ID in $(echo "$INVOICES" | jq -r '.results[].id'); do
+                          if [[ ! "$DOC_ID" =~ ^[0-9]+$ ]]; then
+                              echo "⚠️ Skipping invalid document ID: $DOC_ID"
+                              continue
+                          fi
+
                           FILE_URL="$PAPERLESS_URL/api/documents/$DOC_ID/download/"
                           PDF_TMP="/tmp/invoice_$DOC_ID.pdf"
 
                           echo "📥 Downloading Invoice ID $DOC_ID..."
                           curl -s -H "Authorization: Token $API_TOKEN" -o "$PDF_TMP" "$FILE_URL"
 
-                          PDF_LIST="$PDF_LIST $PDF_TMP"
-                          DOC_IDS="$DOC_IDS $DOC_ID"
+                          if [ -f "$PDF_TMP" ]; then
+                              PDF_LIST="$PDF_LIST $PDF_TMP"
+                              DOC_IDS="$DOC_IDS $DOC_ID"
+                          else
+                              echo "⚠️ Failed to download invoice ID $DOC_ID"
+                          fi
                       done
 
-                      if command -v pdfunite > /dev/null; then
-                          pdfunite $PDF_LIST "$PDF_FILE"
+                      if [ -n "$PDF_LIST" ]; then
+                          pdfunite $PDF_LIST "$PDF_FILE" && echo "✅ Merged PDF created: $PDF_FILE"
                       else
-                          echo "⚠️ pdfunite installation failed! Unable to merge PDFs."
+                          echo "⚠️ No valid invoices found to merge. Skipping PDF creation."
                           return
                       fi
 
-                      echo "✅ Merged PDF created: $PDF_FILE"
                       echo "$PDF_FILE $DOC_IDS"
                   }
 
-                  # 1️⃣ Generate weekly PDF for medical invoices to be paid
+                  # 1️⃣ Generate weekly PDF for invoices to be paid
                   WEEKLY_RESULT=$(generate_merged_pdf "week" "$LAST_WEEK")
                   PDF_FILE_WEEKLY=$(echo "$WEEKLY_RESULT" | awk '{print $1}')
                   WEEKLY_DOC_IDS=$(echo "$WEEKLY_RESULT" | awk '{$1=""; print $0}')
 
                   # Send weekly email with PDF
-                  if [ -n "$PDF_FILE_WEEKLY" ]; then
+                  if [ -f "$PDF_FILE_WEEKLY" ]; then
                       echo "📧 Sending weekly invoice report..."
                       echo "Attached is the PDF containing all invoices from the past 7 days for payment." | mailx -a "$PDF_FILE_WEEKLY" -s "Weekly Invoice Report - $TODAY" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@{SECRET_DOMAIN}" "$EMAIL_TO"
 
@@ -213,7 +233,7 @@ spec:
                   MONTHLY_DOC_IDS=$(echo "$MONTHLY_RESULT" | awk '{$1=""; print $0}')
 
                   # Send monthly email with PDF
-                  if [ -n "$PDF_FILE_MONTHLY" ]; then
+                  if [ -f "$PDF_FILE_MONTHLY" ]; then
                       echo "📧 Sending monthly invoice summary..."
                       echo "Attached is the PDF containing all invoices from the past month for Beihilfe/PKV submission." | mailx -a "$PDF_FILE_MONTHLY" -s "Monthly Invoice Summary - $LAST_MONTH" -S smtp="smtp://$SMTP_SERVER:$SMTP_PORT" -r "noreply@{SECRET_DOMAIN}" "$EMAIL_TO"
 
