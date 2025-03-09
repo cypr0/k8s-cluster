@@ -21,6 +21,7 @@ spec:
                 - sh
                 - -c
                 - |
+
                   echo "🔍 Installing jq..."
                   apk add --no-cache jq > /dev/null 2>&1
 
