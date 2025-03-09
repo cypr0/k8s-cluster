@@ -135,17 +135,20 @@ spec:
                   # Get today's date
                   TODAY=$(date -I)
 
-                  # Weekly calculation (7 days ago)
+                  # Weekly calculation: Get the date 7 days ago
                   LAST_WEEK=$(date -I -d "@$(($(date +%s) - 7 * 86400))")
 
-                  # Calculate the first day of last month
-                  LAST_MONTH_FIRST=$(date -I -d "@$(($(date +%s) - $(date +%d) * 86400))")
+                  # Get the first day of the current month
+                  FIRST_DAY_THIS_MONTH=$(date -I -d "@$(($(date +%s) - $(date +%d * 86400)))")
 
-                  # Calculate the last day of last month (First day of this month - 1 day)
-                  LAST_MONTH_LAST=$(date -I -d "@$(($(date -d "$LAST_MONTH_FIRST" +%s) - 86400))")
+                  # Get the last day of the previous month (First day of this month - 1 day)
+                  LAST_MONTH_LAST=$(date -I -d "@$(($(date -d "$FIRST_DAY_THIS_MONTH" +%s) - 86400))")
+
+                  # Get the first day of the previous month
+                  FIRST_DAY_LAST_MONTH=$(date -I -d "@$(($(date -d "$LAST_MONTH_LAST" +%s) - $(date -d "$LAST_MONTH_LAST" +%d) * 86400))")
 
                   echo "📅 Today: $TODAY | Last Week: $LAST_WEEK"
-                  echo "📅 Last Month: $LAST_MONTH_FIRST to $LAST_MONTH_LAST"
+                  echo "📅 Last Month: $FIRST_DAY_LAST_MONTH to $LAST_MONTH_LAST"
 
                   # Function to add a tag to documents
                   add_tag_to_documents() {
