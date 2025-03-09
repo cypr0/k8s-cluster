@@ -1,7 +1,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: paperless-cronjob-fix-tags
+  name: paperless-cronjob-fix-ownership
 spec:
   schedule: "*/15 * * * *" # Every 15 minutes
   successfulJobsHistoryLimit: 1
@@ -12,7 +12,7 @@ spec:
       template:
         spec:
           containers:
-            - name: paperless-fix-tags
+            - name: paperless-fix-ownership
               image: alpine/curl:8.12.1
               envFrom:
                 - secretRef:
@@ -21,35 +21,36 @@ spec:
                 - sh
                 - -c
                 - |
-                  echo "🔍 Installing jq..."
-                  apk add --no-cache jq > /dev/null 2>&1
-
-                  echo "🔍 Starting Paperless tag permissions fix..."
+                  echo "🔍 Starting Paperless tag and correspondent permissions fix..."
                   PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
-                  GROUP_ID=3  # Group ID for tag assignment
+                  GROUP_ID=3  # Group ID for assignment
+                  AUTH_HEADER="Authorization: Token $PAPERLESS_API_TOKEN"
 
-                  echo "🔍 Fetching tags from Paperless-ngx API..."
-                  echo "🔍 Using API Token: ${PAPERLESS_API_TOKEN:0:4}******** (Masked for Security)"
+                  # Function to update ownership of an item (tag or correspondent)
+                  update_ownership() {
+                      ITEM_TYPE=$1  # Either "tags" or "correspondents"
+                      echo "🔍 Checking for new $ITEM_TYPE..."
 
-                  # Fetch tags correctly with headers
-                  API_RESPONSE=$(curl -s -H "Authorization: Token $PAPERLESS_API_TOKEN" -H "Content-Type: application/json" "$PAPERLESS_URL/api/tags/")
+                      # Fetch items that are owned by the API user but not yet assigned to the group
+                      NEW_ITEMS=$(curl -s -H "$AUTH_HEADER" -H "Content-Type: application/json" "$PAPERLESS_URL/api/$ITEM_TYPE/" | jq -r '.results[] | select(.ownership != "group") | .id')
 
-                  echo "🔍 API Response: $API_RESPONSE"
+                      if [ -z "$NEW_ITEMS" ]; then
+                          echo "✅ No new $ITEM_TYPE found, exiting."
+                          return
+                      fi
 
-                  # Extract tag IDs safely
-                  NEW_TAGS=$(echo "$API_RESPONSE" | jq -r '.results[]? | select(.ownership != "group") | .id')
+                      # Assign new items to the group
+                      for ITEM_ID in $NEW_ITEMS; do
+                          echo "🔄 Updating permissions for $ITEM_TYPE ID $ITEM_ID..."
+                          curl -X PATCH -H "$AUTH_HEADER" -H "Content-Type: application/json" "$PAPERLESS_URL/api/$ITEM_TYPE/$ITEM_ID/" -d "{\"ownership\": \"group\", \"group\": $GROUP_ID}"
+                      done
 
-                  # If no new tags are found, exit
-                  if [ -z "$NEW_TAGS" ]; then
-                    echo "✅ No new tags found, exiting."
-                    exit 0
-                  fi
+                      echo "✅ $ITEM_TYPE permissions updated successfully!"
+                  }
 
-                  # Assign new tags to the group
-                  for TAG_ID in $NEW_TAGS; do
-                      echo "🔄 Updating permissions for tag $TAG_ID..."
-                      curl -X PATCH -H "Authorization: Token $PAPERLESS_API_TOKEN" -H "Content-Type: application/json" "$PAPERLESS_URL/api/tags/$TAG_ID/" -d "{\"ownership\": \"group\", \"group\": $GROUP_ID}"
-                  done
+                  # Fix tags and correspondents
+                  update_ownership "tags"
+                  update_ownership "correspondents"
 
-                  echo "✅ Tag permissions updated successfully!"
+                  echo "✅ Paperless permissions fix completed!"
           restartPolicy: OnFailure
