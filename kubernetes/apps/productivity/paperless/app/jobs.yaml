@@ -86,6 +86,7 @@ spec:
                   # Fix permissions for both tags and correspondents
                   update_bulk_permissions "tags"
                   update_bulk_permissions "correspondents"
+                  update_bulk_permissions "document_types"
 
                   echo "✅ Paperless permissions fix completed!"
           restartPolicy: OnFailure
