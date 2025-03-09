@@ -25,13 +25,18 @@ spec:
                   apk add --no-cache jq > /dev/null 2>&1
 
                   echo "🔍 Starting Paperless tag permissions fix..."
-                  PAPERLESS_URL="http://paperless-paperless-ngx.productivity.svc.cluster.local"
-                  GROUP_ID=1  # Group ID for tag assignment
+                  PAPERLESS_URL="http://your-paperless-server"
+                  GROUP_ID=3  # Group ID for tag assignment
 
                   HEADERS="-H 'Authorization: Token $PAPERLESS_API_TOKEN' -H 'Content-Type: application/json'"
 
-                  # Fetch tags that are owned by the API user but not yet assigned to the group
-                  NEW_TAGS=$(curl -s $HEADERS "$PAPERLESS_URL/api/tags/" | jq -r '.results[] | select(.ownership != "group") | .id')
+                  # Fetch tags and log response for debugging
+                  echo "🔍 Fetching tags from Paperless-ngx API..."
+                  API_RESPONSE=$(curl -s $HEADERS "$PAPERLESS_URL/api/tags/")
+                  echo "🔍 API Response: $API_RESPONSE"
+
+                  # Extract tag IDs safely
+                  NEW_TAGS=$(echo "$API_RESPONSE" | jq -r '.results[]? | select(.ownership != "group") | .id')
 
                   # If no new tags are found, exit
                   if [ -z "$NEW_TAGS" ]; then
