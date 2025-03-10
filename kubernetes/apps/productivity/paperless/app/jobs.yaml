@@ -191,18 +191,19 @@ spec:
                       echo "🔄 Fetching invoices from $TIME_RANGE..."
                       API_URL="$PAPERLESS_URL/api/documents/?tags__name__in=Rechnung,Gesundheit&document_date__gte=$START_DATE"
 
-                      echo "📝 API Request: $API_URL"
+                      echo "📝 API Request:"
+                      echo "    URL: $API_URL"
 
                       INVOICES=$(curl -s -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" "$API_URL")
 
-                      echo "📜 API Response (truncated for readability):"
-                      echo "$INVOICES" | jq '.' | tee "/tmp/api_response_$TIME_RANGE.json"
+                      echo "📜 API Response:"
+                      echo "$INVOICES" | jq '.'
 
                       # Check if the response contains documents
                       DOC_COUNT=$(echo "$INVOICES" | jq '.results | length')
 
                       if [ "$DOC_COUNT" -eq 0 ]; then
-                          echo "⚠️ No invoices found for the past $TIME_RANGE. Skipping PDF creation."
+                          echo "⚠️ No invoices found for $TIME_RANGE. Skipping PDF creation."
                           return
                       fi
 
