@@ -194,7 +194,9 @@ spec:
                       echo "📝 API Request:"
                       echo "    URL: $API_URL"
 
-                      INVOICES=$(curl -s -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" "$API_URL")
+                      INVOICES=$(curl -s -H "Authorization: Token $API_TOKEN" "$API_URL")
+                      echo "📜 Raw API Response:"
+                      echo "$INVOICES"
 
                       echo "📜 API Response:"
                       echo "$INVOICES" | jq '.'
