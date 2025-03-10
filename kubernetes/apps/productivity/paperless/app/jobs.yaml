@@ -201,6 +201,9 @@ spec:
                       echo "📜 API Response:"
                       echo "$INVOICES" | jq '.'
 
+                      echo "📌 Debug: Checking document count..."
+                      echo "$INVOICES" | jq '.results'
+
                       # Check if the response contains documents
                       DOC_COUNT=$(echo "$INVOICES" | jq '.results | length')
 
