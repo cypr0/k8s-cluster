@@ -121,18 +121,26 @@ spec:
                   # Function to check and install packages
                   install_package() {
                       PACKAGE=$1
-                      if ! command -v "$PACKAGE" > /dev/null 2>&1; then
+                      APK_PACKAGE=$2
+                      BIN_PATH=$3
+
+                      if ! command -v "$PACKAGE" > /dev/null 2>&1 && [ ! -f "$BIN_PATH" ]; then
                           echo "⚠️ $PACKAGE is missing. Installing..."
-                          apk add --no-cache "$2" || (echo "❌ Failed to install $PACKAGE. Retrying..." && apk add --no-cache "$2")
+                          apk add --no-cache "$APK_PACKAGE" || (echo "❌ Failed to install $PACKAGE. Retrying..." && apk add --no-cache "$APK_PACKAGE")
+
+                          # If it's pdfunite, reload the environment in case the binary is missing
+                          if [ "$PACKAGE" = "pdfunite" ]; then
+                              export PATH=$PATH:/usr/bin
+                          fi
                       else
                           echo "✅ $PACKAGE is already installed."
                       fi
                   }
 
                   # Install required dependencies
-                  install_package "jq" "jq"
-                  install_package "pdfunite" "poppler-utils"
-                  install_package "mailx" "mailx"
+                  install_package "jq" "jq" "/usr/bin/jq"
+                  install_package "pdfunite" "poppler-utils" "/usr/bin/pdfunite"
+                  install_package "mailx" "mailx" "/usr/bin/mailx"
 
                   # Final verification
                   echo "🔍 Verifying installations..."
