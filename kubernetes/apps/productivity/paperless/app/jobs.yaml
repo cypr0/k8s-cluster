@@ -189,7 +189,7 @@ spec:
                       PDF_FILE="/tmp/invoices_$TIME_RANGE.pdf"
 
                       echo "🔄 Fetching invoices from $TIME_RANGE..."
-                      API_URL="$PAPERLESS_URL/api/documents/?tags__name__in=Rechnung,Gesundheit&document_date__gte=$START_DATE"
+                      API_URL="$PAPERLESS_URL/api/documents/?format=json&tags__name__in=Rechnung,Gesundheit&document_date__gte=$START_DATE"
 
                       echo "📝 API Request:"
                       echo "    URL: $API_URL"
