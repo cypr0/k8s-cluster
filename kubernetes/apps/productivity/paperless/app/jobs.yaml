@@ -116,18 +116,27 @@ spec:
                   SMTP_PORT="25"
 
                   # Install required packages if missing
+                  echo "🔍 Checking required dependencies..."
 
-                  if ! command -v jq > /dev/null; then
-                      echo "⚠️ jq is missing. Installing jq..."
-                      apk add --no-cache jq
-                  fi
-
-                  for package in poppler-utils mailx jq; do
-                      if ! command -v ${package%%-*} > /dev/null; then
-                          echo "⚠️ $package is missing. Installing..."
-                          apk add --no-cache $package
+                  # Function to check and install packages
+                  install_package() {
+                      PACKAGE=$1
+                      if ! command -v "$PACKAGE" > /dev/null 2>&1; then
+                          echo "⚠️ $PACKAGE is missing. Installing..."
+                          apk add --no-cache "$2" || (echo "❌ Failed to install $PACKAGE. Retrying..." && apk add --no-cache "$2")
+                      else
+                          echo "✅ $PACKAGE is already installed."
                       fi
-                  done
+                  }
+
+                  # Install required dependencies
+                  install_package "jq" "jq"
+                  install_package "pdfunite" "poppler-utils"
+                  install_package "mailx" "mailx"
+
+                  # Final verification
+                  echo "🔍 Verifying installations..."
+                  command -v jq && command -v pdfunite && command -v mailx && echo "✅ All dependencies installed successfully!"
 
                   # Get today's date
                   TODAY=$(date -I)
