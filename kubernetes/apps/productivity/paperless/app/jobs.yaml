@@ -116,6 +116,12 @@ spec:
                   SMTP_PORT="25"
 
                   # Install required packages if missing
+
+                  if ! command -v jq > /dev/null; then
+                      echo "⚠️ jq is missing. Installing jq..."
+                      apk add --no-cache jq
+                  fi
+
                   for package in poppler-utils mailx jq; do
                       if ! command -v ${package%%-*} > /dev/null; then
                           echo "⚠️ $package is missing. Installing..."
