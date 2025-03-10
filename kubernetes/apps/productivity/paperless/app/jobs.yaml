@@ -186,24 +186,38 @@ spec:
                   generate_merged_pdf() {
                       TIME_RANGE="$1"
                       START_DATE="$2"
-                      END_DATE="$3"
                       PDF_FILE="/tmp/invoices_$TIME_RANGE.pdf"
 
-                      echo "🔄 Fetching invoices from $TIME_RANGE ($START_DATE to $END_DATE)..."
-                      API_URL="$PAPERLESS_URL/api/documents/?created__date__gte=$START_DATE&created__date__lte=$END_DATE&document_type__name__in=Eingangsrechnung,Zahlungsavis,Beleg,Gutschrift,Nachweis"
+                      echo "🔄 Fetching invoices from $TIME_RANGE..."
+                      API_URL="$PAPERLESS_URL/api/documents/?tags__name__in=Rechnung,Gesundheit&document_date__gte=$START_DATE"
 
-                      echo "🔍 API URL: $API_URL"
+                      echo "📝 API Request: $API_URL"
 
                       INVOICES=$(curl -s -H "Authorization: Token $API_TOKEN" -H "Content-Type: application/json" "$API_URL")
-                      echo "📜 Raw API Response: $INVOICES"
+
+                      echo "📜 API Response (truncated for readability):"
+                      echo "$INVOICES" | jq '.' | tee "/tmp/api_response_$TIME_RANGE.json"
+
+                      # Check if the response contains documents
+                      DOC_COUNT=$(echo "$INVOICES" | jq '.results | length')
+
+                      if [ "$DOC_COUNT" -eq 0 ]; then
+                          echo "⚠️ No invoices found for the past $TIME_RANGE. Skipping PDF creation."
+                          return
+                      fi
 
                       PDF_LIST=""
                       DOC_IDS=""
                       for DOC_ID in $(echo "$INVOICES" | jq -r '.results[].id'); do
+                          if [[ ! "$DOC_ID" =~ ^[0-9]+$ ]]; then
+                              echo "⚠️ Skipping invalid document ID: $DOC_ID"
+                              continue
+                          fi
+
                           FILE_URL="$PAPERLESS_URL/api/documents/$DOC_ID/download/"
                           PDF_TMP="/tmp/invoice_$DOC_ID.pdf"
 
-                          echo "📥 Downloading Invoice ID $DOC_ID from $FILE_URL..."
+                          echo "📥 Downloading Invoice ID $DOC_ID..."
                           curl -s -H "Authorization: Token $API_TOKEN" -o "$PDF_TMP" "$FILE_URL"
 
                           if [ -f "$PDF_TMP" ]; then
