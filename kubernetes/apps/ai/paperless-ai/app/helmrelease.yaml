@@ -53,7 +53,7 @@ spec:
               CUSTOM_BASE_URL: "https://generativelanguage.googleapis.com/v1beta/openai"
               CUSTOM_MODEL: "gemini-1.5-flash"
               ACTIVATE_CUSTOM_FIELDS: "yes"
-              CUSTOM_FIELDS: "{"custom_fields":[{"value":"Betrag","data_type":"monetary","currency":"EUR"},{"value":"IBAN","data_type":"string"},{"value":"Verwendungszweck","data_type":"string"},{"value":"Empfänger","data_type":"string"}]}"
+              CUSTOM_FIELDS: '{"custom_fields":[{"value":"Betrag","data_type":"monetary","currency":"EUR"},{"value":"IBAN","data_type":"string"},{"value":"Verwendungszweck","data_type":"string"},{"value":"Empfänger","data_type":"string"}]}'
             envFrom:
               - secretRef:
                   name: paperless-ai-secret
