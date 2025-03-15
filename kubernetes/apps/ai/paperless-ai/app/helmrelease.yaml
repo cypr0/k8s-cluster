@@ -38,10 +38,10 @@ spec:
             env:
               PAPERLESS_AI_INITIAL_SETUP: "no"
               PAPERLESS_API_URL: "http://paperless-paperless-ngx.productivity.svc.cluster.local/api"
-              AI_PROVIDER: "custom"
+              AI_PROVIDER: "ollama"
               SCAN_INTERVAL: "*/5 * * * *"
-              #OLLAMA_API_URL: "http://ollama.ai.svc.cluster.local:11434"
-              #OLLAMA_MODEL: "llama3.2"
+              OLLAMA_API_URL: "https://generativelanguage.googleapis.com/v1beta/openai"
+              OLLAMA_MODEL: "gemini-1.5-flash"
               SYSTEM_PROMPT: "You are a personalized document analyzer. Your task is to analyze documents and extract relevant information. Analyze the document content and extract the following information into a structured JSON object: 1. title: Create a concise, meaningful title for the document. 2. correspondent: Identify the sender or institution but do not include addresses. 3. tags: Select up to 4 relevant thematic tags. Prefer existing tags, but create new ones if necessary. 4. document_date: Extract the document date in the format YYYY-MM-DD. 5. language: Determine the document language, using 'de' for German, 'en' for English, or 'und' if unclear. 6. document_type: Assign only an existing document type classification. Do not create new classifications. For tags: Select up to 4 tags per document, fewer if sufficient. Prefer existing tags. Only create a new tag if no suitable one exists. Avoid overly generic or too specific tags. Use the language of the document. - Apply the tag 'Honorar' ONLY if the document indicates that the user is RECEIVING money (e.g., payment confirmations, fee agreements, invoices issued by the user). - DO NOT apply 'Honorar' for normal invoices that require payment by the user. For the title: Keep it short and concise without addresses. Include the most important identification features. For invoices or orders, mention the invoice or order number if available. Use the language of the document. For the correspondent: Check the existing correspondent list first. If a match is found, use the existing correspondent. Only create a new correspondent if no suitable match exists. Use the shortest possible form of the company name, for example, Amazon instead of Amazon EU SARL German branch. For the document date: Extract the most relevant date from the document. Use the format YYYY-MM-DD. For the language: Determine the document language. Use language codes like de for German or en for English. If the language is not clear, use und as a placeholder. For document type classification: Use only predefined document type classifications. Do not create new ones. If no matching classification exists, leave it empty rather than inventing a new one. If applicable, extract and populate the predefined custom fields: Betrag, IBAN, Verwendungszweck und Empfänger. These fields should only be set for invoices and must not be included for other document types."
               PROCESS_PREDEFINED_DOCUMENTS: "yes"
               TAGS: "Neu"
@@ -50,8 +50,6 @@ spec:
               USE_PROMPT_TAGS: "no"
               PROMPT_TAGS: ""
               USE_EXISTING_DATA: "yes"
-              CUSTOM_BASE_URL: "https://generativelanguage.googleapis.com/v1beta/openai"
-              CUSTOM_MODEL: "gemini-1.5-flash"
               ACTIVATE_CUSTOM_FIELDS: "yes"
               CUSTOM_FIELDS: '{"custom_fields":[{"value":"Betrag","data_type":"monetary","currency":"EUR"},{"value":"IBAN","data_type":"string"},{"value":"Verwendungszweck","data_type":"string"},{"value":"Empfänger","data_type":"string"}]}'
             envFrom:
