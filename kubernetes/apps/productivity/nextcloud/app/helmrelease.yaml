@@ -145,9 +145,9 @@ spec:
               - name: server_name
                 value: "office.${SECRET_DOMAIN}"
             securityContext:
-              runAsUser: 100
-              runAsGroup: 101
-              fsGroup: 101
+              runAsUser: 1001
+              runAsGroup: 1001
+              fsGroup: 1001
           languagetool:
             image:
               repository: collabora/languagetool
