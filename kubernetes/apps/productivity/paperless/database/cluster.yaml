@@ -6,7 +6,7 @@ metadata:
 spec:
   description: Postgresql cluster for Paperless
   # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.4
   instances: 1
   storage:
     size: 20Gi
@@ -30,20 +30,21 @@ spec:
       max_parallel_workers_per_gather: "2"
       max_parallel_workers: "4"
       max_parallel_maintenance_workers: "2"
-  bootstrap:
-    initdb:
-      database: paperlessdb
-      owner: paperlessusr
-      secret:
-        name: paperless-db-secret
+  # Initial bootstrap for first install
+  # bootstrap:
+  #   initdb:
+  #     database: paperlessdb
+  #     owner: paperlessusr
+  #     secret:
+  #       name: paperless-db-secret
   primaryUpdateStrategy: unsupervised
   monitoring:
     enablePodMonitor: true
   # Bootstrap to recover from an existing backup
   # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
-  # bootstrap:
-  #   recovery:
-  #     source: &previousCluster paperless-postgres17-v1
+  bootstrap:
+    recovery:
+      source: &previousCluster paperless-postgres17-v1
   backup:
     retentionPolicy: 7d
     barmanObjectStore: &barmanObjectStore

@@ -6,7 +6,7 @@ metadata:
 spec:
   description: Postgresql cluster for Immich
   # renovate: datasource=docker depName=ghcr.io/tensorchord/cloudnative-pgvecto.rs
-  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16.6
+  imageName: ghcr.io/tensorchord/cloudnative-pgvecto.rs:16.8
   instances: 1
   storage:
     size: 25Gi
@@ -46,7 +46,7 @@ spec:
         maxParallel: 8
       destinationPath: s3://k8s-postgres/immich/
       endpointURL: https://s3.${SECRET_DOMAIN}
-      serverName: &currentCluster immich-postgres17-v2
+      serverName: &currentCluster immich-postgres17-v1
       s3Credentials:
         accessKeyId:
           name: immich-db-secret
