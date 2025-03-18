@@ -30,9 +30,8 @@ The repository is organized as follows:
 - **Ingress Management**: Includes [ingress-nginx](https://www.f5.com/products/nginx/nginx-ingress-controller) for internal and external access to applications.
 - **Monitoring and Observability**: Pre-configured monitoring stack ([Prometheus](https://prometheus.io/), [Grafana](https://grafana.com/)).
 - **Storage**:
-  - [Longhorn](https://longhorn.io): Distributed block storage for Kubernetes.
+  - [Democratic CSI](https://github.com/democratic-csi): CSI driver for NFS and block storage.
   - [MinIO](https://min.io): S3-compatible object storage.
-  - [NFS Subdir External Provisioner](https://github.com/kubernetes-sigs/nfs-subdir-external-provisioner): Lightweight NFS-based storage provisioner.
   - [OpenEBS](https://openebs.io): Cloud-native storage for containers.
 
 
@@ -40,8 +39,6 @@ The repository is organized as follows:
 
 The cluster hosts the following applications:
 
-- **[Automad](https://automad.org/)**: A flat-file content management system.
-- **[Home Assistant](https://www.home-assistant.io/)**: A self-hosted home automation platform.
 - **[Immich](https://immich.app/)**: Photo and video backup service with AI-based search capabilities.
 - **[Mastodon](https://joinmastodon.org/)**: A decentralized social network instance.
 - **[Nextcloud](https://nextcloud.com/)**: A self-hosted productivity platform.
@@ -74,8 +71,8 @@ The cluster is built on high-performance virtual root servers provided by [Netcu
 - **Firewall**:
   - A dedicated **[OPNsense](https://opnsense.org/)** firewall deployed on a separate virtual server, also hosted at Netcup.
   - The firewall handles connections to local home networks and provides secure ingress/egress traffic control.
-- **NFS Server**:
-  - A separate virtual server at Netcup is used to provide NFS storage, enabling robust persistence for cluster applications.
+- **Storage Backend**:
+  - A **[TrueNAS Scale](https://www.truenas.com/truenas-scale/)** system is used to provide both **NFS and block storage**, ensuring reliable and scalable persistence for cluster applications.
 
 [![Netcup](https://www.netcup.com/uploads/netcup_hlogo_2019_b110h50_32d03f6da4.png)](https://www.netcup.com/de/?ref=97728)
 
