@@ -3,8 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: mastodon-config-pvc
 spec:
-  accessModes: ["ReadWriteOnce"]
-  storageClassName: iscsi
+  accessModes: ["ReadWriteMany"]
+  storageClassName: infs
   resources:
     requests:
       storage: 5Gi
