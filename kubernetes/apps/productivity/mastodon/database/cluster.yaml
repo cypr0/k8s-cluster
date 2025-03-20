@@ -6,11 +6,11 @@ metadata:
 spec:
   description: Postgresql cluster for Mastodon
   # renovate: datasource=docker depName=ghcr.io/cloudnative-pg/postgresql
-  imageName: ghcr.io/cloudnative-pg/postgresql:17.2
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.4
   instances: 1
   storage:
     size: 30Gi
-    storageClass: iscsi
+    storageClass: openebs-hostpath
   postgresql:
     parameters:
       max_connections: "200"
