@@ -30,20 +30,20 @@ spec:
       max_parallel_workers_per_gather: "2"
       max_parallel_workers: "4"
       max_parallel_maintenance_workers: "2"
-  bootstrap:
-    initdb:
-      database: mastodondb
-      owner: mastodonusr
-      secret:
-        name: mastodon-db-secret
+  # bootstrap:
+  #   initdb:
+  #     database: mastodondb
+  #     owner: mastodonusr
+  #     secret:
+  #       name: mastodon-db-secret
   primaryUpdateStrategy: unsupervised
   monitoring:
     enablePodMonitor: true
   # Bootstrap to recover from an existing backup
   # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
-  # bootstrap:
-  #   recovery:
-  #     source: &previousCluster mastodon-postgres17-v1
+  bootstrap:
+    recovery:
+      source: &previousCluster mastodon-postgres17-v1
   backup:
     retentionPolicy: 7d
     barmanObjectStore: &barmanObjectStore
