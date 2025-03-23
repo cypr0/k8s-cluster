@@ -69,6 +69,7 @@ spec:
               readiness:
                 enabled: true
             env:
+              ALLOW_UNSAFE_AUTH_PROVIDER_REATTACH: true
               DB_HOST: cnpg-mastodon-rw.productivity.svc.cluster.local
               DB_NAME: mastodondb
               DB_PORT: 5432
