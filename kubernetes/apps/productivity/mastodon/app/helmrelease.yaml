@@ -89,6 +89,8 @@ spec:
               OIDC_UID_FIELD: preferred_username
               OIDC_REDIRECT_URI: https://social.${SECRET_DOMAIN}/auth/auth/openid_connect/callback
               OIDC_SECURITY_ASSUME_EMAIL_IS_VERIFIED: true
+              OMNIAUTH_ONLY: true
+              ONE_CLICK_SSO_LOGIN: true
               PGID: 1000
               PUID: 1000
               RAILS_ENV: production
