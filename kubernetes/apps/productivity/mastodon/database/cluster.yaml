@@ -54,7 +54,7 @@ spec:
         maxParallel: 8
       destinationPath: s3://k8s-postgres/mastodon/
       endpointURL: https://s3.${SECRET_DOMAIN}
-      serverName: &currentCluster mastodon-postgres17-v2
+      serverName: &currentCluster mastodon-postgres17-v1
       s3Credentials:
         accessKeyId:
           name: mastodon-db-secret
