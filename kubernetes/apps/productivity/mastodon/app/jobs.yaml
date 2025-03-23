@@ -26,7 +26,7 @@ spec:
               echo "User ${MASTODON_ADMIN_USER} already exists."
             elif [ "$RESPONSE" -eq 404 ]; then
               echo "User does not exist. Creating user..."
-              tootctl accounts create $MASTODON_ADMIN_USER --email=admin@${SECRET_DOMAIN} --confirmed --approve --role=Owner
+              tootctl accounts create $MASTODON_ADMIN_USER --email=mail@${SECRET_DOMAIN} --confirmed --approve --role=Owner
             else
               echo "Unexpected response ($RESPONSE) while checking for user. Exiting..."
               exit 1
