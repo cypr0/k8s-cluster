@@ -51,14 +51,6 @@ spec:
         - 'arn:aws:s3:::k8s-mastodon/*'
         actions:
         - 's3:*'
-    - name: anonread-k8s-mastodon
-      statements:
-      - effect: Allow
-        principal: "*"
-        actions:
-        - 's3:GetObject'
-        resources:
-        - 'arn:aws:s3:::k8s-mastodon/*'
     - name: readwrite-k8s-postgres
       statements:
       - resources:
