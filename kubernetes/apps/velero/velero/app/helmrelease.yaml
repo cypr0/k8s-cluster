@@ -35,7 +35,7 @@ spec:
           provider: aws
           default: true
           config:
-            region: eu-central-1
+            region: us-east-1
             s3Url: https://s3.${SECRET_DOMAIN}
             s3ForcePathStyle: "true"
       volumeSnapshotLocation:
