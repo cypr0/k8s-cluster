@@ -25,6 +25,8 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    credentials:
+      useSecret: false
     volumeSnapshotLocation:
       - name: default
         provider: csi
