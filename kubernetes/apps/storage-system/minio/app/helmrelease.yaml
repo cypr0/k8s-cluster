@@ -72,15 +72,6 @@ spec:
     - name: readwrite-k8s-velero
       statements:
       - resources:
-        - "*"
-        actions:
-        - "ec2:DescribeVolumes"
-        - "ec2:DescribeSnapshots"
-        - "ec2:CreateTags"
-        - "ec2:CreateVolume"
-        - "ec2:CreateSnapshot"
-        - "ec2:DeleteSnapshot"
-      - resources:
         - 'arn:aws:s3:::k8s-velero'
         - 'arn:aws:s3:::k8s-velero/*'
         actions:
