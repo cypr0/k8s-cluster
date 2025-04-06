@@ -46,7 +46,7 @@ spec:
             - storage-system
           snapshotVolumes: true
     snapshotsEnabled: true
-    backupsEnabled: false
+    backupsEnabled: true
     deployNodeAgent: true
     upgradeCRDs: true
     cleanUpCRDs: true
