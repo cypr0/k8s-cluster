@@ -30,8 +30,10 @@ spec:
     credentials:
       useSecret: false
     volumeSnapshotLocation:
-      - name: default
+      - name: nfs
         provider: csi
+        config:
+          snapshotClass: nfs
     configuration:
       extraEnvVars:
         TZ: "${TIMEZONE}"
