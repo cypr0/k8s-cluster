@@ -52,8 +52,8 @@ spec:
     snapshotsEnabled: true
     backupsEnabled: false
     deployNodeAgent: false
-    upgradeCRDs: false
-    cleanUpCRDs: false
+    upgradeCRDs: true
+    cleanUpCRDs: true
     metrics:
       enabled: true
       serviceMonitor:
