@@ -72,13 +72,27 @@ spec:
     - name: readwrite-k8s-velero
       statements:
       - resources:
+        - "*"
+        actions:
+        - "ec2:DescribeVolumes"
+        - "ec2:DescribeSnapshots"
+        - "ec2:CreateTags"
+        - "ec2:CreateVolume"
+        - "ec2:CreateSnapshot"
+        - "ec2:DeleteSnapshot"
+      - resources:
         - 'arn:aws:s3:::k8s-velero'
         - 'arn:aws:s3:::k8s-velero/*'
         actions:
-        - 's3:PutObject'
-        - 's3:GetObject'
-        - 's3:ListBucket'
-        - 's3:DeleteObject'
+        - "s3:GetObject"
+        - "s3:DeleteObject"
+        - "s3:PutObject"
+        - "s3:AbortMultipartUpload"
+        - "s3:ListMultipartUploadParts"
+      - resources:
+        - 'arn:aws:s3:::k8s-velero'
+        actions:
+        - "s3:ListBucket"
     users:
     - accessKey: usrk8smastodon
       existingSecret: minio-secret
