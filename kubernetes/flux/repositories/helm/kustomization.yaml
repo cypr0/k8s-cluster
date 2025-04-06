@@ -23,3 +23,4 @@ resources:
   - ./minio.yaml
   - ./ollama.yaml
   - ./piraeus.yaml
+  - ./velero.yaml
