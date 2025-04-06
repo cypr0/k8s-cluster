@@ -47,7 +47,7 @@ spec:
           snapshotVolumes: true
     snapshotsEnabled: true
     backupsEnabled: false
-    deployNodeAgent: false
+    deployNodeAgent: true
     upgradeCRDs: true
     cleanUpCRDs: true
     metrics:
