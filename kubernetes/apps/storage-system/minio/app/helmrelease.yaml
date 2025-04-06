@@ -80,9 +80,6 @@ spec:
         - "s3:PutObject"
         - "s3:AbortMultipartUpload"
         - "s3:ListMultipartUploadParts"
-      - resources:
-        - 'arn:aws:s3:::k8s-velero'
-        actions:
         - "s3:ListBucket"
     users:
     - accessKey: usrk8smastodon
