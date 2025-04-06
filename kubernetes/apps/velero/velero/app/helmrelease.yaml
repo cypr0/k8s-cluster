@@ -30,7 +30,7 @@ spec:
     credentials:
       useSecret: false
     volumeSnapshotLocation:
-      - name: nfs
+      - name: default
         provider: csi
         config:
           snapshotClass: nfs
