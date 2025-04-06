@@ -27,14 +27,16 @@ spec:
     keepHistory: false
   values:
     credentials:
-      useSecret: false
+      existingSecret: velero-secret
     configuration:
       backupStorageLocation:
         - name: default
+          bucket: k8s-velero
           provider: aws
-          bucket: dummy
+          default: true
           config:
-            region: dummy
+            region: eu-central-1
+            s3Url: https://s3.{$SECRET_DOMAIN}
       volumeSnapshotLocation:
         - name: default
           provider: csi
@@ -43,14 +45,19 @@ spec:
       extraEnvVars:
         TZ: "${TIMEZONE}"
     schedules:
-      daily-csi-snapshots:
+      daily-snapshot:
+        # At 1:00am every day
         schedule: "00 01 * * *"
         template:
-          ttl: "168h" # 7 days
+          ttl: "72h" # 3 days retention
           includedNamespaces:
             - productivity
-            - storage-system
           snapshotVolumes: true
+      weekly-backup:
+        # At the end of the week on a Sunday at 3:00am
+        schedule: "00 03 * * 0"
+        template:
+          ttl: "72h" # 3 days retention
     snapshotsEnabled: true
     backupsEnabled: true
     deployNodeAgent: true
