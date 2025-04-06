@@ -69,6 +69,16 @@ spec:
         - 's3:GetObject'
         - 's3:ListBucket'
         - 's3:DeleteObject'
+    - name: readwrite-k8s-velero
+      statements:
+      - resources:
+        - 'arn:aws:s3:::k8s-velero'
+        - 'arn:aws:s3:::k8s-velero/*'
+        actions:
+        - 's3:PutObject'
+        - 's3:GetObject'
+        - 's3:ListBucket'
+        - 's3:DeleteObject'
     users:
     - accessKey: usrk8smastodon
       existingSecret: minio-secret
@@ -78,6 +88,10 @@ spec:
       existingSecret: minio-secret
       existingSecretKey: postgres-user
       policy: readwrite-k8s-postgres
+    - accessKey: usrk8svelero
+      existingSecret: minio-secret
+      existingSecretKey: velero-user
+      policy: readwrite-k8s-velero
     buckets:
     - name: k8s-mastodon
       policy: none
@@ -85,6 +99,11 @@ spec:
       versioning: false
       objectlocking: false
     - name: k8s-postgres
+      policy: none
+      purge: false
+      versioning: false
+      objectlocking: false
+    - name: k8s-velero
       policy: none
       purge: false
       versioning: false
