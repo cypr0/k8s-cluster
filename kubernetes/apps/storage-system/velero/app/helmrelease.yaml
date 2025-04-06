@@ -18,8 +18,10 @@ spec:
   install:
     remediation:
       retries: 3
+    crds: Create
   upgrade:
     cleanupOnFail: true
+    crds: CreateReplace
     remediation:
       retries: 3
   uninstall:
