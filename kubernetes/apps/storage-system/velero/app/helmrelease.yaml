@@ -44,13 +44,6 @@ spec:
             - productivity
             - storage-system
           snapshotVolumes: true
-    initContainers:
-      - name: velero-plugin-for-csi
-        image: velero/velero-plugin-for-csi:v0.5.0
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-          - mountPath: /target
-            name: plugins
     snapshotsEnabled: true
     backupsEnabled: false
     deployNodeAgent: false
