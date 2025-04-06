@@ -29,6 +29,12 @@ spec:
     credentials:
       useSecret: false
     configuration:
+      backupStorageLocation:
+        - name: default
+          provider: aws
+          bucket: dummy
+          config:
+            region: dummy
       volumeSnapshotLocation:
         - name: default
           provider: csi
