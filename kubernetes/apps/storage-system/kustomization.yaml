@@ -7,4 +7,4 @@ resources:
   - ./minio/ks.yaml
   - ./openebs/ks.yaml
   - ./snapshot-controller/ks.yaml
-  - ./velero/ks.yaml
+ # - ./velero/ks.yaml
