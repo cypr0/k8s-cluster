@@ -25,25 +25,14 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    volumeSnapshotLocation:
+      - name: default
+        provider: csi
     configuration:
-      provider: velero.io/csi
-      volumeSnapshotLocation:
-        - name: democratic-csi
-          provider: csi
-          config:
-            region: zfs-local
       extraEnvVars:
         TZ: "${TIMEZONE}"
-      resticTimeout: 4h
-    initContainers:
-      - name: velero-plugin-for-csi
-        image: velero/velero-plugin-for-csi:v0.5.0
-        imagePullPolicy: IfNotPresent
-        volumeMounts:
-          - mountPath: /target
-            name: plugins
     schedules:
-      daily-snapshots:
+      daily-csi-snapshots:
         schedule: "00 01 * * *"
         template:
           ttl: "168h" # 7 days
@@ -51,19 +40,22 @@ spec:
             - productivity
             - storage-system
           snapshotVolumes: true
+    initContainers:
+      - name: velero-plugin-for-csi
+        image: velero/velero-plugin-for-csi:v0.5.0
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
+    snapshotsEnabled: true
+    backupsEnabled: false
+    deployNodeAgent: false
+    upgradeCRDs: false
+    cleanUpCRDs: false
     metrics:
       enabled: true
       serviceMonitor:
         enabled: true
-    backupsEnabled: false
-    snapshotsEnabled: true
-    upgradeCRDs: false
-    cleanUpCRDs: false
-    kubectl:
-      image:
-        repository: registry.k8s.io/kubectl
-        tag: v1.32.3
-    deployNodeAgent: false
     resources:
       requests:
         memory: 300Mi
