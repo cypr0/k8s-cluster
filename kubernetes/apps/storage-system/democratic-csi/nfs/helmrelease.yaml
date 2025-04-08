@@ -84,7 +84,7 @@ spec:
           memory: 150Mi
           ephemeral-storage: 200Mi
     csiDriver:
-      name: "nfs"
+      name: org.democratic-csi.nfs
     storageClasses:
       - name: nfs
         defaultClass: false

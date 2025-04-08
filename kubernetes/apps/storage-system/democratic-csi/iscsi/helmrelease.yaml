@@ -84,7 +84,7 @@ spec:
           memory: 150Mi
           ephemeral-storage: 200Mi
     csiDriver:
-      name: "iscsi"
+      name: org.democratic-csi.iscsi
     storageClasses:
       - name: iscsi
         defaultClass: true
