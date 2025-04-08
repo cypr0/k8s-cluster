@@ -108,7 +108,7 @@ spec:
           clamav:
             image:
               repository: clamav/clamav
-              tag: 1.4.2@sha256:dd5da3bad15392ef36f2aff3f8ab8c41e933fcc4598f511c3918603aff477ab3
+              tag: 1.4.2@sha256:c996a6d1f12225d5ee225d0953696b7c1b7415e170d2455a8ea8b6a0ca3d5fc4
             env:
               CLAMAV_NO_CLAMD: false
               CLAMAV_NO_FRESHCLAMD: false
