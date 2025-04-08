@@ -31,21 +31,21 @@ spec:
       max_parallel_workers: "4"
       max_parallel_maintenance_workers: "2"
   # Initial bootstrap for first install
-  # bootstrap:
-  #   initdb:
-  #     database: nextclouddb
-  #     owner: nextcloudusr
-  #     secret:
-  #       name: nextcloud-db-secret
-  #     encoding: 'UTF8'
+  bootstrap:
+    initdb:
+      database: nextclouddb
+      owner: nextcloudusr
+      secret:
+        name: nextcloud-db-secret
+      encoding: 'UTF8'
   primaryUpdateStrategy: unsupervised
   monitoring:
     enablePodMonitor: true
   # Bootstrap to recover from an existing backup
   # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
-  bootstrap:
-    recovery:
-      source: &previousCluster nextcloud-postgres16-v1
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster nextcloud-postgres16-v1
   backup:
     retentionPolicy: 7d
     barmanObjectStore: &barmanObjectStore
@@ -56,7 +56,7 @@ spec:
         maxParallel: 8
       destinationPath: s3://k8s-postgres/nextcloud/
       endpointURL: https://s3.${SECRET_DOMAIN}
-      serverName: &currentCluster nextcloud-postgres16-v2
+      serverName: &currentCluster nextcloud-postgres16-v1
       s3Credentials:
         accessKeyId:
           name: nextcloud-db-secret
@@ -65,8 +65,8 @@ spec:
           name: nextcloud-db-secret
           key: SECRET_ACCESS_KEY
  # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-   - name: *previousCluster
-     barmanObjectStore:
-       <<: *barmanObjectStore
-       serverName: *previousCluster
+ # externalClusters:
+ #  - name: *previousCluster
+ #    barmanObjectStore:
+ #      <<: *barmanObjectStore
+ #      serverName: *previousCluster

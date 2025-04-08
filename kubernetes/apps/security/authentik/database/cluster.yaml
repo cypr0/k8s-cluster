@@ -22,17 +22,17 @@ spec:
   monitoring:
     enablePodMonitor: true
   # Initial bootstrap for first install
-  # bootstrap:
-  #   initdb:
-  #     database: authentikdb
-  #     owner: authentikusr
-  #     secret:
-  #       name: authentik-db-secret
+ bootstrap:
+   initdb:
+     database: authentikdb
+     owner: authentikusr
+     secret:
+       name: authentik-db-secret
   # Bootstrap to recover from an existing backup
   # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
-  bootstrap:
-    recovery:
-      source: &previousCluster authentik-postgres17-v1
+  # bootstrap:
+  #   recovery:
+  #     source: &previousCluster authentik-postgres17-v1
   backup:
     retentionPolicy: 7d
     barmanObjectStore: &barmanObjectStore
@@ -43,7 +43,7 @@ spec:
         maxParallel: 8
       destinationPath: s3://k8s-postgres/authentik/
       endpointURL: https://s3.${SECRET_DOMAIN}
-      serverName: &currentCluster authentik-postgres17-v2
+      serverName: &currentCluster authentik-postgres17-v1
       s3Credentials:
         accessKeyId:
           name: authentik-db-secret
@@ -52,8 +52,8 @@ spec:
           name: authentik-db-secret
           key: SECRET_ACCESS_KEY
  # Note: externalClusters is needed when recovering from an existing cnpg cluster
-  externalClusters:
-   - name: *previousCluster
-     barmanObjectStore:
-       <<: *barmanObjectStore
-       serverName: *previousCluster
+ # externalClusters:
+ #  - name: *previousCluster
+ #    barmanObjectStore:
+ #      <<: *barmanObjectStore
+ #      serverName: *previousCluster
