@@ -56,6 +56,25 @@
   commitMessageSuffix: '',
   packageRules: [
     {
+      "description": ["MinIO release auto update (manual merge only)"],
+      "matchPackageNames": ["minio/minio"],
+      "matchDatasources": ["docker"],
+      "registryUrls": ["https://quay.io"],
+      "versioning": "loose",
+      "automerge": false,
+      "prCreation": "immediate",
+      "commitMessageTopic": "image minio/minio",
+      "addLabels": ["renovate/container", "minio"],
+      "separateMinorPatch": false  // optional
+    },
+    {
+      "description": ["Auto merge Docker patch updates"],
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "branch",
+    },
+    {
       description: [
         'Auto merge Github Actions',
       ],
