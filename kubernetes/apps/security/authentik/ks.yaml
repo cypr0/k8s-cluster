@@ -35,7 +35,6 @@ spec:
   dependsOn:
     - name: external-secrets-stores
     - name: cloudnative-pg
-    - name: democratic-csi-iscsi
   path: /kubernetes/apps/security/authentik/database
   prune: true
   sourceRef:
