@@ -38,6 +38,7 @@ spec:
             region: eu-central-1
             s3Url: https://s3.${SECRET_DOMAIN}
             s3ForcePathStyle: "true"
+            signatureVersion: "v4"
       volumeSnapshotLocation:
         - name: default
           provider: csi
