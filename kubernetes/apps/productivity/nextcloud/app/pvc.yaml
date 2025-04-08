@@ -6,10 +6,10 @@ metadata:
   name: nextcloud-data-pvc
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: nfs
+  storageClassName: nas-nfs-store
   resources:
     requests:
-      storage: 250Gi # Size does not matter
+      storage: 250Gi
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -17,7 +17,7 @@ metadata:
   name: nextcloud-app-pvc
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: nfs
+  storageClassName: nas-nfs-store
   resources:
     requests:
       storage: 50Gi

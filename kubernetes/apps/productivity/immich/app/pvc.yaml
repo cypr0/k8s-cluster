@@ -5,7 +5,7 @@ metadata:
   name: immich-pvc
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: nfs
+  storageClassName: nas-nfs-store
   resources:
     requests:
       storage: 300Gi

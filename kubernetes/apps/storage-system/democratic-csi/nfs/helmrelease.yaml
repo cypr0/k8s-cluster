@@ -86,8 +86,8 @@ spec:
     csiDriver:
       name: org.democratic-csi.nfs
     storageClasses:
-      - name: nfs
-        defaultClass: false
+      - name: nas-nfs-store
+        defaultClass: true
         reclaimPolicy: Delete
         volumeBindingMode: Immediate
         allowVolumeExpansion: true
@@ -103,7 +103,7 @@ spec:
           node-publish-secret:
           controller-expand-secret:
     volumeSnapshotClasses:
-      - name: nfs
+      - name: nas-nfs-snap
         deletionPolicy: Delete
         parameters:
           detachedSnapshots: "true"

@@ -4,7 +4,7 @@ metadata:
   name: mastodon-config-pvc
 spec:
   accessModes: ["ReadWriteMany"]
-  storageClassName: nfs
+  storageClassName: nas-nfs-store
   resources:
     requests:
       storage: 5Gi
