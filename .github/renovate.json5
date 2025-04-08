@@ -65,7 +65,7 @@
       "prCreation": "immediate",
       "commitMessageTopic": "image minio/minio",
       "addLabels": ["renovate/container", "minio"],
-      "separateMinorPatch": false  // optional
+      "separateMinorPatch": false
     },
     {
       "description": ["Auto merge Docker patch updates"],
@@ -73,6 +73,7 @@
       "matchUpdateTypes": ["patch"],
       "automerge": true,
       "automergeType": "branch",
+      "ignoreTests": true
     },
     {
       description: [
