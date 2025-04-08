@@ -59,9 +59,13 @@ spec:
         schedule: "00 03 * * 0"
         template:
           ttl: "72h" # 3 days retention
-    defaultPlugins:
-      - aws
-      - csi
+    initContainers:
+      - name: velero-plugin-for-aws
+        image: velero/velero-plugin-for-aws:v1.7.1
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
     snapshotsEnabled: true
     backupsEnabled: true
     deployNodeAgent: false
