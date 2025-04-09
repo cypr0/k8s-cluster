@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-ingress-tls
+spec:
+  validationFailureAction: enforce
+  rules:
+    - name: check-tls
+      match:
+        resources:
+          kinds:
+            - Ingress
+      validate:
+        message: "TLS must be configured for Ingress."
+        pattern:
+          spec:
+            tls:
+              - hosts: ["*"]
+                secretName: "*"
