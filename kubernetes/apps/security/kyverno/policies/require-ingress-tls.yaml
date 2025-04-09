@@ -5,18 +5,23 @@ metadata:
 spec:
   validationFailureAction: enforce
   rules:
-    - name: check-tls-on-specific-domain
+    - name: enforce-tls-on-${SECRET_DOMAIN}-with-external-ingress
       match:
         resources:
           kinds:
             - Ingress
+      preconditions:
+        all:
+          - key: "{{request.object.spec.ingressClassName}}"
+            operator: Equals
+            value: "external"
       validate:
-        message: "Ingresses for *.${SECRET_DOMAIN} must configure TLS."
+        message: "Ingresses for *.${SECRET_DOMAIN} with ingressClass 'external' must configure TLS."
         pattern:
           spec:
             rules:
               - host: "*.${SECRET_DOMAIN}"
             tls:
               - hosts:
-                  - "*.c${SECRET_DOMAIN}"
+                  - "*.${SECRET_DOMAIN}"
                 secretName: "*"
