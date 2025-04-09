@@ -6,3 +6,4 @@ resources:
   - ./disallow-latest-tag.yaml
   - ./enforce-security-context.yaml
   - ./restrict-clusterrole-wildcards.yaml
+  - ./disallow-host-path-and-hostnetwork.yaml
