@@ -20,6 +20,7 @@ resources:
   - ./democratic-csi.yaml
   - ./external-secrets.yaml
   - ./grafana.yaml
+  - ./kyverno.yaml
   - ./minio.yaml
   - ./ollama.yaml
   - ./piraeus.yaml
