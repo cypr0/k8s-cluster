@@ -5,3 +5,4 @@ kind: Kustomization
 resources:
   - ./disallow-latest-tag.yaml
   - ./enforce-security-context.yaml
+  - ./restrict-clusterrole-wildcards.yaml
