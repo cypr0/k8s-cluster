@@ -34,7 +34,6 @@ spec:
       app.kubernetes.io/name: *app
   dependsOn:
     - name: external-secrets-stores
-    - name: cloudnative-pg
   path: /kubernetes/apps/security/authentik/database
   prune: true
   sourceRef:
