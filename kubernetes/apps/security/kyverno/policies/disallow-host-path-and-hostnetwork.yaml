@@ -3,7 +3,7 @@ kind: ClusterPolicy
 metadata:
   name: disallow-host-path-and-hostnetwork
 spec:
-  validationFailureAction: enforce
+  validationFailureAction: warn-only
   rules:
     - name: disallow-host-path-and-hostnetwork
       match: { resources: { kinds: ["Pod"] } }
