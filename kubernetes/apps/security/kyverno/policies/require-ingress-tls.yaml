@@ -5,15 +5,18 @@ metadata:
 spec:
   validationFailureAction: enforce
   rules:
-    - name: check-tls
+    - name: check-tls-on-specific-domain
       match:
         resources:
           kinds:
             - Ingress
       validate:
-        message: "TLS must be configured for Ingress."
+        message: "Ingresses for *.${SECRET_DOMAIN} must configure TLS."
         pattern:
           spec:
+            rules:
+              - host: "*.${SECRET_DOMAIN}"
             tls:
-              - hosts: ["*"]
+              - hosts:
+                  - "*.c${SECRET_DOMAIN}"
                 secretName: "*"
