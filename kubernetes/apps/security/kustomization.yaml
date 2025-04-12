@@ -5,5 +5,5 @@ resources:
   - ./namespace.yaml
   - ./authentik/ks.yaml
   - ./external-secrets/ks.yaml
-  - ./kyverno/ks.yaml
+#  - ./kyverno/ks.yaml
   - ./onepassword-connect/ks.yaml
