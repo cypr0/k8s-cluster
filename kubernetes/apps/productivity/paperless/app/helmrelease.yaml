@@ -72,8 +72,6 @@ spec:
               PAPERLESS_TIME_ZONE: ${TIMEZONE}
               PAPERLESS_TRUSTED_PROXIES: 10.96.0.0/16,10.69.0.0/16,192.168.0.0/16
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
-              USERMAP_UID: 3000
-              USERMAP_GID: 3000
             envFrom:
               - secretRef:
                   name: paperless-secret
@@ -91,8 +89,6 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-              runAsUser: 3000
-              runAsGroup: 3000
               fsGroup: 3000
               runAsNonRoot: true
           gotenberg:
