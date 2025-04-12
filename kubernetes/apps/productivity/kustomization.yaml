@@ -6,4 +6,4 @@ resources:
  # - ./immich/ks.yaml
  # - ./mastodon/ks.yaml
  # - ./nextcloud/ks.yaml
- # - ./paperless/ks.yaml
+  - ./paperless/ks.yaml
