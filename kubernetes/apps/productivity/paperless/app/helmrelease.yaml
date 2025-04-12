@@ -211,3 +211,5 @@ spec:
           main:
             init-run-dir:
               - path: /run
+            paperless-ngx:
+              - path: /run
