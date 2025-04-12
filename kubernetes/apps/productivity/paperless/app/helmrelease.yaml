@@ -72,6 +72,8 @@ spec:
               PAPERLESS_TIME_ZONE: ${TIMEZONE}
               PAPERLESS_TRUSTED_PROXIES: 10.96.0.0/16,10.69.0.0/16,192.168.0.0/16
               PAPERLESS_URL: https://paperless.${SECRET_DOMAIN}
+              USERMAP_UID: 3000
+              USERMAP_GID: 3000
             envFrom:
               - secretRef:
                   name: paperless-secret
@@ -89,6 +91,8 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
+              runAsUser: 3000
+              runAsGroup: 3000
               fsGroup: 3000
               runAsNonRoot: true
           gotenberg:
@@ -129,15 +133,6 @@ spec:
               runAsGroup: 3000
               fsGroup: 3000
               runAsNonRoot: true
-        initContainers:
-          init-run-dir:
-            image:
-              repository: docker.io/library/alpine
-              tag: 3.21.3@sha256:a8560b36e8b8210634f77d9f7f9efd7ffa463e380b75e2e74aff4511df3ef88c
-            command: ["sh", "-c", "mkdir -p /run && chown 3000:3000 /run"]
-            securityContext:
-              runAsUser: 0
-              runAsGroup: 0
     service:
       paperless-ngx:
         controller: main
@@ -200,12 +195,3 @@ spec:
           main:
             tika:
               - path: /tmp
-      run-dir:
-        enabled: true
-        type: emptyDir
-        advancedMounts:
-          main:
-            init-run-dir:
-              - path: /run
-            paperless-ngx:
-              - path: /run
