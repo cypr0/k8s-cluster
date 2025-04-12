@@ -112,8 +112,8 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-              runAsUser: 3000
-              runAsGroup: 3000
+              runAsUser: 0
+              runAsGroup: 0
               fsGroup: 3000
               runAsNonRoot: true
           tika:
