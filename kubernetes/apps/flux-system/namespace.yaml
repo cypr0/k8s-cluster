@@ -7,3 +7,5 @@ metadata:
     kustomize.toolkit.fluxcd.io/prune: disabled
     owner: cypr0
     protection-level: normal
+    owner: cypr0
+    protection-level: normal
