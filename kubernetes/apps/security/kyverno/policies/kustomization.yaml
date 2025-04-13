@@ -5,3 +5,4 @@ kind: Kustomization
 resources:
   - ./namespace-labels-required.yaml
   - ./trusted-image-registries.yaml
+  - ./disallow-latest-tag.yaml
