@@ -5,62 +5,24 @@ metadata:
   annotations:
     policies.kyverno.io/title: "Allow only trusted image registries"
     policies.kyverno.io/category: "Supply Chain Security"
-    policies.kyverno.io/severity: "high"
-    policies.kyverno.io/subject: "Container Images"
     policies.kyverno.io/description: "Restrict container image sources to approved registries for all containers (BSI SYS.1.6.A17)."
 spec:
   validationFailureAction: audit
   background: true
   rules:
-    - name: enforce-trusted-registries
+    - name: validate-trusted-container-registry
       match:
         resources:
-          kinds:
-            - Pod
+          kinds: ["Pod"]
       validate:
-        message: "Only trusted registries are allowed (BSI SYS.1.6.A17)."
+        message: "Only trusted registries are allowed in containers (BSI SYS.1.6.A17)."
         foreach:
           - list: "request.object.spec.containers[]"
-            deny:
-              conditions:
-                all:
-                  - key: "{{ element.image }}"
-                    operator: NotPattern
-                    value: &trustedRegistries |
-                      ghcr.io/*
-                      quay.io/*
-                      registry.k8s.io/*
-                      docker.io/library/*
-                      docker.io/1password/*
-                      docker.io/clusterzx/*
-                      docker.io/cloudflare/*
-                      docker.io/gotenberg/*
-                      nginxinc/*
-                      clamav/*
-                      collabora/*
-                      ghcr.io/external-secrets/*
-                      ghcr.io/nextcloud-releases/*
-                      ghcr.io/immich-app/*
-                      ghcr.io/dragonflydb/*
-                      ghcr.io/mendhak/*
-                      ghcr.io/paperless-ngx/*
-                      ollama/*
-                      prometheus/*
-                      redis
-                      elasticsearch
-                      apache/tika
-                      lscr.io/*
+            pattern:
+              image: ghcr.io/* | quay.io/* | registry.k8s.io/* | docker.io/library/* | docker.io/1password/* | docker.io/clusterzx/* | docker.io/cloudflare/* | docker.io/gotenberg/* | nginxinc/* | clamav/* | collabora/* | ghcr.io/external-secrets/* | ghcr.io/nextcloud-releases/* | ghcr.io/immich-app/* | ghcr.io/dragonflydb/* | ghcr.io/mendhak/* | ghcr.io/paperless-ngx/* | ollama/* | prometheus/* | redis | elasticsearch | apache/tika | lscr.io/*
           - list: "request.object.spec.initContainers[]"
-            deny:
-              conditions:
-                all:
-                  - key: "{{ element.image }}"
-                    operator: NotPattern
-                    value: *trustedRegistries
+            pattern:
+              image: *trustedRegistries
           - list: "request.object.spec.ephemeralContainers[]"
-            deny:
-              conditions:
-                all:
-                  - key: "{{ element.image }}"
-                    operator: NotPattern
-                    value: *trustedRegistries
+            pattern:
+              image: *trustedRegistries
