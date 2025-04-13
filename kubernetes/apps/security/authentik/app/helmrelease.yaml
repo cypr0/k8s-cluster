@@ -36,6 +36,13 @@ spec:
       envFrom:
         - secretRef:
             name: *secret
+      volumes:
+        - name: authentik-templates
+          configMap:
+            name: authentik-templates
+      volumeMounts:
+        - name: authentik-templates
+          mountPath: /templates
     authentik:
       log_level: info
       avatars: "gravatar,initials"
