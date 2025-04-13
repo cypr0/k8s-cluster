@@ -22,6 +22,7 @@ spec:
             - kube-node-lease
             - default
             - cilium-secrets
+            - flux-system
       validate:
         message: "Managed namespaces must define 'owner' and 'protection-level' labels (BSI SYS.1.6.A6)."
         pattern:
