@@ -5,7 +5,7 @@ metadata:
   annotations:
     policies.kyverno.io/title: "Namespace labeling"
     policies.kyverno.io/category: "Security"
-    policies.kyverno.io/description: "Require labels 'owner' and 'protection-level' for all namespaces (BSI SYS.1.6.A6)."
+    policies.kyverno.io/description: "Require labels 'owner' and 'protection-level' for all *managed* namespaces (BSI SYS.1.6.A6)."
 spec:
   validationFailureAction: audit
   rules:
@@ -14,8 +14,16 @@ spec:
         resources:
           kinds:
             - Namespace
+      exclude:
+        resources:
+          names:
+            - kube-system
+            - kube-public
+            - kube-node-lease
+            - default
+            - cilium-secrets
       validate:
-        message: "Namespaces must define 'owner' and 'protection-level' labels (BSI SYS.1.6.A6)."
+        message: "Managed namespaces must define 'owner' and 'protection-level' labels (BSI SYS.1.6.A6)."
         pattern:
           metadata:
             labels:
