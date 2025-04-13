@@ -19,7 +19,35 @@ spec:
         foreach:
           - list: "request.object.spec.containers[]"
             pattern:
-              image: &trustedRegistries ghcr.io/* | quay.io/* | registry.k8s.io/* | docker.io/library/* | docker.io/1password/* | docker.io/clusterzx/* | docker.io/cloudflare/* | docker.io/gotenberg/* | nginxinc/* | clamav/* | collabora/* | ghcr.io/external-secrets/* | ghcr.io/nextcloud-releases/* | ghcr.io/immich-app/* | ghcr.io/dragonflydb/* | ghcr.io/mendhak/* | ghcr.io/paperless-ngx/* | ollama/* | prometheus/* | redis | elasticsearch | apache/tika | lscr.io/*
+              image: &trustedRegistries >
+                ghcr.io/* |
+                quay.io/* |
+                registry.k8s.io/* |
+                docker.io/library/* |
+                docker.io/1password/* |
+                docker.io/clusterzx/* |
+                docker.io/cloudflare/* |
+                docker.io/gotenberg/* |
+                docker.io/grafana/* |
+                docker.io/velero/* |
+                docker.io/coredns/* |
+                docker.io/democraticcsi/* |
+                nginxinc/* |
+                clamav/* |
+                collabora/* |
+                ghcr.io/external-secrets/* |
+                ghcr.io/nextcloud-releases/* |
+                ghcr.io/immich-app/* |
+                ghcr.io/dragonflydb/* |
+                ghcr.io/mendhak/* |
+                ghcr.io/paperless-ngx/* |
+                ghcr.io/democratic-csi/* |
+                ollama/* |
+                prometheus/* |
+                redis |
+                elasticsearch |
+                apache/tika |
+                lscr.io/*
           - list: "request.object.spec.initContainers[]"
             pattern:
               image: *trustedRegistries
