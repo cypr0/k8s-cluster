@@ -33,8 +33,8 @@ spec:
         containers:
           paperless-ngx:
             image:
-              repository: paperless-ngx/paperless-ngx
-              tag: 2.15.1@sha256:a06d051e0c422e83498a36676d504d94de262686f167cccc826a71170ddef00a
+              repository: ghcr.io/paperless-ngx/paperless-ngx
+              tag: 2.15.1
             env:
               PAPERLESS_APPS: allauth.socialaccount.providers.openid_connect
               PAPERLESS_CONSUMER_POLLING: 60
@@ -87,8 +87,6 @@ spec:
                 spec:
                   failureThreshold: 30
                   periodSeconds: 5
-            securityContext:
-              fsGroup: 3000
           gotenberg:
             image:
               repository: docker.io/gotenberg/gotenberg
@@ -106,8 +104,8 @@ spec:
               allowPrivilegeEscalation: false
               readOnlyRootFilesystem: true
               capabilities: { drop: ["ALL"] }
-              runAsUser: 0
-              runAsGroup: 0
+              runAsUser: 3000
+              runAsGroup: 3000
               fsGroup: 3000
               runAsNonRoot: true
           tika:
