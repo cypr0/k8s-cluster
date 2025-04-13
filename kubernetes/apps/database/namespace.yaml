@@ -5,3 +5,5 @@ metadata:
   name: database
   labels:
     kustomize.toolkit.fluxcd.io/prune: disabled
+    owner: cypr0
+    protection-level: very-high

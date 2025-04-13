@@ -6,4 +6,5 @@ metadata:
   labels:
     kustomize.toolkit.fluxcd.io/prune: disabled
     pod-security.kubernetes.io/enforce: privileged
-
+    owner: cypr0
+    protection-level: high

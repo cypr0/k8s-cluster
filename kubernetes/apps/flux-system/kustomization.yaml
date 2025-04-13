@@ -4,3 +4,5 @@ kind: Kustomization
 resources:
   - ./namespace.yaml
   - ./webhooks/ks.yaml
+    owner: cypr0
+    protection-level: normal
