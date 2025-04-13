@@ -94,7 +94,7 @@ spec:
               runAsUser: 0
               runAsGroup: 0
               fsGroup: 3000
-              runAsNonRoot: true
+              runAsNonRoot: false
           gotenberg:
             image:
               repository: docker.io/gotenberg/gotenberg
