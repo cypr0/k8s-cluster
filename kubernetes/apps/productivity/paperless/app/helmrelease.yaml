@@ -86,13 +86,9 @@ spec:
                   failureThreshold: 30
                   periodSeconds: 5
             securityContext:
-              allowPrivilegeEscalation: false
-              readOnlyRootFilesystem: false
-              capabilities: { drop: ["ALL"] }
               runAsUser: 1000
               runAsGroup: 1000
               fsGroup: 3000
-              runAsNonRoot: false
           gotenberg:
             image:
               repository: docker.io/gotenberg/gotenberg
