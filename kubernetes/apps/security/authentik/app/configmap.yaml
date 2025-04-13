@@ -22,7 +22,7 @@ data:
             <p>Hallo {{ user.name or user.username }},</p>
 
             <p>
-                du hast kürzlich angefragt, das Passwort für deinen Zugang zu <strong>{{ tenant.branding_title }}</strong> zu ändern.
+                Du hast kürzlich angefragt, das Passwort für Deinen Zugang zu <strong>{{ tenant.branding_title }}</strong> zu ändern.
             </p>
 
             <p>
@@ -55,7 +55,7 @@ data:
             </p>
 
             <p>
-                Wenn du diese Anfrage nicht gestellt hast, kannst du diese E-Mail ignorieren.
+                Wenn Du diese Anfrage nicht gestellt hast, kannst Du diese E-Mail ignorieren.
             </p>
 
             <p>Viele Grüße<br />
@@ -63,6 +63,7 @@ data:
         </td>
     </tr>
     {% endblock %}
+
   mail-account-confirmation.html: |
     {% extends "email/base.html" %}
     {% load i18n %}
@@ -82,11 +83,11 @@ data:
             <p>Hallo {{ user.name or user.username }},</p>
 
             <p>
-                vielen Dank für deine Registrierung bei <strong>{{ tenant.branding_title }}</strong>.
+                vielen Dank für Deine Registrierung bei <strong>{{ tenant.branding_title }}</strong>.
             </p>
 
             <p>
-                Bitte bestätige dein Konto, indem du auf den folgenden Button klickst:
+                Bitte bestätige Dein Konto, indem Du auf den folgenden Button klickst:
             </p>
 
             <table
@@ -112,7 +113,7 @@ data:
             </p>
 
             <p>
-                Solltest du dich nicht bei uns registriert haben, kannst du diese E-Mail einfach ignorieren.
+                Solltest Du Dich nicht bei uns registriert haben, kannst Du diese E-Mail einfach ignorieren.
             </p>
 
             <p>Viele Grüße<br />
@@ -120,6 +121,7 @@ data:
         </td>
     </tr>
     {% endblock %}
+
   mail-invitation.html: |
     {% extends "email/base.html" %}
     {% load i18n %}
@@ -139,11 +141,11 @@ data:
             <p>Hallo,</p>
 
             <p>
-                du wurdest eingeladen, dich bei <strong>{{ tenant.branding_title }}</strong> zu registrieren.
+                Du wurdest eingeladen, Dich bei <strong>{{ tenant.branding_title }}</strong> zu registrieren.
             </p>
 
             <p>
-                Nutze bitte den folgenden Button, um dein Konto zu erstellen:
+                Nutze bitte den folgenden Button, um Dein Konto zu erstellen:
             </p>
 
             <table
@@ -173,6 +175,7 @@ data:
         </td>
     </tr>
     {% endblock %}
+
   mail-account-created.html: |
     {% extends "email/base.html" %}
     {% load i18n %}
@@ -191,12 +194,11 @@ data:
             <p>Hallo {{ user.name or user.username }},</p>
 
             <p>
-                dein Benutzerkonto bei <strong>{{ tenant.branding_title }}</strong> wurde erfolgreich erstellt.
+                Dein Benutzerkonto bei <strong>{{ tenant.branding_title }}</strong> wurde erfolgreich erstellt.
             </p>
 
             <p>
-                Du kannst dich ab sofort mit deinen Zugangsdaten anmelden.
-                Falls du dein Passwort noch nicht gesetzt hast, folge bitte der entsprechenden Anleitung auf unserer Website.
+                Du kannst Dich ab sofort mit Deinen Zugangsdaten anmelden.
             </p>
 
             <p>Viele Grüße<br />
