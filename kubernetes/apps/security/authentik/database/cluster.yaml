@@ -22,12 +22,12 @@ spec:
   monitoring:
     enablePodMonitor: true
   # Initial bootstrap for first install
- bootstrap:
-   initdb:
-     database: authentikdb
-     owner: authentikusr
-     secret:
-       name: authentik-db-secret
+  bootstrap:
+    initdb:
+      database: authentikdb
+      owner: authentikusr
+      secret:
+        name: authentik-db-secret
   # Bootstrap to recover from an existing backup
   # Note: previousCluster needs to be set to the name of the previous cluster when recovering from an existing cnpg cluster.
   # bootstrap:
