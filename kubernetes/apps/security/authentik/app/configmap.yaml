@@ -19,7 +19,7 @@ data:
 
     <tr>
         <td class="content-wrap">
-            <p>Hallo {{ user.name or user.username }},</p>
+            <p>Hallo {{ user.name|default:user.username }},</p>
 
             <p>
                 Du hast kürzlich angefragt, das Passwort für Deinen Zugang zu <strong>{{ tenant.branding_title }}</strong> zu ändern.
@@ -80,7 +80,7 @@ data:
 
     <tr>
         <td class="content-wrap">
-            <p>Hallo {{ user.name or user.username }},</p>
+            <p>Hallo {{ user.name|default:user.username }},</p>
 
             <p>
                 vielen Dank für Deine Registrierung bei <strong>{{ tenant.branding_title }}</strong>.
@@ -191,7 +191,7 @@ data:
 
     <tr>
         <td class="content-wrap">
-            <p>Hallo {{ user.name or user.username }},</p>
+            <p>Hallo {{ user.name|default:user.username }},</p>
 
             <p>
                 Dein Benutzerkonto bei <strong>{{ tenant.branding_title }}</strong> wurde erfolgreich erstellt.
