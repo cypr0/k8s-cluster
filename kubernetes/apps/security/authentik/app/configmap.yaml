@@ -3,206 +3,143 @@ kind: ConfigMap
 metadata:
   name: authentik-templates
 data:
-  mail-password-reset.html: |
+  mail_account_confirmation.html: |
+    {% extends 'email/base.html' %}
+
+    {% load authentik_stages_email %}
+    {% load i18n %}
+
+    {% block content %}
+    <tr>
+    <td align="center">
+        <h1>
+        {% trans 'Willkommen!' %}
+        </h1>
+    </td>
+    </tr>
+    <tr>
+    <td align="center">
+        <table border="0">
+        <tr>
+            <td align="center" style="max-width: 300px; padding: 20px 0; color: #212124;">
+            {% trans "Schön, dass Du dabei bist! Bitte bestätige zunächst Dein Konto. Klicke dazu einfach auf den Button unten." %}
+            </td>
+        </tr>
+        <tr>
+            <td align="center" class="btn btn-primary">
+            <a id="confirm" href="{{ url }}" rel="noopener noreferrer" target="_blank">{% trans 'Konto bestätigen' %}</a>
+            </td>
+        </tr>
+        </table>
+    </td>
+    </tr>
+    <td>
+    {% endblock %}
+
+    {% block sub_content %}
+    <tr>
+    <td style="padding: 20px; font-size: 12px; color: #212124;word-break: break-all; overflow-wrap: break-word;" align="center">
+        {% blocktrans with url=url %}
+        Falls der Button nicht funktioniert, kopiere den folgenden Link und füge ihn in Deinen Browser ein: {{ url }}
+        {% endblocktrans %}
+    </td>
+    </tr>
+    {% endblock %}
+  mail_password_reset.html: |
     {% extends "email/base.html" %}
+
     {% load i18n %}
     {% load humanize %}
 
     {% block content %}
     <tr>
-        <td class="alert alert-success">
-            Passwort-Zurücksetzung bei {{ tenant.branding_title }}
-        </td>
+    <td align="center">
+        <h1>
+        {% blocktrans with username=user.username %}
+        Hallo {{ username }},
+        {% endblocktrans %}
+        </h1>
+    </td>
     </tr>
-
-    <tr><td height="15"></td></tr>
-
     <tr>
-        <td class="content-wrap">
-            <p>Hallo {{ user.name|default:user.username }},</p>
-
-            <p>
-                Du hast kürzlich angefragt, das Passwort für Deinen Zugang zu <strong>{{ tenant.branding_title }}</strong> zu ändern.
-            </p>
-
-            <p>
-                Klicke auf den folgenden Button, um ein neues Passwort festzulegen:
-            </p>
-
-            <table
-                role="presentation"
-                border="0"
-                cellpadding="0"
-                cellspacing="0"
-                class="btn btn-primary"
-            >
-                <tbody>
-                    <tr>
-                        <td align="center">
-                            <a
-                                id="confirm"
-                                href="{{ url }}"
-                                rel="noopener noreferrer"
-                                target="_blank"
-                            >Passwort zurücksetzen</a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <p>
-                Der Link ist gültig für <strong>{{ expires|naturaltime }}</strong>.
-            </p>
-
-            <p>
-                Wenn Du diese Anfrage nicht gestellt hast, kannst Du diese E-Mail ignorieren.
-            </p>
-
-            <p>Viele Grüße<br />
-            Dein {{ tenant.branding_title }}-Team</p>
-        </td>
+    <td align="center">
+        <table border="0">
+        <tr>
+            <td align="center" style="max-width: 300px; padding: 20px 0; color: #212124;">
+            {% blocktrans %}
+            Du hast kürzlich angefragt, das Passwort für Deinen authentik-Zugang zu ändern. Klicke auf den Button unten, um ein neues Passwort festzulegen.
+            {% endblocktrans %}
+            </td>
+        </tr>
+        <tr>
+            <td align="center" class="btn btn-primary">
+            <a id="confirm" href="{{ url }}" rel="noopener noreferrer" target="_blank">{% trans 'Passwort zurücksetzen' %}</a>
+            </td>
+        </tr>
+        </table>
+    </td>
     </tr>
     {% endblock %}
 
-  mail-account-confirmation.html: |
-    {% extends "email/base.html" %}
-    {% load i18n %}
-    {% load humanize %}
-
-    {% block content %}
+    {% block sub_content %}
     <tr>
-        <td class="alert alert-info">
-            Konto bestätigen bei {{ tenant.branding_title }}
-        </td>
-    </tr>
-
-    <tr><td height="15"></td></tr>
-
-    <tr>
-        <td class="content-wrap">
-            <p>Hallo {{ user.name|default:user.username }},</p>
-
-            <p>
-                vielen Dank für Deine Registrierung bei <strong>{{ tenant.branding_title }}</strong>.
-            </p>
-
-            <p>
-                Bitte bestätige Dein Konto, indem Du auf den folgenden Button klickst:
-            </p>
-
-            <table
-                role="presentation"
-                border="0"
-                cellpadding="0"
-                cellspacing="0"
-                class="btn btn-primary"
-            >
-                <tbody>
-                    <tr>
-                        <td align="center">
-                            <a href="{{ url }}" target="_blank" rel="noopener noreferrer">
-                                Konto bestätigen
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <p>
-                Der Link ist gültig für <strong>{{ expires|naturaltime }}</strong>.
-            </p>
-
-            <p>
-                Solltest Du Dich nicht bei uns registriert haben, kannst Du diese E-Mail einfach ignorieren.
-            </p>
-
-            <p>Viele Grüße<br />
-            Dein {{ tenant.branding_title }}-Team</p>
-        </td>
+    <td style="padding: 20px; font-size: 12px; color: #212124;" align="center">
+        {% blocktrans with expires=expires|naturaltime %}
+        Wenn Du diese Passwortänderung nicht angefordert hast, kannst Du diese E-Mail ignorieren. Der obige Link ist gültig für {{ expires }}.
+        {% endblocktrans %}
+    </td>
     </tr>
     {% endblock %}
-
-  mail-invitation.html: |
+  mail_event_notification.html: |
     {% extends "email/base.html" %}
-    {% load i18n %}
-    {% load humanize %}
 
-    {% block content %}
-    <tr>
-        <td class="alert alert-info">
-            Einladung zu {{ tenant.branding_title }}
-        </td>
-    </tr>
-
-    <tr><td height="15"></td></tr>
-
-    <tr>
-        <td class="content-wrap">
-            <p>Hallo,</p>
-
-            <p>
-                Du wurdest eingeladen, Dich bei <strong>{{ tenant.branding_title }}</strong> zu registrieren.
-            </p>
-
-            <p>
-                Nutze bitte den folgenden Button, um Dein Konto zu erstellen:
-            </p>
-
-            <table
-                role="presentation"
-                border="0"
-                cellpadding="0"
-                cellspacing="0"
-                class="btn btn-primary"
-            >
-                <tbody>
-                    <tr>
-                        <td align="center">
-                            <a href="{{ url }}" target="_blank" rel="noopener noreferrer">
-                                Einladung annehmen
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <p>
-                Diese Einladung ist gültig bis <strong>{{ expires|naturaltime }}</strong>.
-            </p>
-
-            <p>Viele Grüße<br />
-            Dein {{ tenant.branding_title }}-Team</p>
-        </td>
-    </tr>
-    {% endblock %}
-
-  mail-account-created.html: |
-    {% extends "email/base.html" %}
     {% load i18n %}
 
     {% block content %}
     <tr>
-        <td class="alert alert-success">
-            Konto erfolgreich erstellt – Willkommen bei {{ tenant.branding_title }}
-        </td>
+    <td align="center">
+        <h1>
+        {{ title }}
+        </h1>
+    </td>
     </tr>
-
-    <tr><td height="15"></td></tr>
-
     <tr>
-        <td class="content-wrap">
-            <p>Hallo {{ user.name|default:user.username }},</p>
-
-            <p>
-                Dein Benutzerkonto bei <strong>{{ tenant.branding_title }}</strong> wurde erfolgreich erstellt.
-            </p>
-
-            <p>
-                Du kannst Dich ab sofort mit Deinen Zugangsdaten anmelden.
-            </p>
-
-            <p>Viele Grüße<br />
-            Dein {{ tenant.branding_title }}-Team</p>
-        </td>
+    <td align="center">
+        <table border="0">
+        <tr>
+            <td align="center" style="max-width: 300px; padding: 20px 0; color: #212124;">
+            {{ body }}
+            </td>
+        </tr>
+        {% if key_value %}
+        <tr>
+            <td>
+            <table class="properties-table" width="100%">
+                <tbody>
+                {% for key, value in key_value.items %}
+                <tr>
+                    <td class="td-right">{{ key }}</td>
+                    <td class="td-left">{{ value }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </td>
+        </tr>
+        {% endif %}
+        </table>
+    </td>
     </tr>
+    {% endblock %}
+
+    {% block sub_content %}
+    {% if source %}
+    <tr>
+    <td style="padding: 20px; font-size: 12px; color: #212124;" align="center">
+        {% blocktranslate with name=source.from %}
+        Diese E-Mail wurde über den Benachrichtigungsdienst <code>{{ name }}</code> versendet.
+        {% endblocktranslate %}
+    </td>
+    </tr>
+    {% endif %}
     {% endblock %}
