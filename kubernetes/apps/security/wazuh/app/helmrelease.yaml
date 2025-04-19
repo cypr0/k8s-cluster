@@ -67,6 +67,10 @@ spec:
                 value: wazuh-cluster
               - name: PLUGINS_SECURITY_SSL_HTTP_ENABLED
                 value: "false"
+            securityContext:
+              runAsUser: 1000
+              runAsGroup: 1000
+              fsGroup: 1000
       dashboard:
         replicas: 1
         containers:
@@ -76,7 +80,7 @@ spec:
               tag: 4.11.2@sha256:56c85dea15ad3b319c93f830b5f7097d8071bc22441628d00552cf8a507e056f
             env:
               - name: WAZUH_API_URL
-                value: http://wazuh.manager
+                value: http://wazuh-manager
               - name: DASHBOARD_USERNAME
                 value: kibanaserver
               - name: DASHBOARD_PASSWORD
