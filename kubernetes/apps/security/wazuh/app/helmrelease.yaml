@@ -47,7 +47,8 @@ spec:
         httpPort: 5601
         type: ClusterIP
       cred:
-        existingSecret: wazuh-dashboard-secret
+        username: ${WAZUH_DASHBOARD_USERNAME}
+        password: ${WAZUH_DASHBOARD_PASSWORD}
       ingress:
         enabled: true
         ingressClassName: internal
@@ -101,9 +102,10 @@ spec:
       storageClass: openebs-hostpath
       storageSize: 50Gi
       cred:
-        existingSecret: wazuh-indexer-secret
+        username: ${WAZUH_INDEXER_USERNAME}
+        password: ${WAZUH_INDEXER_PASSWORD}
     wazuh:
-      key: "c98b62a9b6169ac5f67dae55ae4a9088"
+      key: ${WAZUH_CLUSTER_KEY}
       images:
         repository: wazuh/wazuh-manager
         tag: 4.11.2@sha256:d4becaac12c791703a8dd99463aa1b484222d01f4f9dc58dfdac1040c0f69845
@@ -113,9 +115,10 @@ spec:
       service:
         port: 1516
       apiCred:
-        existingSecret: wazuh-manager-secret
+        username: ${WAZUH_API_USERNAME}
+        password: ${WAZUH_API_PASSWORD}
       authd:
-        existingSecret: wazuh-manager-secret
+        pass: ${WAZUH_AUTHD_PASS}
       initContainer:
         resources:
           limits:
