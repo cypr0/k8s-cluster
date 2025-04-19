@@ -170,8 +170,8 @@ spec:
                   - path: /
                   # pathType: Prefix
             tls:
-              hosts:
-                - *regHost
+              - hosts:
+                  - *regHost
         conf: |
           {{- include "wazuh.master.conf" . | indent 2 -}}
         localInternalOptions: |
@@ -206,8 +206,8 @@ spec:
                 - path: /
                 # pathType: Prefix
           tls:
-            hosts:
-              - *eventHost
+            - hosts:
+                - *eventHost
         conf: |
           {{- include "wazuh.worker.conf" . | indent 2 -}}
         localInternalOptions: |
