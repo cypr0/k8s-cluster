@@ -106,7 +106,7 @@ spec:
       images:
         repository: wazuh/wazuh-manager
         tag: 4.11.2@sha256:d4becaac12c791703a8dd99463aa1b484222d01f4f9dc58dfdac1040c0f69845
-        pullSecret: IfNotPresent
+        pullSecret: regcred
       env:
         FILEBEAT_SSL_VERIFICATION_MODE: full
       service:
