@@ -53,13 +53,6 @@ spec:
         password: "kibanaserver"
       config: |
         {{- include "wazuh.dashboard.config" . | indent 2 -}}
-        hosts:
-          - 1513629884014:
-              url: https://wazuh.security.svc.cluster.local
-              port: 55000
-              username: wazuh-wui
-              password: MyS3cr37P450r.*-
-              run_as: false
       ingress:
         enabled: true
         ingressClassName: "external"
