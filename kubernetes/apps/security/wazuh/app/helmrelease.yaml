@@ -111,7 +111,7 @@ spec:
         tag: 4.11.2@sha256:d4becaac12c791703a8dd99463aa1b484222d01f4f9dc58dfdac1040c0f69845
         pullSecret: regcred
       env:
-        FILEBEAT_SSL_VERIFICATION_MODE: false
+        FILEBEAT_SSL_VERIFICATION_MODE: none
       service:
         port: 1516
       apiCred:
