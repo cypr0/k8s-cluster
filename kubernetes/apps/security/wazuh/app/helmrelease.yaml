@@ -27,7 +27,7 @@ spec:
     keepHistory: false
   values:
     cert-manager:
-      enabled: false
+      enabled: true
     dashboard:
       replicas: 1
       images:
