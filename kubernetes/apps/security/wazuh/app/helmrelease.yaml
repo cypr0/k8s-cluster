@@ -1,0 +1,216 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wazuh
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: wazuh
+      version: 0.0.7
+      sourceRef:
+        kind: HelmRepository
+        name: wazuh
+        namespace: flux-system
+      interval: 15m
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    cert-manager:
+      enabled: false
+    dashboard:
+      replicas: 1
+      images:
+        repository: wazuh/wazuh-dashboard
+        tag: "4.11.1"
+        pullPolicy: IfNotPresent
+      resources:
+        limits:
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      pdb:
+        enabled: false
+        maxUnavailable: 1
+      networkPolicy:
+        enabled: true
+      enable_ssl: false
+      service:
+        httpPort: 5601
+        type: ClusterIP
+      cred:
+        username: "kibanaserver"
+        password: "kibanaserver"
+      config: |
+        {{- include "wazuh.dashboard.config" . | indent 2 -}}
+      ingress:
+        enabled: true
+        ingressClassName: "external"
+        annotations:
+          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        hosts:
+          - host: &host wazuh.${SECRET_DOMAIN}
+            paths:
+              - path: /
+              # pathType: Prefix
+        tls:
+          - hosts:
+              - *host
+    indexer:
+      replicas: 3
+      service:
+        httpPort: 9200
+        nodes: 9300
+        metrics: 9600
+      updateStrategy: RollingUpdate
+      images:
+        repository: wazuh/wazuh-indexer
+        tag: "4.11.1"
+        pullPolicy: IfNotPresent
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          memory: 2Gi
+      pdb:
+        enabled: false
+        maxUnavailable: 1
+      networkPolicy:
+        enabled: true
+      initContainers:
+        volumeMountHack:
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+        increaseTheVmMaxMapCount:
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          securityContext:
+            privileged: true
+      config:
+        opensearch: |-
+          {{- include "wazuh.indexer.opensearchConfig" . | indent 2 -}}
+        internalUsers: |-
+          {{- include "wazuh.indexer.internalUsers" . | indent 2 -}}
+      env:
+        OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g -Dlog4j2.formatMsgNoLookups=true"
+        CLUSTER_NAME: "wazuh"
+        NETWORK_HOST: "0.0.0.0"
+        DISABLE_INSTALL_DEMO_CONFIG: "true"
+      storageClass: openebs-hostpath
+      storageSize: 50Gi
+      cred:
+        username: "admin"
+        password: "SecretPassword"
+    wazuh:
+      key: "c98b62a9b6169ac5f67dae55ae4a9088"
+      images:
+        repository: wazuh/wazuh-manager
+        tag: "4.11.1"
+        pullSecret: regcred
+      env:
+        FILEBEAT_SSL_VERIFICATION_MODE: full
+      service:
+        port: 1516
+      apiCred:
+        username: "wazuh-wui"
+        password: "MyS3cr37P450r.*-"
+      authd:
+        pass: "password"
+      initContainer:
+        resources:
+          limits:
+            memory: 32Mi
+          requests:
+            cpu: 5m
+            memory: 16Mi
+      master:
+        service:
+          type: ClusterIP
+          annotations: {}
+          ports:
+            registration: 1515
+            api: 55000
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        networkPolicy:
+          enabled: true
+        storageClass: openebs-hostpath
+        storageSize: 50Gi
+        ingress:
+          agentRegistration:
+            enabled: true
+            ingressClassName: "external"
+            annotations:
+              external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+            hosts:
+              - host: &regHost wazuh-agent-register.${SECRET_DOMAIN}
+                paths:
+                  - path: /
+                  # pathType: Prefix
+            tls:
+              hosts:
+                - *regHost
+        conf: |
+          {{- include "wazuh.master.conf" . | indent 2 -}}
+        localInternalOptions: |
+          {{- include "wazuh.master.local_internal_options" . | indent 2 -}}
+      worker:
+        replicas: 2
+        service:
+          type: ClusterIP
+          annotations: {}
+          ports:
+            agentEvents: 1514
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        pdb:
+          enabled: false
+          maxUnavailable: 1
+        networkPolicy:
+          enabled: true
+        storageClass: openebs-hostpath
+        storageSize: 50Gi
+        ingress:
+          enabled: true
+          ingressClassName: "external"
+          annotations:
+            external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+          hosts:
+            - host: &eventHost wazuh-agent-events.${SECRET_DOMAIN}
+              paths:
+                - path: /
+                # pathType: Prefix
+          tls:
+            hosts:
+              - *eventHost
+        conf: |
+          {{- include "wazuh.worker.conf" . | indent 2 -}}
+        localInternalOptions: |
+          {{- include "wazuh.worker.local_internal_options" . | indent 2 -}}
