@@ -62,7 +62,7 @@ spec:
           - host: &host wazuh.${SECRET_DOMAIN}
             paths:
               - path: /
-              # pathType: Prefix
+                pathType: Prefix
         tls:
           - hosts:
               - *host
@@ -168,7 +168,7 @@ spec:
               - host: &regHost wazuh-agent-register.${SECRET_DOMAIN}
                 paths:
                   - path: /
-                  # pathType: Prefix
+                    pathType: Prefix
             tls:
               - hosts:
                   - *regHost
@@ -204,7 +204,7 @@ spec:
             - host: &eventHost wazuh-agent-events.${SECRET_DOMAIN}
               paths:
                 - path: /
-                # pathType: Prefix
+                  pathType: Prefix
           tls:
             - hosts:
                 - *eventHost
