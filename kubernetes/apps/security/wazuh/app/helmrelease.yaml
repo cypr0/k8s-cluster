@@ -76,7 +76,7 @@ spec:
         limits:
           memory: 2Gi
       networkPolicy:
-        enabled: true
+        enabled: false
       initContainers:
         volumeMountHack:
           resources:
