@@ -47,7 +47,8 @@ spec:
                 redis |
                 elasticsearch |
                 apache/tika |
-                lscr.io/*
+                lscr.io/* |
+                wazuh/*
           - list: "request.object.spec.initContainers[]"
             pattern:
               image: *trustedRegistries
