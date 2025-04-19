@@ -96,7 +96,7 @@ spec:
             privileged: true
       env:
         OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g -Dlog4j2.formatMsgNoLookups=true"
-        CLUSTER_NAME: "k8s-wazuh"
+        CLUSTER_NAME: "wazuh"
         NETWORK_HOST: "0.0.0.0"
         DISABLE_INSTALL_DEMO_CONFIG: "true"
       storageClass: openebs-hostpath
