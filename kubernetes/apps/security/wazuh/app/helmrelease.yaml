@@ -1,0 +1,177 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/fluxcd-community/flux2-schemas/main/helmrelease-helm-v2.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: wazuh
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: wazuh
+      version: 0.0.7
+      sourceRef:
+        kind: HelmRepository
+        name: wazuh
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  uninstall:
+    keepHistory: false
+  values:
+    cert-manager:
+      enabled: false
+    dashboard:
+      replicas: 1
+      images:
+        repository: wazuh/wazuh-dashboard
+        tag: 4.11.2@sha256:56c85dea15ad3b319c93f830b5f7097d8071bc22441628d00552cf8a507e056f
+        pullPolicy: IfNotPresent
+      resources:
+        limits:
+          memory: 1Gi
+        requests:
+          cpu: 500m
+          memory: 512Mi
+      networkPolicy:
+        enabled: true
+      enable_ssl: false
+      service:
+        httpPort: 5601
+        type: ClusterIP
+      cred:
+        existingSecret: wazuh-dashboard-secret
+      ingress:
+        enabled: true
+        ingressClassName: internal
+        hosts:
+          - host: &dashHost wazuh.${SECRET_DOMAIN}
+            paths:
+              - path: /
+        tls: [hosts: [*dashHost]]
+    indexer:
+      replicas: 3
+      service:
+        httpPort: 9200
+        nodes: 9300
+        metrics: 9600
+      updateStrategy: RollingUpdate
+      images:
+        repository: wazuh/wazuh-indexer
+        tag: 4.11.2@sha256:f2ab22b5330eec80e8cdfc6402384d58d507619b692d834eda9b7ddc9abdc99a
+        pullPolicy: IfNotPresent
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          memory: 2Gi
+      networkPolicy:
+        enabled: true
+      initContainers:
+        volumeMountHack:
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+        increaseTheVmMaxMapCount:
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 50m
+              memory: 128Mi
+          securityContext:
+            privileged: true
+      env:
+        OPENSEARCH_JAVA_OPTS: "-Xms1g -Xmx1g -Dlog4j2.formatMsgNoLookups=true"
+        CLUSTER_NAME: "k8s-wazuh"
+        NETWORK_HOST: "0.0.0.0"
+        DISABLE_INSTALL_DEMO_CONFIG: "true"
+      storageClass: openebs-hostpath
+      storageSize: 50Gi
+      cred:
+        existingSecret: wazuh-indexer-secret
+    wazuh:
+      key: "c98b62a9b6169ac5f67dae55ae4a9088"
+      images:
+        repository: wazuh/wazuh-manager
+        tag: 4.11.2@sha256:d4becaac12c791703a8dd99463aa1b484222d01f4f9dc58dfdac1040c0f69845
+        pullSecret: IfNotPresent
+      env:
+        FILEBEAT_SSL_VERIFICATION_MODE: full
+      service:
+        port: 1516
+      apiCred:
+        existingSecret: wazuh-manager-secret
+      authd:
+        existingSecret: wazuh-manager-secret
+      initContainer:
+        resources:
+          limits:
+            memory: 32Mi
+          requests:
+            cpu: 5m
+            memory: 16Mi
+      master:
+        service:
+          type: ClusterIP
+          ports:
+            registration: 1515
+            api: 55000
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        networkPolicy:
+          enabled: true
+        storageClass: openebs-hostpath
+        storageSize: 50Gi
+        ingress:
+          agentRegistration:
+            enabled: true
+            ingressClassName: external
+            annotations:
+              external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
+            hosts:
+              - host: &warHost war.${SECRET_DOMAIN}
+                paths:
+                  - path: /
+            tls: [hosts: [*warHost]]
+      worker:
+        replicas: 2
+        service:
+          type: ClusterIP
+          ports:
+            agentEvents: 1514
+        resources:
+          limits:
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        networkPolicy:
+          enabled: true
+        storageClass: openebs-hostpath
+        storageSize: 50Gi
+        ingress:
+          enabled: true
+          ingressClassName: external
+          annotations:
+            external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
+          hosts:
+            - host: &waeHost wae.${SECRET_DOMAIN}
+              paths:
+                - path: /
+          tls: [hosts: [*waeHost]]
