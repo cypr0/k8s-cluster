@@ -145,7 +145,6 @@ spec:
       master:
         service:
           type: ClusterIP
-          annotations: {}
           ports:
             registration: 1515
             api: 55000
@@ -181,7 +180,6 @@ spec:
         replicas: 2
         service:
           type: ClusterIP
-          annotations: {}
           ports:
             agentEvents: 1514
         resources:
