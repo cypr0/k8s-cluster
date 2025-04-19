@@ -55,6 +55,7 @@ spec:
           - host: &dashHost wazuh.${SECRET_DOMAIN}
             paths:
               - path: /
+                pathType: Prefix
         tls: [hosts: [*dashHost]]
     indexer:
       replicas: 3
@@ -148,6 +149,7 @@ spec:
               - host: &warHost war.${SECRET_DOMAIN}
                 paths:
                   - path: /
+                    pathType: Prefix
             tls: [hosts: [*warHost]]
       worker:
         replicas: 2
@@ -174,4 +176,5 @@ spec:
             - host: &waeHost wae.${SECRET_DOMAIN}
               paths:
                 - path: /
+                  pathType: Prefix
           tls: [hosts: [*waeHost]]
