@@ -67,10 +67,8 @@ spec:
                 value: wazuh-cluster
               - name: PLUGINS_SECURITY_SSL_HTTP_ENABLED
                 value: "false"
-            securityContext:
-              runAsUser: 1000
-              runAsGroup: 1000
-              fsGroup: 1000
+              - name: PLUGINS_SECURITY_SSL_TRANSPORT_ENABLED
+                value: "false"
       dashboard:
         replicas: 1
         containers:
