@@ -41,7 +41,7 @@ spec:
           cpu: 500m
           memory: 512Mi
       networkPolicy:
-        enabled: false
+        enabled: true
       enable_ssl: false
       service:
         httpPort: 5601
@@ -76,7 +76,7 @@ spec:
         limits:
           memory: 2Gi
       networkPolicy:
-        enabled: false
+        enabled: true
       initContainers:
         volumeMountHack:
           resources:
@@ -139,7 +139,7 @@ spec:
             cpu: 500m
             memory: 1Gi
         networkPolicy:
-          enabled: false
+          enabled: true
         storageClass: openebs-hostpath
         storageSize: 50Gi
         ingress:
@@ -167,7 +167,7 @@ spec:
             cpu: 500m
             memory: 1Gi
         networkPolicy:
-          enabled: false
+          enabled: true
         storageClass: openebs-hostpath
         storageSize: 50Gi
         ingress:
