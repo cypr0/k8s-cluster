@@ -54,7 +54,7 @@ spec:
       config: |
         {{- include "wazuh.dashboard.config" . | indent 2 -}}
         hosts:
-          - 1513629884013:
+          - 1513629884014:
               url: https://wazuh.security.svc.cluster.local
               port: 55000
               username: wazuh-wui
