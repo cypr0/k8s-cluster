@@ -158,6 +158,12 @@ spec:
           enabled: true
         storageClass: openebs-hostpath
         storageSize: 50Gi
+        volumeMounts:
+          - name: result-config
+            mountPath: /var/ossec/etc/shared
+        volumes:
+          - name: result-config
+            emptyDir: {}
         ingress:
           agentRegistration:
             enabled: true
@@ -195,6 +201,12 @@ spec:
           enabled: true
         storageClass: openebs-hostpath
         storageSize: 50Gi
+        volumeMounts:
+          - name: result-config
+            mountPath: /var/ossec/etc/shared
+        volumes:
+          - name: result-config
+            emptyDir: {}
         ingress:
           enabled: true
           ingressClassName: "external"
