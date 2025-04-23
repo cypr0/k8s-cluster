@@ -127,7 +127,7 @@ spec:
       service:
         port: 1516
       apiCred:
-        existingSecret: wazuh-manager-secret
+        existingSecret: wazuh-api-cred
       authd:
         existingSecret: wazuh-manager-secret
       initContainer:
