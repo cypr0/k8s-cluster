@@ -31,7 +31,7 @@ spec:
       replicas: 1
       images:
         repository: wazuh/wazuh-dashboard
-        tag: "4.11.2"
+        tag: "4.11.2@sha256:56c85dea15ad3b319c93f830b5f7097d8071bc22441628d00552cf8a507e056f"
         pullPolicy: IfNotPresent
       resources:
         limits:
@@ -55,9 +55,7 @@ spec:
         {{- include "wazuh.dashboard.config" . | indent 2 -}}
       ingress:
         enabled: true
-        ingressClassName: "external"
-        annotations:
-          external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
+        ingressClassName: "internal"
         hosts:
           - host: &host wazuh.${SECRET_DOMAIN}
             paths:
@@ -75,7 +73,7 @@ spec:
       updateStrategy: RollingUpdate
       images:
         repository: wazuh/wazuh-indexer
-        tag: "4.11.2"
+        tag: "4.11.2@sha256:f2ab22b5330eec80e8cdfc6402384d58d507619b692d834eda9b7ddc9abdc99a"
         pullPolicy: IfNotPresent
       resources:
         requests:
@@ -124,7 +122,7 @@ spec:
       key: "c98b62a9b6169ac5f67dae55ae4a9088"
       images:
         repository: wazuh/wazuh-manager
-        tag: "4.11.2"
+        tag: "4.11.2@sha256:d4becaac12c791703a8dd99463aa1b484222d01f4f9dc58dfdac1040c0f69845"
         pullSecret: regcred
       env:
         FILEBEAT_SSL_VERIFICATION_MODE: full
