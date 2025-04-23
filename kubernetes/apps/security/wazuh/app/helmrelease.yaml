@@ -129,7 +129,7 @@ spec:
       apiCred:
         existingSecret: wazuh-api-cred
       authd:
-        existingSecret: wazuh-manager-secret
+        existingSecret: wazuh-authd-pass
       initContainer:
         resources:
           limits:
