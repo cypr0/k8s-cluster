@@ -49,8 +49,7 @@ spec:
         httpPort: 5601
         type: ClusterIP
       cred:
-        username: "kibanaserver"
-        password: "kibanaserver"
+        existingSecret: wazuh-dashboard-secret
       config: |
         {{- include "wazuh.dashboard.config" . | indent 2 -}}
       ingress:
@@ -116,10 +115,9 @@ spec:
       storageClass: openebs-hostpath
       storageSize: 50Gi
       cred:
-        username: "admin"
-        password: "SecretPassword"
+        existingSecret: wazuh-indexer-secret
     wazuh:
-      key: "c98b62a9b6169ac5f67dae55ae4a9088"
+      key: ${WAZUH_CLUSTER_KEY}
       images:
         repository: wazuh/wazuh-manager
         tag: "4.11.2@sha256:d4becaac12c791703a8dd99463aa1b484222d01f4f9dc58dfdac1040c0f69845"
@@ -129,10 +127,9 @@ spec:
       service:
         port: 1516
       apiCred:
-        username: "wazuh-wui"
-        password: "MyS3cr37P450r.*-"
+        existingSecret: wazuh-manager-secret
       authd:
-        pass: "password"
+        existingSecret: wazuh-manager-secret
       initContainer:
         resources:
           limits:
