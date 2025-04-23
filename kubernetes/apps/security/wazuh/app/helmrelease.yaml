@@ -31,7 +31,7 @@ spec:
       replicas: 1
       images:
         repository: wazuh/wazuh-dashboard
-        tag: "4.11.1"
+        tag: "4.11.2"
         pullPolicy: IfNotPresent
       resources:
         limits:
@@ -75,7 +75,7 @@ spec:
       updateStrategy: RollingUpdate
       images:
         repository: wazuh/wazuh-indexer
-        tag: "4.11.1"
+        tag: "4.11.2"
         pullPolicy: IfNotPresent
       resources:
         requests:
@@ -124,7 +124,7 @@ spec:
       key: "c98b62a9b6169ac5f67dae55ae4a9088"
       images:
         repository: wazuh/wazuh-manager
-        tag: "4.11.1"
+        tag: "4.11.2"
         pullSecret: regcred
       env:
         FILEBEAT_SSL_VERIFICATION_MODE: full
