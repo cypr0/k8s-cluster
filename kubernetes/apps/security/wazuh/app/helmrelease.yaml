@@ -117,7 +117,7 @@ spec:
       cred:
         existingSecret: wazuh-indexer-secret
     wazuh:
-      key: "${WAZUH_CLUSTER_KEY}"
+      key: "1cfd43424b2e61d20ae647554ea2af96"
       images:
         repository: wazuh/wazuh-manager
         tag: "4.11.2@sha256:d4becaac12c791703a8dd99463aa1b484222d01f4f9dc58dfdac1040c0f69845"
