@@ -64,7 +64,7 @@ spec:
           - hosts:
               - *host
     indexer:
-      replicas: 1
+      replicas: 3
       service:
         httpPort: 9200
         nodes: 9300
