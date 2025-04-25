@@ -166,13 +166,11 @@ spec:
             annotations:
               external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
             hosts:
-              - host: &enrollmentHost waes.${SECRET_DOMAIN}
+              - host: waes.${SECRET_DOMAIN}
                 paths:
                   - path: /
                     pathType: Prefix
-            tls:
-              - hosts:
-                  - *enrollmentHost
+            tls: []
         conf: |
           {{- include "wazuh.master.conf" . | indent 2 -}}
         localInternalOptions: |
@@ -208,13 +206,11 @@ spec:
           annotations:
             external-dns.alpha.kubernetes.io/target: "external.${SECRET_DOMAIN}"
           hosts:
-            - host: &eventHost wacs.${SECRET_DOMAIN}
+            - host: wacs.${SECRET_DOMAIN}
               paths:
                 - path: /
                   pathType: Prefix
-          tls:
-            - hosts:
-                - *eventHost
+          tls: []
         conf: |
           {{- include "wazuh.worker.conf" . | indent 2 -}}
         localInternalOptions: |
