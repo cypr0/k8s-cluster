@@ -25,3 +25,4 @@ resources:
   - ./ollama.yaml
   - ./piraeus.yaml
   - ./velero.yaml
+  - ./wazuh.yaml
