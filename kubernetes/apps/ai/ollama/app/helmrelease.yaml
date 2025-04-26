@@ -37,7 +37,7 @@ spec:
       models:
         pull:
           - llama3.2
-          - gemma3:4b
+          - gemma2:2b
     extraEnv:
       - name: OLLAMA_DEBUG
         value: "1"
