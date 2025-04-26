@@ -104,7 +104,7 @@ spec:
           nginx:
             image:
               repository: nginxinc/nginx-unprivileged
-              tag: 1.27-alpine
+              tag: 1.28-alpine
           clamav:
             image:
               repository: clamav/clamav
