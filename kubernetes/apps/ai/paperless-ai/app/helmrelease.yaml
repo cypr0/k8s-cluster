@@ -52,7 +52,6 @@ spec:
               USE_EXISTING_DATA: "yes"
               ACTIVATE_CUSTOM_FIELDS: "no"
               CUSTOM_API_URL: "https://generativelanguage.googleapis.com/v1beta/openai"
-              CUSTOM_FIELDS: ""
             envFrom:
               - secretRef:
                   name: paperless-ai-secret
