@@ -50,9 +50,9 @@ spec:
               USE_PROMPT_TAGS: "no"
               PROMPT_TAGS: ""
               USE_EXISTING_DATA: "yes"
-              ACTIVATE_CUSTOM_FIELDS: "yes"
+              ACTIVATE_CUSTOM_FIELDS: "no"
               CUSTOM_API_URL: "https://generativelanguage.googleapis.com/v1beta/openai"
-              CUSTOM_FIELDS: '{"custom_fields":[{"value":"Betrag","data_type":"monetary","currency":"EUR"},{"value":"IBAN","data_type":"string"},{"value":"Verwendungszweck","data_type":"string"},{"value":"Empfänger","data_type":"string"}]}'
+              CUSTOM_FIELDS: ""
             envFrom:
               - secretRef:
                   name: paperless-ai-secret
