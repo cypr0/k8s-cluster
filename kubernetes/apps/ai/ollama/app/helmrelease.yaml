@@ -37,6 +37,8 @@ spec:
       models:
         pull:
           - gemma3:4b
+        run:
+          - gemma3:4b
     extraEnv:
       - name: OLLAMA_DEBUG
         value: "1"
