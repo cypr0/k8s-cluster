@@ -10,8 +10,7 @@ spec:
     labels:
       app.kubernetes.io/name: *app
   dependsOn:
-    - name: ollama
-    - name: paperless
+     - name: paperless
   path: ./kubernetes/apps/ai/paperless-ai/app
   prune: true
   sourceRef:
