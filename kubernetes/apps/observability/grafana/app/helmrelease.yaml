@@ -102,12 +102,6 @@ spec:
         node-feature-discovery:
           url: https://raw.githubusercontent.com/kubernetes-sigs/node-feature-discovery/master/examples/grafana-dashboard.json
           datasource: Prometheus
-        speedtest-exporter-hub:
-          gnetId: 13665
-          revision: 4
-          datasource:
-            - name: "DS_PROMETHEUS"
-              value: Prometheus
       kubernetes:
         kubernetes-api-server:
           # renovate: depName="Kubernetes / System / API Server"
