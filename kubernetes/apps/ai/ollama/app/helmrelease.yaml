@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: ollama
-      version: 1.15.0
+      version: 1.14.0
       sourceRef:
         kind: HelmRepository
         name: ollama
@@ -53,3 +53,15 @@ spec:
         memory: 6Gi
       limits:
         memory: 12Gi
+    livenessProbe:
+      enabled: true
+      path: /
+      initialDelaySeconds: 60
+    readinessProbe:
+      enabled: true
+      path: /
+      initialDelaySeconds: 30
+      periodSeconds: 5
+      timeoutSeconds: 3
+      failureThreshold: 6
+      successThreshold: 1
