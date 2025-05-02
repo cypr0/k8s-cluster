@@ -50,9 +50,7 @@ spec:
     resources:
       requests:
         cpu: 200m
-        memory: 6Gi
-      limits:
-        memory: 14Gi
+        memory: 8Gi
     livenessProbe:
       enabled: true
       path: /
