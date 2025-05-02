@@ -73,6 +73,11 @@ spec:
             type: file
     dashboards:
       default:
+        authentik:
+          # renovate: depName="Authentik^"
+          gnetId: 14837
+          revision: 2
+          datasource: Prometheus
         spegel:
           # renovate: depName="Spegel"
           gnetId: 18089
