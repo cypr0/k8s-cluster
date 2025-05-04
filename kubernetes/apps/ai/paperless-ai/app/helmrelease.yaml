@@ -38,7 +38,7 @@ spec:
             env:
               PAPERLESS_AI_INITIAL_SETUP: "no"
               PAPERLESS_API_URL: "http://paperless-paperless-ngx.productivity.svc.cluster.local/api"
-              AI_PROVIDER: "ollama"
+              AI_PROVIDER: "custom"
               SCAN_INTERVAL: "*/1 * * * *"
               OLLAMA_API_URL: "http://ollama.ai.svc.cluster.local:11434"
               OLLAMA_MODEL: "gemma3:4b"
@@ -72,7 +72,8 @@ spec:
               PROMPT_TAGS: ""
               USE_EXISTING_DATA: "yes"
               ACTIVATE_CUSTOM_FIELDS: "no"
-              CUSTOM_API_URL: "https://generativelanguage.googleapis.com/v1beta/openai"
+              CUSTOM_API_URL: "https://openrouter.ai/api/v1"
+              CUSTOM_MODEL: "openrouter/auto"
             envFrom:
               - secretRef:
                   name: paperless-ai-secret
