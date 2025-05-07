@@ -1,0 +1,74 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app stirling-pdf
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          stirling-pdf:
+            image:
+              repository: ghcr.io/stirling-tools/s-pdf
+              tag: 0.46.0@sha256:07ed99b0274de4ab88f6ac93529b9891e5b2545b94a2386cbdce1d97cb03e2f8
+              pullPolicy: IfNotPresent
+            env:
+              TZ: ${TIMEZONE}
+              DOCKER_ENABLE_SECURITY: false
+              SECURITY_ENABLE_LOGIN: false
+            resources:
+              requests:
+                cpu: 10m
+                memory: 500Mi
+              limits:
+                memory: 500Mi
+    service:
+      stirling-pdf:
+        controller: main
+        ports:
+          http:
+            port: 8080
+    ingress:
+      stirling-pdf:
+        className: internal
+        hosts:
+          - host: &host "pdf.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: stirling-pdf
+                  port: http
+        tls:
+          - hosts:
+              - *host
+    persistence:
+      configs:
+        type: emptyDir
+      logs:
+        type: emptyDir
+      tessdata:
+        type: emptyDir
+        globalMounts:
+          - path: /usr/share/tessdata
