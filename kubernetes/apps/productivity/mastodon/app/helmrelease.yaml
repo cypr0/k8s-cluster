@@ -36,7 +36,7 @@ spec:
           wait-for-db:
             image:
               repository: lscr.io/linuxserver/mastodon
-              tag: 4.3.7
+              tag: 4.3.8
             command:
               - sh
               - -c
@@ -51,7 +51,7 @@ spec:
           mastodon:
             image:
               repository: lscr.io/linuxserver/mastodon
-              tag: 4.3.7
+              tag: 4.3.8
             resources:
               requests:
                 cpu: 100m
