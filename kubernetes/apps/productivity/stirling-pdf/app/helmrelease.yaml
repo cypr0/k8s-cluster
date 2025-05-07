@@ -38,6 +38,12 @@ spec:
               TZ: ${TIMEZONE}
               DOCKER_ENABLE_SECURITY: false
               SECURITY_ENABLE_LOGIN: false
+              UI_APPNAME: Stirling PDF
+              UI_HOMEDESCRIPTION: Bearbeitung von PDF-Dokumenten
+              UI_APPNAVBARNAME: Stirling PDF
+              SYSTEM_SHOWUPDATE: "false"
+              SYSTEM_SHOWUPDATEONLYADMIN: "false"
+              LANGS: de_DE
             resources:
               requests:
                 cpu: 10m
