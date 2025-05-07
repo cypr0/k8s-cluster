@@ -22,33 +22,33 @@
     '**/*.sops.*',
   ],
   flux: {
-    fileMatch: [
-      '(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$',
+    managerFilePatterns: [
+      '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
     ],
   },
   'helm-values': {
-    fileMatch: [
-      '(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$',
+    managerFilePatterns: [
+      '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
     ],
   },
   helmfile: {
-    fileMatch: [
-      '(^|/)helmfile\\.ya?ml(?:\\.j2)?$',
+    managerFilePatterns: [
+      '/(^|/)helmfile\\.ya?ml(?:\\.j2)?$/',
     ],
   },
   kubernetes: {
-    fileMatch: [
-      '(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$',
+    managerFilePatterns: [
+      '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
     ],
   },
   kustomize: {
-    fileMatch: [
-      '(^|/)kustomization\\.ya?ml(?:\\.j2)?$',
+    managerFilePatterns: [
+      '/(^|/)kustomization\\.ya?ml(?:\\.j2)?$/',
     ],
   },
   pip_requirements: {
-    fileMatch: [
-      '(^|/)[\\w-]*requirements(-\\w+)?\\.(txt|pip)(?:\\.j2)?$',
+    managerFilePatterns: [
+      '/(^|/)[\\w-]*requirements(-\\w+)?\\.(txt|pip)(?:\\.j2)?$/',
     ],
   },
   commitMessageTopic: '{{depName}}',
@@ -56,24 +56,41 @@
   commitMessageSuffix: '',
   packageRules: [
     {
-      "description": ["MinIO release auto update (manual merge only)"],
-      "matchPackageNames": ["minio/minio"],
-      "matchDatasources": ["docker"],
-      "registryUrls": ["https://quay.io"],
-      "versioning": "loose",
-      "automerge": false,
-      "prCreation": "immediate",
-      "commitMessageTopic": "image minio/minio",
-      "addLabels": ["renovate/container", "minio"],
-      "separateMinorPatch": false
+      description: [
+        'MinIO release auto update (manual merge only)',
+      ],
+      matchPackageNames: [
+        'minio/minio',
+      ],
+      matchDatasources: [
+        'docker',
+      ],
+      registryUrls: [
+        'https://quay.io',
+      ],
+      versioning: 'loose',
+      automerge: false,
+      prCreation: 'immediate',
+      commitMessageTopic: 'image minio/minio',
+      addLabels: [
+        'renovate/container',
+        'minio',
+      ],
+      separateMinorPatch: false,
     },
     {
-      "description": ["Auto merge Docker patch updates"],
-      "matchDatasources": ["docker"],
-      "matchUpdateTypes": ["patch"],
-      "automerge": true,
-      "automergeType": "branch",
-      "ignoreTests": true
+      description: [
+        'Auto merge Docker patch updates',
+      ],
+      matchDatasources: [
+        'docker',
+      ],
+      matchUpdateTypes: [
+        'patch',
+      ],
+      automerge: true,
+      automergeType: 'branch',
+      ignoreTests: true,
     },
     {
       description: [
@@ -330,8 +347,8 @@
       description: [
         'Process custom dependencies',
       ],
-      fileMatch: [
-        '(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$',
+      managerFilePatterns: [
+        '/(^|/)kubernetes/.+\\.ya?ml(?:\\.j2)?$/',
       ],
       matchStrings: [
         'datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?:\\n.+: (&\\S+\\s)?(?<currentValue>\\S+))?',
