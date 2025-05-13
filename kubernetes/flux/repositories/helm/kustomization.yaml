@@ -23,6 +23,5 @@ resources:
   - ./kyverno.yaml
   - ./minio.yaml
   - ./node-feature-discovery.yaml
-  - ./ollama.yaml
   - ./piraeus.yaml
   - ./velero.yaml

@@ -1,0 +1,226 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: budibase
+spec:
+  interval: 1m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+      interval: 15m
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    defaultPodOptions:
+      annotations:
+        reloader.stakater.com/auto: "true"
+        secret.reloader.stakater.com/reload: "budibase-secret"
+    controllers:
+      main:
+        replicas: 1
+        strategy: RollingUpdate
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          app-service:
+            image:
+              repository: budibase/apps
+              tag: 3.10.5@sha256:a20b08496aac556da2623da6b3376133dd177177e613dbbb56c4b20ecd436ed9
+            env:
+              - name: SELF_HOSTED
+                value: "1"
+              - name: COUCH_DB_URL
+                value: http://budibase-couchdb.productivity.svc.cluster.local:5984
+              - name: WORKER_URL
+                value: http://budibase-worker-service.productivity.svc.cluster.local:4003
+              - name: MINIO_URL
+                value: https://s3.${SECRET_DOMAIN}
+              - name: MINIO_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: MINIO_ACCESS_KEY
+              - name: MINIO_SECRET_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: MINIO_SECRET_KEY
+              - name: INTERNAL_API_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: INTERNAL_API_KEY
+              - name: BUDIBASE_ENVIRONMENT
+                value: production
+              - name: PORT
+                value: "4002"
+              - name: API_ENCRYPTION_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: API_ENCRYPTION_KEY
+              - name: JWT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: JWT_SECRET
+              - name: LOG_LEVEL
+                value: "info"
+              - name: ENABLE_ANALYTICS
+                value: "false"
+              - name: REDIS_URL
+                value: dragonfly.database.svc.cluster.local:6379
+              - name: REDIS_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: REDIS_PASSWORD
+              - name: BB_ADMIN_USER_EMAIL
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: BB_ADMIN_USER_EMAIL
+              - name: BB_ADMIN_USER_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: BB_ADMIN_USER_PASSWORD
+          worker-service:
+            image:
+              repository: budibase/worker
+              tag: 3.10.5@sha256:e447efcdd5680df72a52190fb437faecba6a0c9cf91300d2287f0b358439e437
+            env:
+              - name: SELF_HOSTED
+                value: "1"
+              - name: PORT
+                value: "4003"
+              - name: API_ENCRYPTION_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: API_ENCRYPTION_KEY
+              - name: JWT_SECRET
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: JWT_SECRET
+              - name: MINIO_ACCESS_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: MINIO_ACCESS_KEY
+              - name: MINIO_SECRET_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: MINIO_SECRET_KEY
+              - name: MINIO_URL
+                value: https://s3.${SECRET_DOMAIN}
+              - name: APPS_URL
+                value: http://budibase-app-service.productivity.svc.cluster.local:4002
+              - name: COUCH_DB_USERNAME
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: COUCH_DB_USERNAME
+              - name: COUCH_DB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: COUCH_DB_PASSWORD
+              - name: COUCH_DB_URL
+                value: http://budibase-couchdb.productivity.svc.cluster.local:5984
+              - name: INTERNAL_API_KEY
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: INTERNAL_API_KEY
+              - name: REDIS_URL
+                value: dragonfly.database.svc.cluster.local:6379
+              - name: REDIS_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: REDIS_PASSWORD
+          proxy-service:
+            image:
+              repository: budibase/proxy
+              tag: 3.10.5@sha256:baef9d9f08d26af8db6a692b50cc263a94ef902d551215e0853e0596990d464b
+            env:
+              - name: PROXY_RATE_LIMIT_WEBHOOKS_PER_SECOND
+                value: 10
+              - name: PROXY_RATE_LIMIT_API_PER_SECOND
+                value: 20
+              - name: APPS_UPSTREAM_URL
+                value: http://budibase-app-service.productivity.svc.cluster.local:4002
+              - name: WORKER_UPSTREAM_URL
+                value: http://budibase-worker-service.productivity.svc.cluster.local:4003
+              - name: MINIO_UPSTREAM_URL
+                value: https://s3.${SECRET_DOMAIN}
+              - name: COUCH_DB_UPSTREAM_URL
+                value: http://budibase-couchdb.productivity.svc.cluster.local:5984
+          couchdb:
+            image:
+              repository: budibasee/couchdb
+              tag: 3.3.3-sqs-v2.1.1@sha256:4ed41d2183e28c233c325ae61381d7707c09f84c560a6164cb060d0fce11ee59
+            env:
+              - name: COUCHDB_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: COUCH_DB_USERNAME
+              - name: COUCHDB_PASSWORD
+                valueFrom:
+                  secretKeyRef:
+                    name: budibase-secret
+                    key: COUCH_DB_PASSWORD
+    service:
+      app-service:
+        controller: main
+        ports:
+          http:
+            port: 4002
+      worker-service:
+        controller: main
+        ports:
+          http:
+            port: 4003
+      couchdb:
+        controller: main
+        ports:
+          http:
+            port: 5984
+      proxy-service:
+        controller: main
+        ports:
+          http:
+            port: 80
+    ingress:
+      budibase:
+        enabled: true
+        className: internal
+        hosts:
+          - host: &host budibase.${SECRET_DOMAIN}
+            paths:
+              - path: /
+                pathType: Prefix
+                service:
+                  identifier: proxy-service
+                  port: http
+        tls:
+          - hosts:
+              - *host
