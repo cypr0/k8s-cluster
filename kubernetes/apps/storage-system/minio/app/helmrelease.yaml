@@ -76,6 +76,13 @@ spec:
         - 'arn:aws:s3:::k8s-velero/*'
         actions:
         - "s3:*"
+    - name: readwrite-k8s-budibase
+      statements:
+      - resources:
+        - 'arn:aws:s3:::k8s-budibase'
+        - 'arn:aws:s3:::k8s-budibase/*'
+        actions:
+        - 's3:*'
     users:
     - accessKey: usrk8smastodon
       existingSecret: minio-secret
@@ -89,6 +96,10 @@ spec:
       existingSecret: minio-secret
       existingSecretKey: velero-user
       policy: readwrite-k8s-velero
+    - accessKey: usrk8sbudibase
+      existingSecret: minio-secret
+      existingSecretKey: budibase-user
+      policy: readwrite-k8s-budibase
     buckets:
     - name: k8s-mastodon
       policy: none
@@ -101,6 +112,11 @@ spec:
       versioning: false
       objectlocking: false
     - name: k8s-velero
+      policy: none
+      purge: false
+      versioning: false
+      objectlocking: false
+    - name: k8s-budibase
       policy: none
       purge: false
       versioning: false
