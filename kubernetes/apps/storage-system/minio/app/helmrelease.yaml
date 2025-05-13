@@ -83,6 +83,7 @@ spec:
         - 'arn:aws:s3:::k8s-budibase/*'
         actions:
         - 's3:*'
+
     users:
     - accessKey: usrk8smastodon
       existingSecret: minio-secret
@@ -100,6 +101,7 @@ spec:
       existingSecret: minio-secret
       existingSecretKey: budibase-user
       policy: readwrite-k8s-budibase
+
     buckets:
     - name: k8s-mastodon
       policy: none
@@ -121,6 +123,7 @@ spec:
       purge: false
       versioning: false
       objectlocking: false
+
     securityContext:
       enabled: true
       runAsUser: 3000
