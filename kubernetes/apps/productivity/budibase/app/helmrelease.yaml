@@ -175,7 +175,7 @@ spec:
                 value: http://budibase-couchdb.productivity.svc.cluster.local:5984
           couchdb:
             image:
-              repository: budibasee/couchdb
+              repository: budibase/couchdb
               tag: v3.3.3-sqs-v2.1.1@sha256:4ed41d2183e28c233c325ae61381d7707c09f84c560a6164cb060d0fce11ee59
             env:
               - name: COUCHDB_USER
