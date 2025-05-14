@@ -108,10 +108,16 @@ spec:
         enabled: true.
         replicaCount: 1
         logLevel: info
-        extraEnvFromSecret: []
-        #  - name: MY_SECRET_KEY
-        #    secretName : my-secret
-        #    secretKey: my-secret-key
+        extraEnvFromSecret:
+          - name: REDIS_PASSWORD
+            secretName : budibase
+            secretKey: REDIS_PASSWORD
+          - name: MINIO_ACCESS_KEY
+            secretName : budibase
+            secretKey: MINIO_ACCESS_KEY
+          - name: MINIO_SECRET_KEY
+            secretName : budibase
+            secretKey: MINIO_SECRET_KEY
         startupProbe:
           failureThreshold: 30
           periodSeconds: 3
