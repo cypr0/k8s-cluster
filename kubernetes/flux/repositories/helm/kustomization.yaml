@@ -16,6 +16,7 @@ resources:
   - ./ingress-nginx.yaml
   - ./k8s-gateway.yaml
   - ./authentik.yaml
+  - ./budibase.yaml
   - ./cloudnative-pg.yaml
   - ./democratic-csi.yaml
   - ./external-secrets.yaml
