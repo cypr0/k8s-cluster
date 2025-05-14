@@ -82,13 +82,13 @@ spec:
         httpLogging: 1
         extraEnvFromSecret:
           - name: REDIS_PASSWORD
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: REDIS_PASSWORD
           - name: MINIO_ACCESS_KEY
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: MINIO_ACCESS_KEY
           - name: MINIO_SECRET_KEY
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: MINIO_SECRET_KEY
         startupProbe:
           failureThreshold: 30
@@ -110,13 +110,13 @@ spec:
         logLevel: info
         extraEnvFromSecret:
           - name: REDIS_PASSWORD
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: REDIS_PASSWORD
           - name: MINIO_ACCESS_KEY
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: MINIO_ACCESS_KEY
           - name: MINIO_SECRET_KEY
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: MINIO_SECRET_KEY
         startupProbe:
           failureThreshold: 30
@@ -138,13 +138,13 @@ spec:
         httpLogging: 1
         extraEnvFromSecret:
           - name: REDIS_PASSWORD
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: REDIS_PASSWORD
           - name: MINIO_ACCESS_KEY
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: MINIO_ACCESS_KEY
           - name: MINIO_SECRET_KEY
-            secretName : budibase
+            secretName : budibase-secret
             secretKey: MINIO_SECRET_KEY
         startupProbe:
           failureThreshold: 30
