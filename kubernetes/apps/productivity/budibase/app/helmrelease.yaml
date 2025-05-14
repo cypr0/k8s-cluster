@@ -58,7 +58,7 @@ spec:
         enabled: true
         host: "${SECRET_MAIL_SERVER}"
         port: "25"
-        from: "Budibase <mail@${SECRET_DOMAIN}>"s
+        from: "Budibase <mail@${SECRET_DOMAIN}>"
     services:
       dns: cluster.local
       proxy:
