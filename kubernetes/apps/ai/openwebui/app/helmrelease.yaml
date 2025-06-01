@@ -74,7 +74,7 @@ spec:
               #OAUTH_SCOPES: openid email profile
               TZ: ${TIMEZONE}
               VECTOR_DB: elasticsearch
-              ELASTICSEARCH_URL: http://openwebui-elasticsearch.ai.svc.cluster.local:9200
+              ELASTICSEARCH_URL: http://open-webui-elasticsearch.ai.svc.cluster.local:9200
               STORAGE_PROVIDER: s3
               S3_ENDPOINT_URL: https://s3.${SECRET_DOMAIN}
               S3_REGION_NAME: eu-central-1
