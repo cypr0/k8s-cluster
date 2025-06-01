@@ -62,7 +62,8 @@ spec:
               tag: 0.6.13@sha256:ddc64d14ec933e8c1caf017df8a0068bece3e35acbc59e4aa4971e5aa4176a72
             env:
               WEBUI_URL: chat.${SECRET_DOMAIN}
-              ENABLE_SIGNUP: true
+              ENABLE_SIGNUP: false
+              ENABLE_OAUTH_SIGNUP: true
               DEFAULT_LOCALE: de
               DEFAULT_USER_ROLE: user
               ENV: prod
@@ -79,6 +80,7 @@ spec:
               OPENID_REDIRECT_URI: https://chat.${SECRET_DOMAIN}/oauth/oidc/callback
               OAUTH_SCOPES: openid email profile
               OAUTH_ALLOWED_DOMAINS: ${SECRET_DOMAIN}
+              OAUTH_UPDATE_PICTURE_ON_LOGIN: true
               TZ: ${TIMEZONE}
               VECTOR_DB: elasticsearch
               ELASTICSEARCH_URL: http://open-webui-elasticsearch.ai.svc.cluster.local:9200
