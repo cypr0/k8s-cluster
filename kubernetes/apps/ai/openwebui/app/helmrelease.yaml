@@ -65,7 +65,7 @@ spec:
               ENABLE_RAG_WEB_SEARCH: false
               RAG_WEB_SEARCH_ENGINE: searxng
               SEARXNG_QUERY_URL: http://searxng.productivity.svc.cluster.local:8080/search?q=<query>
-              ENABLE_WEBSOCKET_SUPPORT: "true"
+              ENABLE_WEBSOCKET_SUPPORT: "false"
               WEBSOCKET_MANAGER: "redis"
               #OAUTH_PROVIDER_NAME: Authentik
               #OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
@@ -85,9 +85,9 @@ spec:
             resources:
               requests:
                 cpu: 500m
-                memory: 2Gi
+                memory: 1Gi
               limits:
-                memory: 2Gi
+                memory: 4Gi
           elasticsearch:
             image:
               repository: elasticsearch
