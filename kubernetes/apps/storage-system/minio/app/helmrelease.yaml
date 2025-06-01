@@ -25,6 +25,8 @@ spec:
   uninstall:
     keepHistory: false
   values:
+    additionalAnnotations:
+      secret.reloader.stakater.com/reload: &secret minio-secret
     image:
       repository: quay.io/minio/minio
       tag: RELEASE.2025-05-24T17-08-30Z
