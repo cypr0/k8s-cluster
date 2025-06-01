@@ -70,14 +70,13 @@ spec:
               ENABLE_RAG_WEB_SEARCH: false
               RAG_WEB_SEARCH_ENGINE: searxng
               SEARXNG_QUERY_URL: http://searxng.productivity.svc.cluster.local:8080/search?q=<query>
-              ENABLE_WEBSOCKET_SUPPORT: "false"
+              ENABLE_WEBSOCKET_SUPPORT: "true"
               WEBSOCKET_MANAGER: "redis"
               OAUTH_PROVIDER_NAME: Authentik
               OAUTH_MERGE_ACCOUNTS_BY_EMAIL: false
               OPENID_PROVIDER_URL: https://id.${SECRET_DOMAIN}/application/o/openwebui/.well-known/openid-configuration
               OPENID_REDIRECT_URI: https://chat.${SECRET_DOMAIN}/oauth/oidc/callback
               OAUTH_SCOPES: openid email profile
-              OAUTH_ADMIN_ROLES: admin
               OAUTH_ALLOWED_DOMAINS: ${SECRET_DOMAIN}
               TZ: ${TIMEZONE}
               VECTOR_DB: elasticsearch
