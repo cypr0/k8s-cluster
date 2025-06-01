@@ -61,6 +61,11 @@ spec:
               repository: ghcr.io/open-webui/open-webui
               tag: 0.6.13@sha256:ddc64d14ec933e8c1caf017df8a0068bece3e35acbc59e4aa4971e5aa4176a72
             env:
+              WEBUI_URL: chat.${SECRET_DOMAIN}
+              ENABLE_SIGNUP: false
+              DEFAULT_LOCALE: de
+              DEFAULT_USER_ROLE: user
+              ENV: prod
               OPENAI_BASE_URL: https://openrouter.ai/api/v1
               ENABLE_RAG_WEB_SEARCH: false
               RAG_WEB_SEARCH_ENGINE: searxng
@@ -68,10 +73,12 @@ spec:
               ENABLE_WEBSOCKET_SUPPORT: "false"
               WEBSOCKET_MANAGER: "redis"
               OAUTH_PROVIDER_NAME: Authentik
-              OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
+              OAUTH_MERGE_ACCOUNTS_BY_EMAIL: false
               OPENID_PROVIDER_URL: https://id.${SECRET_DOMAIN}}/application/o/openwebui/.well-known/openid-configuration
               OPENID_REDIRECT_URI: https://chat.${SECRET_DOMAIN}/oauth/oidc/callback
               OAUTH_SCOPES: openid email profile
+              OAUTH_ADMIN_ROLES: admin
+              OAUTH_ALLOWED_DOMAINS: ${SECRET_DOMAIN}
               TZ: ${TIMEZONE}
               VECTOR_DB: elasticsearch
               ELASTICSEARCH_URL: http://open-webui-elasticsearch.ai.svc.cluster.local:9200
