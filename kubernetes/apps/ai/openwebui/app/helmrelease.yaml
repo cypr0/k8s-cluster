@@ -87,6 +87,8 @@ spec:
               S3_ENDPOINT_URL: https://s3.${SECRET_DOMAIN}
               S3_REGION_NAME: eu-central-1
               S3_BUCKET_NAME: k8s-openwebui
+              CONTENT_EXTRACTION_ENGINE: tika
+              TIKA_SERVER_URL: http://paperless-tika.productivity.svc.cluster.local:9998
             envFrom:
               - secretRef:
                   name: openwebui-secret
