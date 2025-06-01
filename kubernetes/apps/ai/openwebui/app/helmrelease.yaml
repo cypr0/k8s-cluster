@@ -54,6 +54,7 @@ spec:
       main:
         annotations:
           reloader.stakater.com/auto: "true"
+          secret.reloader.stakater.com/reload: openwebui-secret
         containers:
           open-webui:
             image:
