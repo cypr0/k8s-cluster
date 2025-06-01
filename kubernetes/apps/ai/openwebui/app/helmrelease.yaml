@@ -1,0 +1,134 @@
+---
+# yaml-language-server: $schema=https://raw.githubusercontent.com/bjw-s-labs/helm-charts/main/charts/other/app-template/schemas/helmrelease-helm-v2.schema.json
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app openwebui
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  maxHistory: 2
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+  uninstall:
+    keepHistory: false
+  values:
+    controllers:
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: &app open-webui
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: app-template
+      version: 3.7.3
+      sourceRef:
+        kind: HelmRepository
+        name: bjw-s
+        namespace: flux-system
+  install:
+    remediation:
+      retries: 3
+  upgrade:
+    cleanupOnFail: true
+    remediation:
+      retries: 3
+      strategy: rollback
+  values:
+    controllers:
+      main:
+        annotations:
+          reloader.stakater.com/auto: "true"
+        containers:
+          open-webui:
+            image:
+              repository: ghcr.io/open-webui/open-webui
+              tag: 0.6.13@sha256:ddc64d14ec933e8c1caf017df8a0068bece3e35acbc59e4aa4971e5aa4176a72
+            env:
+              OPENAI_BASE_URL: https://openrouter.ai/api/v1
+              ENABLE_RAG_WEB_SEARCH: false
+              RAG_WEB_SEARCH_ENGINE: searxng
+              SEARXNG_QUERY_URL: http://searxng.productivity.svc.cluster.local:8080/search?q=<query>
+              ENABLE_WEBSOCKET_SUPPORT: "true"
+              WEBSOCKET_MANAGER: "redis"
+              OAUTH_PROVIDER_NAME: Authentik
+              OAUTH_MERGE_ACCOUNTS_BY_EMAIL: true
+              OPENID_PROVIDER_URL: https://id.${SECRET_DOMAIN}}/application/o/openwebui/.well-known/openid-configuration
+              OPENID_REDIRECT_URI: https://chat.${SECRET_DOMAIN}/oauth/oidc/callback
+              OAUTH_SCOPES: openid email profile
+              TZ: ${TIMEZONE}
+              VECTOR_DB: elasticsearch
+              ELASTICSEARCH_URL: http://openwebui-elasticsearch.ai.svc.cluster.local:9200
+              STORAGE_PROVIDER: s3
+              S3_ENDPOINT_URL: https://s3.${SECRET_DOMAIN}
+              S3_REGION_NAME: eu-central-1
+              S3_BUCKET_NAME: k8s-openwebui
+            envFrom:
+              - secretRef:
+                  name: openwebui-secret
+            resources:
+              requests:
+                cpu: 500m
+                memory: 2Gi
+              limits:
+                memory: 2Gi
+          elasticsearch:
+            image:
+              repository: elasticsearch
+              tag: 9.0.1@sha256:26abc2782ee790b76df4e0806ea492967d14bcddb8c58e0eb3cc8593b363ad6c
+            resources:
+              requests:
+                cpu: 100m
+                memory: 250Mi
+              limits:
+                memory: 4096Mi
+            probes:
+              startup:
+                enabled: true
+                spec:
+                  failureThreshold: 30
+                  periodSeconds: 5
+              liveness:
+                enabled: true
+              readiness:
+                enabled: true
+            env:
+              TZ: ${TIMEZONE}
+              xpack.security.enabled: "false"
+              discovery.type: "single-node"
+              ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    service:
+      open-webui:
+        controller: main
+        ports:
+          http:
+            port: 8080
+    ingress:
+      open-webui:
+        enabled: true
+        className: internal
+        hosts:
+          - host: &host "chat.${SECRET_DOMAIN}"
+            paths:
+              - path: /
+                service:
+                  identifier: open-webui
+                  port: http
+        tls:
+          - hosts:
+              - *host
