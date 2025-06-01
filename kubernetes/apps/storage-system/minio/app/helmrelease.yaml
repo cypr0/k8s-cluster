@@ -24,11 +24,6 @@ spec:
       strategy: rollback
   uninstall:
     keepHistory: false
-  dependsOn:
-    - name: external-secrets
-      namespace: security
-    - name: democratic-csi-nfs
-      namespace: storage-system
   values:
     image:
       repository: quay.io/minio/minio
