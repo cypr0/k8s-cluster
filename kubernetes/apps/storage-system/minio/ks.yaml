@@ -10,9 +10,6 @@ spec:
   commonMetadata:
     labels:
       app.kubernetes.io/name: *app
-  dependsOn:
-    - name: external-secrets-stores
-    - name: democratic-csi-nfs
   path: ./kubernetes/apps/storage-system/minio/app
   prune: true
   sourceRef:
