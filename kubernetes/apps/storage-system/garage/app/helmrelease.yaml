@@ -10,7 +10,7 @@ spec:
       chart: garage
       version: 0.7.0
       sourceRef:
-        kind: HelmRepository
+        kind: GitRepository
         name: garage
         namespace: flux-system
   maxHistory: 2
