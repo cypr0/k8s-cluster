@@ -24,5 +24,3 @@ spec:
       - name: garage-meta
         persistentVolumeClaim:
           claimName: meta-garage-0
-
-
