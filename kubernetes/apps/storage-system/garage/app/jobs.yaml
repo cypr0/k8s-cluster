@@ -13,7 +13,7 @@ spec:
       - name: garage-cli
         image: dxflrs/garage:v1.1.0
         command: ["garage"]
-        args: ["bucket", "create". "mybucket"]
+        args: ["bucket", "create", "mybucket"]
         env:
         - name: GARAGE_DATA_DIR
           value: /mnt/meta
