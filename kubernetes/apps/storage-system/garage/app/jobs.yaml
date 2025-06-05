@@ -1,0 +1,42 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: garage-init-buckets
+  namespace: storage-system
+spec:
+  ttlSecondsAfterFinished: 60
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: garage-cli
+        image: deuxfleurs/garage:v0.8.1
+        command:
+        - sh
+        - -c
+        - |
+          export GARAGE_DATA_DIR=/mnt/meta
+          echo "⏳ Warte auf DB-Datei..."
+          for i in $(seq 1 30); do
+            [ -f "$GARAGE_DATA_DIR/garage.db" ] && break
+            echo "🔄 Versuch $i: garage.db noch nicht da..."
+            sleep 3
+          done
+
+          if ! garage bucket list | grep -q meinbucket; then
+            echo "📦 Bucket 'meinbucket' wird erstellt..."
+            garage bucket create meinbucket
+          else
+            echo "✅ Bucket 'meinbucket' existiert bereits."
+          fi
+        env:
+        - name: GARAGE_DATA_DIR
+          value: /mnt/meta
+        volumeMounts:
+        - name: garage-meta
+          mountPath: /mnt/meta
+      volumes:
+      - name: garage-meta
+        persistentVolumeClaim:
+          claimName: meta-garage-0
