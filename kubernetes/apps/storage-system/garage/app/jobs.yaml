@@ -11,7 +11,7 @@ spec:
       restartPolicy: Never
       containers:
       - name: garage-cli
-        image: deuxfleurs/garage:v0.8.1
+        image: dxflrs/garage:v1.1.0
         command:
         - sh
         - -c
