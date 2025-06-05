@@ -26,22 +26,20 @@ spec:
     keepHistory: false
   values:
     garage:
-      # Use only 2 replicas per object
       replicationMode: "1"
-
-    # Start 4 instances (StatefulSets) of garage
+      rpcSecret: ${GARAGE_RPC_SECRET}
+      s3:
+        api:
+          region: "eu-central-1"
     deployment:
-      replicaCount: 3
-
-    # Override default storage class and size
+      replicaCount: 1
     persistence:
       meta:
-        storageClass: "openebs-hostpath"
-        size: 100Mi
-      data:
-        storageClass: "openebs-hostpath"
+        storageClass: "nas-nfs-store"
         size: 1Gi
-
+      data:
+        storageClass: "nas-nfs-store"
+        size: 300Gi
     ingress:
       s3:
         api:
@@ -56,3 +54,11 @@ spec:
                 - path: /
                   pathType: Prefix
           tls: [hosts: [*host]]
+    monitoring:
+      metrics:
+        serviceMonitor:
+          enabled: true
+    podSecurityContext:
+      fsGroup: 3000
+      runAsGroup: 3000
+      runAsUser: 3000
