@@ -70,7 +70,7 @@ spec:
 
         [admin]
         api_bind_addr = "[::]:3903"
-        admin_token = "${GARAGE_RADMIN_TOKEN}"
+        admin_token = "${GARAGE_ADMIN_TOKEN}"
         {{- if .Values.monitoring.tracing.sink }}
         trace_sink = "{{ .Values.monitoring.tracing.sink }}"
         {{- end }}
