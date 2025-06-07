@@ -26,57 +26,42 @@ spec:
     keepHistory: false
   values:
     garage:
-      replicationMode: "1"
-      rpcSecret: ${GARAGE_RPC_SECRET}
-      s3:
-        api:
-          region: eu-central-1
-          rootDomain: &api .s3-api.${SECRET_DOMAIN}
       garageTomlString: |
         metadata_dir = "/mnt/meta"
         data_dir = "/mnt/data"
 
-        db_engine = "{{ .Values.garage.dbEngine }}"
+        db_engine = "lmdb"
 
-        block_size = {{ .Values.garage.blockSize }}
+        block_size = "1M"
 
-        replication_mode = "{{ .Values.garage.replicationMode }}"
+        replication_mode = "1"
 
-        compression_level = {{ .Values.garage.compressionLevel }}
+        compression_level = 1
 
-        {{- if .Values.garage.metadataAutoSnapshotInterval }}
-        metadata_auto_snapshot_interval = {{ .Values.garage.metadataAutoSnapshotInterval | quote }}
-        {{- end }}
+        metadata_auto_snapshot_interval = "6h"
 
-        rpc_bind_addr = "{{ .Values.garage.rpcBindAddr }}"
+        rpc_bind_addr = "[::]:3901"
         rpc_secret = "${GARAGE_RPC_SECRET}"
 
-        bootstrap_peers = {{ .Values.garage.bootstrapPeers }}
-
         [kubernetes_discovery]
-        namespace = "{{ .Release.Namespace }}"
-        service_name = "{{ include "garage.fullname" . }}"
-        skip_crd = {{ .Values.garage.kubernetesSkipCrd }}
+        namespace = "storage-system"
+        service_name = "garage"
+        skip_crd = false
 
         [s3_api]
-        s3_region = "{{ .Values.garage.s3.api.region }}"
+        s3_region = "eu-central-1"
         api_bind_addr = "[::]:3900"
-        root_domain = "{{ .Values.garage.s3.api.rootDomain }}"
-
-        [s3_web]
-        bind_addr = "[::]:3902"
-        root_domain = "{{ .Values.garage.s3.web.rootDomain }}"
-        index = "{{ .Values.garage.s3.web.index }}"
+        root_domain = ".s3-api.${SECRET_DOMAIN}"
 
         [admin]
         api_bind_addr = "[::]:3903"
         admin_token = "${GARAGE_ADMIN_TOKEN}"
-        {{- if .Values.monitoring.tracing.sink }}
-        trace_sink = "{{ .Values.monitoring.tracing.sink }}"
-        {{- end }}
-        {{- end }}
     deployment:
       replicaCount: 1
+    image:
+      repository: dxflrs/amd64_garage
+      tag: v1.1.0@sha256:fe798f1dd55025c9c8fc8da86c49c17ac67b776930d3b9e9981f7876c921519f
+      pullPolicy: IfNotPresent
     persistence:
       meta:
         storageClass: "nas-nfs-store"
@@ -93,7 +78,7 @@ spec:
             external-dns.alpha.kubernetes.io/target: external.${SECRET_DOMAIN}
             nginx.ingress.kubernetes.io/proxy-body-size: 500m
           hosts:
-            - host: *api
+            - host: &api s3-api.${SECRET_DOMAIN}
               paths:
                 - path: /
                   pathType: Prefix
@@ -101,8 +86,6 @@ spec:
     monitoring:
       metrics:
         enabled: true
-        serviceMonitor:
-          enabled: true
     podSecurityContext:
       fsGroup: 3000
       runAsGroup: 3000
