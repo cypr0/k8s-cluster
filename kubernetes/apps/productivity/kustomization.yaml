@@ -7,4 +7,5 @@ resources:
  # - ./mastodon/ks.yaml
   - ./nextcloud/ks.yaml
   - ./paperless/ks.yaml
+  - ./searxng/ks.yaml
   - ./stirling-pdf/ks.yaml
