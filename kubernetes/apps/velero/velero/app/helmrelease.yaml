@@ -74,6 +74,9 @@ spec:
         volumeMounts:
           - mountPath: /target
             name: plugins
+    podVolumes:
+      - name: plugins
+        emptyDir: {}
     snapshotsEnabled: true
     backupsEnabled: true
     deployNodeAgent: false
