@@ -61,7 +61,7 @@ spec:
         schedule: "00 03 * * 0"
         template:
           ttl: "72h" # 3 days retention
-    initContainers:
+    initContainers: |
       - name: velero-plugin-for-aws
         image: velero/velero-plugin-for-aws:v1.12.1
         imagePullPolicy: IfNotPresent
