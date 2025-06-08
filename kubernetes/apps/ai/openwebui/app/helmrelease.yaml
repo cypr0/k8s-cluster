@@ -61,15 +61,17 @@ spec:
               repository: ghcr.io/open-webui/open-webui
               tag: 0.6.13@sha256:ddc64d14ec933e8c1caf017df8a0068bece3e35acbc59e4aa4971e5aa4176a72
             env:
-              WEBUI_URL: https://chat.${SECRET_DOMAIN}
+              CORS_ALLOW_ORIGIN: https://gpt.${SECRET_DOMAIN}
+              WEBUI_URL: https://gpt.${SECRET_DOMAIN}
               ENABLE_SIGNUP: true
               ENABLE_OAUTH_SIGNUP: true
               DEFAULT_LOCALE: de
               DEFAULT_USER_ROLE: user
+              DATA_DIR: /app/backend/data
               ENV: prod
               ENABLE_OLLAMA_API: false
               OPENAI_API_BASE_URL: https://openrouter.ai/api/v1
-              ENABLE_RAG_WEB_SEARCH: false
+              ENABLE_RAG_WEB_SEARCH: true
               RAG_WEB_SEARCH_ENGINE: searxng
               SEARXNG_QUERY_URL: http://searxng.productivity.svc.cluster.local:8080/search?q=<query>
               ENABLE_WEBSOCKET_SUPPORT: "true"
@@ -83,10 +85,6 @@ spec:
               TZ: ${TIMEZONE}
               VECTOR_DB: elasticsearch
               ELASTICSEARCH_URL: http://open-webui-elasticsearch.ai.svc.cluster.local:9200
-              STORAGE_PROVIDER: s3
-              S3_ENDPOINT_URL: https://s3.${SECRET_DOMAIN}
-              S3_REGION_NAME: eu-central-1
-              S3_BUCKET_NAME: k8s-openwebui
               CONTENT_EXTRACTION_ENGINE: tika
               TIKA_SERVER_URL: http://paperless-tika.productivity.svc.cluster.local:9998
             envFrom:
@@ -98,6 +96,11 @@ spec:
                 memory: 1Gi
               limits:
                 memory: 4Gi
+            securityContext:
+              runAsNonRoot: true
+              runAsUser: 3000
+              runAsGroup: 3000
+              fsGroup: 3000
           elasticsearch:
             image:
               repository: elasticsearch
@@ -139,7 +142,7 @@ spec:
         enabled: true
         className: internal
         hosts:
-          - host: &host "chat.${SECRET_DOMAIN}"
+          - host: &host "gpt.${SECRET_DOMAIN}"
             paths:
               - path: /
                 service:
@@ -148,3 +151,9 @@ spec:
         tls:
           - hosts:
               - *host
+    persistence:
+      config:
+        enabled: true
+        existingClaim: openwebui-pvc
+        globalMounts:
+          - path: /app/backend/data

@@ -1,0 +1,122 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: garage-layout-init
+  namespace: storage-system
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: garage-init
+          image: bash:5
+          env:
+            - name: GARAGE_ADMIN_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: garage-secrets
+                  key: admin-token
+          envFrom:
+            - secretRef:
+                name: garage-access-keys
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+
+              ENDPOINT="http://garage-metrics.storage-system.svc.cluster.local:3903"
+
+              echo "Checking layout version..."
+              layout=$(curl -s -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" $ENDPOINT/v1/layout)
+              current_version=$(echo "$layout" | grep -o '"version": [0-9]*' | grep -o '[0-9]*')
+
+              if [ "$current_version" -eq 0 ]; then
+                echo "No layout found. Initializing new layout..."
+
+                # Gather node IDs
+                node_ids=$(curl -s -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" $ENDPOINT/v1/status | \
+                  grep -oE '"id":\s*"[a-f0-9]+"' | sed 's/"id": "//;s/"//')
+
+                layout_json="["
+                for node_id in $node_ids; do
+                  layout_json="${layout_json}
+  {
+    \"id\": \"${node_id}\",
+    \"zone\": \"eu-central-1\",
+    \"capacity\": \"300G\",
+    \"tags\": [\"truenas\"]
+  },"
+                done
+                layout_json="${layout_json%,}
+]"
+
+                echo "Submitting layout..."
+                curl -s -X POST "$ENDPOINT/v1/layout" \
+                  -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -d "$layout_json"
+
+                new_version=$((current_version + 1))
+                echo "Applying layout version $new_version..."
+                curl -s -X POST "$ENDPOINT/v1/layout/apply" \
+                  -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -d "{\"version\": $new_version}"
+
+                echo "Creating buckets..."
+                for bucket in k8s-postgres k8s-velero k8s-openwebui; do
+                  curl -s -X POST "$ENDPOINT/v1/bucket" \
+                    -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    -d "{\"globalAlias\": \"$bucket\"}"
+                done
+
+                echo "Importing access keys..."
+
+                curl -s -X POST "$ENDPOINT/v1/key/import" \
+                  -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -d "{\"name\": \"key-postgres-srv\", \"accessKeyId\": \"$postgres_access_key\", \"secretAccessKey\": \"$postgres_secret_key\"}"
+
+                curl -s -X POST "$ENDPOINT/v1/key/import" \
+                  -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -d "{\"name\": \"key-velero-srv\", \"accessKeyId\": \"$velero_access_key\", \"secretAccessKey\": \"$velero_secret_key\"}"
+
+                curl -s -X POST "$ENDPOINT/v1/key/import" \
+                  -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" \
+                  -H "Content-Type: application/json" \
+                  -d "{\"name\": \"key-openwebui-srv\", \"accessKeyId\": \"$openwebui_access_key\", \"secretAccessKey\": \"$openwebui_secret_key\"}"
+
+                echo "Linking access keys to buckets..."
+
+                declare -A bucket_map=( \
+                  ["k8s-postgres"]="key-postgres-srv" \
+                  ["k8s-velero"]="key-velero-srv" \
+                  ["k8s-openwebui"]="key-openwebui-srv" )
+
+                bucket_list=$(curl -s -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" "$ENDPOINT/v1/bucket?list")
+                key_list=$(curl -s -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" "$ENDPOINT/v1/key?list")
+
+                for bucket_alias in "${!bucket_map[@]}"; do
+                  keyname="${bucket_map[$bucket_alias]}"
+                  bucket_id=$(echo "$bucket_list" | jq -r ".[] | select(.globalAliases[]? == \"$bucket_alias\") | .id")
+                  access_key_id=$(echo "$key_list" | jq -r ".[] | select(.name == \"$keyname\") | .id")
+
+                  if [ -n "$bucket_id" ] && [ -n "$access_key_id" ]; then
+                    echo "Granting access for $keyname to bucket $bucket_alias"
+                    curl -s -X POST "$ENDPOINT/v1/bucket/allow" \
+                      -H "Authorization: Bearer $GARAGE_ADMIN_TOKEN" \
+                      -H "Content-Type: application/json" \
+                      -d "{\"bucketId\": \"$bucket_id\", \"accessKeyId\": \"$access_key_id\", \"permissions\": {\"read\": true, \"write\": true, \"owner\": true}}"
+                  else
+                    echo "Missing ID for $bucket_alias or $keyname"
+                  fi
+                done
+
+                echo "Garage cluster initialized successfully."
+              else
+                echo "Layout already exists. Skipping initialization."
+              fi
