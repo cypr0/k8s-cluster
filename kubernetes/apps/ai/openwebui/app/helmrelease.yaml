@@ -97,7 +97,7 @@ spec:
               limits:
                 memory: 4Gi
             securityContext:
-              runAsNonRoot: true
+              runAsNonRoot: false
               runAsUser: 3000
               runAsGroup: 3000
               fsGroup: 3000
