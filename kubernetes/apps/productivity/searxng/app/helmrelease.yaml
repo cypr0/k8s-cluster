@@ -52,7 +52,7 @@ spec:
                 custom: true
                 spec:
                   httpGet:
-                    path: /healtz
+                    path: /stats
                     port: *httpPort
                   initialDelaySeconds: 15
                   periodSeconds: 10
@@ -85,6 +85,10 @@ spec:
     ingress:
       searxng:
         className: "internal"
+        annotations:
+          nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+          nginx.ingress.kubernetes.io/x-forwarded-for-header: "X-Forwarded-For"
+          nginx.ingress.kubernetes.io/enable-real-ip: "true"
         hosts:
           - host: search.${SECRET_DOMAIN}
             paths:
