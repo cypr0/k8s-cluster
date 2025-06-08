@@ -7,7 +7,7 @@ server:
   method: GET # https://github.com/searxng/searxng/pull/3619
 
 redis:
-  url: redis://:${REDIS_PASSWORD}@dragonfly.database.svc.cluster.local:6379
+  url: redis://:${REDIS_HOST_PASSWORD}@dragonfly.database.svc.cluster.local:6379
 
 search:
   autocomplete: duckduckgo
