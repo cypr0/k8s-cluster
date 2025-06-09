@@ -74,6 +74,18 @@ outgoing:
   max_redirects: 30
   using_tor_proxy: false
 
+categories_as_tabs:
+  general:
+  images:
+  videos:
+  news:
+  map:
+  music:
+  it:
+  science:
+  files:
+  social media:
+
 plugins:
   searx.plugins.calculator.SXNGPlugin:
     active: true
