@@ -81,7 +81,7 @@ spec:
               OPENID_PROVIDER_URL: https://id.${SECRET_DOMAIN}/application/o/openwebui/.well-known/openid-configuration
               OPENID_REDIRECT_URI: https://gpt.${SECRET_DOMAIN}/oauth/oidc/callback
               OAUTH_SCOPES: openid email profile
-              OAUTH_UPDATE_PICTURE_ON_LOGIN: true
+              OAUTH_UPDATE_PICTURE_ON_LOGIN: false
               TZ: ${TIMEZONE}
               VECTOR_DB: elasticsearch
               ELASTICSEARCH_URL: http://open-webui-elasticsearch.ai.svc.cluster.local:9200
