@@ -60,7 +60,7 @@ spec:
       replicaCount: 1
     image:
       repository: dxflrs/amd64_garage
-      tag: v1.1.0@sha256:fe798f1dd55025c9c8fc8da86c49c17ac67b776930d3b9e9981f7876c921519f
+      tag: v1.2.0@sha256:35686dd3dc1b7a53100855d22113c20e3a2739fd40be0dba3da2ac75ee72f83a
       pullPolicy: IfNotPresent
     persistence:
       meta:
