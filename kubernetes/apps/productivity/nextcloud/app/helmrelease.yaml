@@ -39,7 +39,7 @@ spec:
           nextcloud:
             image:
               repository: docker.io/library/nextcloud
-              tag: 31.0.5-fpm-alpine@sha256:567c123f29d75d6899fcf66fba3f5fd5d5863782ad16229d42809e038f3a7e0e
+              tag: 31.0.6-fpm-alpine@sha256:d78a1cacfcf0bbd9a4ff18a73d155e2d8072483a5d862865a2e9d36e050147ca
             securityContext:
               runAsUser: 3000
               runAsGroup: 3000
@@ -108,7 +108,7 @@ spec:
           clamav:
             image:
               repository: clamav/clamav
-              tag: 1.4.2@sha256:0f7f2d47dc25ff908fb4a471175455d7a9cde26c533689f6e182a984d392e50e
+              tag: 1.4.3@sha256:46bbc70e0dd0d1c719c5f47b612d1bc5b0664c1977da83382cb9991986007ee2
             env:
               CLAMAV_NO_CLAMD: false
               CLAMAV_NO_FRESHCLAMD: false
@@ -126,7 +126,7 @@ spec:
           collabora:
             image:
               repository: collabora/code
-              tag: 25.04.2.2.1@sha256:6df19a481053674038514048a747b224f16fc48fd0daf3a104d29721390fe548
+              tag: 25.04.3.1.1@sha256:494ea00ed33e4149698e8995a1fb101400f581810fb86a864dc671a734fdb666
             env:
               - name: username
                 valueFrom:
@@ -155,7 +155,7 @@ spec:
           whiteboard:
             image:
               repository: ghcr.io/nextcloud-releases/whiteboard
-              tag: v1.0.5
+              tag: v1.1.0
             env:
               - name: NEXTCLOUD_URL
                 value: "cloud.${SECRET_DOMAIN}"
