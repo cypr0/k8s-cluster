@@ -66,6 +66,8 @@ spec:
             memory: 200Mi
             ephemeral-storage: 200Mi
       driver:
+        image:
+          tag: next
         resources:
           requests:
             cpu: 20m
@@ -140,6 +142,8 @@ spec:
             memory: 200Mi
             ephemeral-storage: 200Mi
     driver:
+      image:
+        tag: next
       config:
         driver: freenas-api-nfs
         instance_id:
