@@ -68,6 +68,7 @@ spec:
       driver:
         image:
           tag: next
+          pullPolicy: Always
         resources:
           requests:
             cpu: 20m
@@ -149,6 +150,7 @@ spec:
     driver:
       image:
         tag: next
+        pullPolicy: Always
       config:
         driver: freenas-api-iscsi
         instance_id:
