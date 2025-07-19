@@ -39,7 +39,7 @@ spec:
           nextcloud:
             image:
               repository: docker.io/library/nextcloud
-              tag: 31.0.7-fpm-alpine@sha256:ad3f4f11f936721551a92bf82dbb147d217a7b8fdf4ef2e0e4eb4d2aedcfa429
+              tag: 31.0.7-fpm-alpine@sha256:42e5e8d3311a7d17bf2550ee4941ce04697991c29de1c6fe584f8f8d5249deb7
             securityContext:
               runAsUser: 3000
               runAsGroup: 3000
