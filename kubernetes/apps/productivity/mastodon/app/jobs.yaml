@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: mastodon-create-admin-account
-        image: lscr.io/linuxserver/mastodon:4.3.9
+        image: lscr.io/linuxserver/mastodon:4.4.2
         command:
           - sh
           - -c
@@ -134,7 +134,7 @@ spec:
         spec:
           containers:
           - name: mastodon-cronjob
-            image: lscr.io/linuxserver/mastodon:4.3.9
+            image: lscr.io/linuxserver/mastodon:4.4.2
             command: ["/bin/sh", "-c"]
             args: ["tootctl search deploy --only=tags statuses public_statuses"]
             env:
